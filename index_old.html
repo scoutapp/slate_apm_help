@@ -16,7 +16,7 @@
 
   </head>
 
-  <body class="index">
+  <body class="index_old">
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -31,17 +31,175 @@
         <ul class="search-results"></ul>
       <div id="toc">
       </div>
+        <ul class="toc-footer">
+            <li><a href='#'>Sign Up for a Developer Key</a></li>
+            <li><a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a></li>
+        </ul>
     </div>
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id="scout-help-docs">Scout Help Docs</h1>
+        <h1 class="dark">Scout Help Docs</h1>
 
-<p>Welcome to the help site for <strong>Scout Application Monitoring</strong>. Don&rsquo;t have an account? <a href="https://apm.scoutapp.com/users/sign_up">Get started with a free trial</a>.</p>
+<p>Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.</p>
 
-<p>Browse through the sidebar, search, or <a href="mailto:apm.support@scoutapp.com">ask a question</a>. We&rsquo;re here to help.</p>
+<p>We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.</p>
 
-<p>Looking for our server monitoring help site? Goto <a href="http://help.scoutapp.com">help.scoutapp.com</a>.</p>
+<p>This example API documentation page was created with <a href="http://github.com/tripit/slate">Slate</a>. Feel free to edit it and use it as a base for your own API&rsquo;s documentation.</p>
+
+<h1 id="authentication">Authentication</h1>
+
+<blockquote>
+<p>To authorize, use this code:</p>
+</blockquote>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
+</code></pre>
+
+<!-- ```python
+import kittn
+
+api = kittn.authorize('meowmeowmeow')
+``` -->
+
+<!-- ```shell
+# With shell, you can just pass the correct header with each request
+curl "api_endpoint_here"
+  -H "Authorization: meowmeowmeow"
+``` -->
+
+<blockquote>
+<p>Make sure to replace <code class="prettyprint">meowmeowmeow</code> with your API key.</p>
+</blockquote>
+
+<p>Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our <a href="http://example.com/developers">developer portal</a>.</p>
+
+<p>Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
+
+<p><code class="prettyprint">Authorization: meowmeowmeow</code></p>
+
+<aside class="notice">
+You must replace <code>meowmeowmeow</code> with your personal API key.
+</aside>
+
+<h1 id="kittens">Kittens</h1>
+
+<h2 id="get-all-kittens">Get All Kittens</h2>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
+<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span>
+</code></pre>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
+<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</code></pre>
+<pre class="highlight shell"><code>curl <span class="s2">"http://example.com/api/kittens"</span>
+  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">[</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Fluffums"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"calico"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Isis"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">]</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint retrieves all kittens.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET http://example.com/api/kittens</code></p>
+
+<h3 id="query-parameters">Query Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>include_cats</td>
+<td>false</td>
+<td>If set to true, the result will also include cats.</td>
+</tr>
+<tr>
+<td>available</td>
+<td>true</td>
+<td>If set to false, the result will include kittens that have already been adopted.</td>
+</tr>
+</tbody></table>
+
+<aside class="success">
+Remember — a happy kitten is an authenticated kitten!
+</aside>
+
+<h2 id="get-a-specific-kitten">Get a Specific Kitten</h2>
+<pre class="highlight ruby"><code><span class="nb">require</span> <span class="s1">'kittn'</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="no">Kittn</span><span class="o">::</span><span class="no">APIClient</span><span class="p">.</span><span class="nf">authorize!</span><span class="p">(</span><span class="s1">'meowmeowmeow'</span><span class="p">)</span>
+<span class="n">api</span><span class="p">.</span><span class="nf">kittens</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre>
+<pre class="highlight python"><code><span class="kn">import</span> <span class="nn">kittn</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">kittn</span><span class="o">.</span><span class="n">authorize</span><span class="p">(</span><span class="s">'meowmeowmeow'</span><span class="p">)</span>
+<span class="n">api</span><span class="o">.</span><span class="n">kittens</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+</code></pre>
+<pre class="highlight shell"><code>curl <span class="s2">"http://example.com/api/kittens/2"</span>
+  -H <span class="s2">"Authorization: meowmeowmeow"</span>
+</code></pre>
+
+<blockquote>
+<p>The above command returns JSON structured like this:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Isis"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"breed"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unknown"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"fluffiness"</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"cuteness"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This endpoint retrieves a specific kitten.</p>
+
+<aside class="warning">If you&rsquo;re not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET http://example.com/kittens/&lt;ID&gt;</code></p>
+
+<h3 id="url-parameters">URL Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>ID</td>
+<td>The ID of the kitten to retrieve</td>
+</tr>
+</tbody></table>
 
           <h1 id="getting-started">Getting Started</h1>
 
@@ -337,162 +495,6 @@ bundle install
 <p>Add the following line to the <code class="prettyprint">ApplicationController#set_scout_context</code> method defined above:</p>
 <pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
 </code></pre>
-
-          <h1 id="troubleshooting">Troubleshooting</h1>
-
-<h2 id="no-data">No Data</h2>
-
-<p>Not seeing any data?</p>
-
-<table class="help">
-    <tbody><tr>
-      <td>
-        <span class="step">1</span>
-      </td>
-      <td>
-        <p>Is there a <code>log/scout_apm.log</code> file?
-        </p>
-        <p>
-          If not, the gem was never initialized by the application. <a href="#step6">Jump to the last step</a>.<br>If there is a file, examine the file for any error messages:</p>
-        <p></p>
-<pre>
-tail -n1000 log/scout_apm.log | grep "Starting monitoring" -A20
-</pre>
-          See something noteworthy? Proceed to <a href="#step6">to the last step</a>.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">2</span>
-      </td>
-      <td>
-        <p>
-          Using Unicorn?
-        </p>
-        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="http://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">3</span>
-      </td>
-      <td>
-        <p>Was the <code><strong>scout_apm</strong></code> gem deployed with your application?
-        </p>
-<pre>
-bundle list scout_apm
-</pre>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">4</span>
-      </td>
-      <td>
-        <p>Did you download the config file, placing it in <code><strong>config/scout_apm.yml</strong></code>?
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">5</span>
-      </td>
-      <td>
-        <p>
-          Did you restart the app?
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">6</span>
-      </td>
-      <td>
-        <a name="step6"></a>Are you sure the application has processed any requests?
-<pre>
-tail -n1000 log/production.log | grep "Processing"
-</pre>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">7</span>
-      </td>
-      <td>
-        <p>
-          Oops! Looks like messed up. <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
-        </p>
-        <ul>
-          <li>The last 1000 lines of your <code>log/scout_apm.log</code> file: <code>tail -n1000 log/scout_apm.log</code>.
-          </li>
-          <li>Your application&rsquo;s gems <code>bundle list</code>.
-          </li>
-          <li>
-            Rails version
-          </li>
-          <li>
-            Application Server (examples: Passenger, Thin, etc.)
-          </li>
-          <li>
-            Web Server (examples: Apache, Nginx, etc.)
-          </li>
-        </ul>
-        <p>
-          We typically respond within a couple of hours during the business day.
-        </p>
-      </td>
-    </tr>
-  </tbody></table>
-
-<h2 id="service-status">Service Status</h2>
-
-<p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
-
-<ul>
-<li><a href="http://status.scoutapp.com">Check out status site</a>. You can subscribe to service incidents. </li>
-<li><a href="mailto:support@scoutapp.com">Email us</a></li>
-</ul>
-
-          <h1 id="how-scout-works">How Scout Works</h1>
-
-<h2 id="overview">Overview</h2>
-
-<p>Scout is engineered to monitor the performance of your mission-critical production applications by providing a low-overhead monitoring agent and service that values your security.</p>
-
-<h2 id="performance-overhead">Performance Overhead</h2>
-
-<p>Our agent is designed to run in production environments. We&rsquo;ve benchmarked the response time overhead at roughly 3%. Generally, overhead increases as the number of methods are instrumented.</p>
-
-<h2 id="security">Security</h2>
-
-<p>We take the security of your code metrics extremely seriously. Keeping your data secure is fundamental to our business. Scout is nearing a decade storing critical metrics with our server monitoring product and those same fundamentals are applied here:</p>
-
-<ul>
-<li>All data transmitted by our agent to our servers is sent via SSL.</li>
-<li>Our UI is only served under SSL.</li>
-<li>When additional data is collected for slow calls (ex: SQL queries), query parameters are sanitized before sending these to our servers.</li>
-</ul>
-
-<h3 id="git-integration">Git Integration</h3>
-
-<p>Scout only needs read-only access to your repository, but unfortunately, Github doesn&rsquo;t currently allow this - they only offer read-write permissions through their OAuth API.</p>
-
-<p>We have asked Github to offer read-only permissions, and they&rsquo;ve said that the feature coming soon. In the mean time, we&rsquo;re limited to the permissions structure Github offers. Our current Git security practices:</p>
-
-<ul>
-<li>we don&rsquo;t clone your repository&rsquo;s code; we only pull the commit history</li>
-<li>the commit history is secured on our servers according to industry best practices</li>
-<li>authentication subsystems within our application ensure your commit history is never exposed to anyone outside your account.</li>
-</ul>
-
-<p>All that said, we suggest the following:</p>
-
-<ul>
-<li><a href="https://github.com/contact">Contact Github</a> about allowing read-only access. This will ensure it stays top-of-mind.</li>
-<li>This is optional and you are able to view backtrace information w/o the integration. It&rsquo;s likely possible to even write a UserScript to open the code locally in your editor or on Github.</li>
-</ul>
 
       </div>
       <div class="dark-box">
