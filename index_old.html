@@ -201,7 +201,7 @@ Remember — a happy kitten is an authenticated kitten!
 </tr>
 </tbody></table>
 
-          <h1 id="getting-started">Getting Started</h1>
+          <h1 id="configuration">Configuration</h1>
 
 <h2 id="requirements">Requirements</h2>
 
@@ -268,7 +268,8 @@ bundle install
 <h3 id="erb-evaluation">ERB evaluation</h3>
 
 <p>ERB is evaluated when loading the config file. For example, you can set the app name based on the hostname:</p>
-<pre class="highlight ruby"><code><span class="ss">name: </span><span class="o">&lt;</span><span class="sx">%= Socket.gethostname.include?(staging) ? 'Staging App' : 'Production App' %&gt;
+<pre class="highlight ruby"><code><span class="ss">common: </span><span class="o">&amp;</span><span class="n">defaults</span>
+  <span class="ss">name: </span><span class="o">&lt;</span><span class="sx">%= "ProjectPlanner.io (#{Rails.env})" %&gt;
 </span></code></pre>
 
 <h3 id="configuration-reference">Configuration Reference</h3>
@@ -300,7 +301,10 @@ bundle install
         <td>
           Name of the application (ex: &lsquo;Photos App&rsquo;).
         </td>
-        <td></td>
+        <td>
+          <code>Rails.application.class.to_s.
+             sub(/::Application$/, '')</code>
+        </td>
         <td>
           Yes
         </td>
@@ -426,7 +430,7 @@ bundle install
 
 <h2 id="adding-custom-context">Adding Custom Context</h2>
 
-<p>Context lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
+<p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
 
 <ul>
 <li>How many users are impacted by slow requests?</li>
@@ -434,7 +438,7 @@ bundle install
 <li>How much of an impact are slow requests having on our highest paying customers?</li>
 </ul>
 
-<p>It&rsquo;s simple to add custom context to your app. There are two types of context:</p>
+<p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app. There are two types of context:</p>
 
 <h3 id="user-context">User Context</h3>
 
@@ -495,6 +499,32 @@ bundle install
 <p>Add the following line to the <code class="prettyprint">ApplicationController#set_scout_context</code> method defined above:</p>
 <pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
 </code></pre>
+
+<h2 id="environments">Environments</h2>
+
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments.</p>
+
+<p>Here&rsquo;s an example <code class="prettyprint">scout_apm.yml</code> configuration to achieve this:</p>
+<pre class="highlight ruby"><code><span class="ss">common: </span><span class="o">&amp;</span><span class="n">defaults</span>
+  <span class="ss">name: name: </span><span class="o">&lt;</span><span class="sx">%= "YOUR_APP_NAME (#{Rails.env})" %&gt;
+  key: YOUR_KEY
+  log_level: debug
+  monitor: true
+
+production:
+  &lt;&lt;: *defaults
+
+development:
+  &lt;&lt;: *defaults
+  monitor: false
+
+test:
+  &lt;&lt;: *defaults
+  monitor: false
+
+staging:
+  &lt;&lt;: *defaults
+</span></code></pre>
 
       </div>
       <div class="dark-box">

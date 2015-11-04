@@ -43,7 +43,25 @@
 
 <p>Looking for our server monitoring help site? Goto <a href="http://help.scoutapp.com">help.scoutapp.com</a>.</p>
 
-          <h1 id="getting-started">Getting Started</h1>
+<h2 id="overview">Overview</h2>
+
+<p>Scout Application Monitoring is a lightweight, production-grade application monitoring service built for modern development teams. Just embed our agent in your application: we handle the data collection. </p>
+
+<p>Here&rsquo;s an overview of the key functionality in our application monitoring service:</p>
+
+<h3 id="the-agent">The Agent</h3>
+
+<p>We currently monitor Ruby on Rails apps. Support for other languages and frameworks is under development. </p>
+
+<p>Our agent is designed to run in production environments and has low overhead. We&rsquo;ve benchmarked the response time overhead at roughly 3%. Every minute, the agent transmits metrics to our service over SSL. </p>
+
+<p>There&rsquo;s nothing to install on your servers: just include our Ruby Gem within your Rails app. You&rsquo;ll quickly see actionable metrics from the <a href="#instrumented-libaries">common libaries we instrument</a>.</p>
+
+<h3 id="user-interface">User Interface</h3>
+
+<p>A complete overview of the Scout UX is available in the <a href="#features">features</a> area of this help site.</p>
+
+          <h1 id="configuration">Configuration</h1>
 
 <h2 id="requirements">Requirements</h2>
 
@@ -110,7 +128,8 @@ bundle install
 <h3 id="erb-evaluation">ERB evaluation</h3>
 
 <p>ERB is evaluated when loading the config file. For example, you can set the app name based on the hostname:</p>
-<pre class="highlight ruby"><code><span class="ss">name: </span><span class="o">&lt;</span><span class="sx">%= Socket.gethostname.include?(staging) ? 'Staging App' : 'Production App' %&gt;
+<pre class="highlight ruby"><code><span class="ss">common: </span><span class="o">&amp;</span><span class="n">defaults</span>
+  <span class="ss">name: </span><span class="o">&lt;</span><span class="sx">%= "ProjectPlanner.io (#{Rails.env})" %&gt;
 </span></code></pre>
 
 <h3 id="configuration-reference">Configuration Reference</h3>
@@ -142,7 +161,10 @@ bundle install
         <td>
           Name of the application (ex: &lsquo;Photos App&rsquo;).
         </td>
-        <td></td>
+        <td>
+          <code>Rails.application.class.to_s.
+             sub(/::Application$/, '')</code>
+        </td>
         <td>
           Yes
         </td>
@@ -268,7 +290,7 @@ bundle install
 
 <h2 id="adding-custom-context">Adding Custom Context</h2>
 
-<p>Context lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
+<p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
 
 <ul>
 <li>How many users are impacted by slow requests?</li>
@@ -276,7 +298,7 @@ bundle install
 <li>How much of an impact are slow requests having on our highest paying customers?</li>
 </ul>
 
-<p>It&rsquo;s simple to add custom context to your app. There are two types of context:</p>
+<p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app. There are two types of context:</p>
 
 <h3 id="user-context">User Context</h3>
 
@@ -337,6 +359,32 @@ bundle install
 <p>Add the following line to the <code class="prettyprint">ApplicationController#set_scout_context</code> method defined above:</p>
 <pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
 </code></pre>
+
+<h2 id="environments">Environments</h2>
+
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments.</p>
+
+<p>Here&rsquo;s an example <code class="prettyprint">scout_apm.yml</code> configuration to achieve this:</p>
+<pre class="highlight ruby"><code><span class="ss">common: </span><span class="o">&amp;</span><span class="n">defaults</span>
+  <span class="ss">name: name: </span><span class="o">&lt;</span><span class="sx">%= "YOUR_APP_NAME (#{Rails.env})" %&gt;
+  key: YOUR_KEY
+  log_level: debug
+  monitor: true
+
+production:
+  &lt;&lt;: *defaults
+
+development:
+  &lt;&lt;: *defaults
+  monitor: false
+
+test:
+  &lt;&lt;: *defaults
+  monitor: false
+
+staging:
+  &lt;&lt;: *defaults
+</span></code></pre>
 
           <h1 id="troubleshooting">Troubleshooting</h1>
 
@@ -455,11 +503,148 @@ tail -n1000 log/production.log | grep "Processing"
 <li><a href="mailto:support@scoutapp.com">Email us</a></li>
 </ul>
 
-          <h1 id="how-scout-works">How Scout Works</h1>
+<h2 id="contacting-support">Contacting Support</h2>
 
-<h2 id="overview">Overview</h2>
+<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapp.com">apm.support@scoutapp.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
 
-<p>Scout is engineered to monitor the performance of your mission-critical production applications by providing a low-overhead monitoring agent and service that values your security.</p>
+          <h1 id="features">Features</h1>
+
+<p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a free trial</a>.</p>
+
+<h2 id="app-performance-overview">App Performance Overview</h2>
+
+<p>The overview page provides an at-a-glance, auto-refreshing view of your app&rsquo;s performance and resource usage. You can compare metrics in the overview chart and see how your app&rsquo;s performance compares to different time periods.</p>
+
+<p><img alt="overview" src="images/dash_annotated.png" /></p>
+
+<h3 id="zooming-into-slow-requests">Zooming into Slow Requests</h3>
+
+<p>See a large spike in response time? Click-and-drag (or pinch-and-expand on an iPad) on the overview chart. You&rsquo;ll see the number of slow requests over the selected period. Click the link to view details on those requests.</p>
+
+<p><img alt="overview drag" src="images/dash_drag_annotated.png" /></p>
+
+<h2 id="slow-stream">Slow Stream</h2>
+
+<p>The Slow Stream gives direct access to slow web requests (&gt;= 2 seconds).</p>
+
+<p><img alt="stream" src="images/stream_annotated.png" /></p>
+
+<p>Requests are aggregrated by the endpoint name. Scout captures details on every slow request your app handles - it doesn&rsquo;t sample - to ensure you have the complete picture of what&rsquo;s slow.</p>
+
+<p>Click on an endpoint name to view details on slow requests for the respective endpoint.</p>
+
+<h2 id="slow-request-details">Slow Request Details</h2>
+
+<p>Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - with the slow request detail view. </p>
+
+<p><img alt="stream show" src="images/stream_show_annotated.png" /></p>
+
+<h3 id="aggregrate-trace">Aggregrate Trace</h3>
+
+<p>When clicking on an endpoint from the Slow Stream, you&rsquo;ll see an <strong>aggregrate trace</strong> by default. This aggregrates slow request traces from multiple requests together so you can see common bottlenecks across requests.</p>
+
+<h3 id="individual-slow-requests">Individual Slow Requests</h3>
+
+<p>You can view details on individual slow requests vs. an aggregrate trace by selecting the request in the sidebar.</p>
+
+<p><img alt="stream show request" src="images/stream_show_request.png" /></p>
+
+<h3 id="call-breakdown">Call Breakdown</h3>
+
+<p>Method calls are aggregrated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).</p>
+
+<p><img alt="stream show breakdown" src="images/stream_show_call_breakdown.png" /></p>
+
+<h3 id="sql-queries">SQL Queries</h3>
+
+<p>Scout captures a santized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details. </p>
+
+<p><img alt="stream show sql" src="images/stream_show_sql_annotated.png" /></p>
+
+<h4 id="don-39-t-see-the-query-next-to-an-sql-call">Don&rsquo;t see the query next to an SQL call?</h4>
+
+<p>For performance reasons, Scout doesn&rsquo;t attempt to sanitize large SQL queries. When this occurs, you won&rsquo;t see an &ldquo;SQL&rdquo; button to view the raw query next to an SQL method call.</p>
+
+<h3 id="code-backtraces">Code Backtraces</h3>
+
+<p>You&rsquo;ll see &ldquo;CODE&rdquo; buttons next to method calls that are &gt;= 500 ms. If you&rsquo;ve enabled the Github integration, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.</p>
+
+<p><img alt="stream show git" src="images/stream_slow_git_annotated.png" /></p>
+
+<p>If you don&rsquo;t enable the Github integration, you&rsquo;ll see a backtrace.</p>
+
+<h3 id="rate-limiting-of-slow-requests">Rate Limiting of Slow Requests</h3>
+
+<p>Scout records details on every slow request but limits the collection of call breakdown metrics to ten slow requests per-server to prevent sending too much data to Scout.</p>
+
+<h2 id="git-integration">Git Integration</h2>
+
+<p>If your code is hosted at Github, you can see the relevant slow line-of-code within the Scout user interface when viewing slow request details. Additionally, you&rsquo;ll also see the:</p>
+
+<ul>
+<li>author</li>
+<li>commit time</li>
+<li>deploy time</li>
+</ul>
+
+<p>Git integration must be configured on the settings page for each app. Scout integrates with Github via OAuth. Pick the repository name and branch name used for your application.</p>
+
+<p><img alt="git settings" src="images/git_settings_annotated.png" /></p>
+
+<h2 id="context">Context</h2>
+
+<p>Context lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
+
+<ul>
+<li>How many users are impacted by slow requests?</li>
+<li>How many trial customers are impacted by slow requests?</li>
+<li>How much of an impact are slow requests having on our highest paying customers?</li>
+</ul>
+
+<p>Adding custom context is easy - <a href="#adding-custom-context">learn how</a>.</p>
+
+<p>When viewing slow request details from the Slow Stream, click the &ldquo;Context&rdquo; link:</p>
+
+<p><img alt="context" src="images/stream_show_context_annotated.png" /></p>
+
+<p>You&rsquo;ll see a histogram representation for each piece of context for the endpoint.</p>
+
+<h2 id="endpoints-performance">Endpoints Performance</h2>
+
+<h3 id="endpoints-overview">Endpoints Overview</h3>
+
+<p>The endpoints area within Scout provides a sortable view of your app&rsquo;s overall performance aggregrated by endpoint name. Click on an endpoint to view details.</p>
+
+<p><img alt="endpoints overview" src="images/endpoints_annotated.png" /></p>
+
+<h3 id="endpoint-details">Endpoint Details</h3>
+
+<p>View aggregrated metrics across requests for a specific endpoint by clicking on the endpoint name from overview area. You can also drill into slow requests for this endpoint from this page.</p>
+
+<p><img alt="endpoint details" src="images/endpoints_show_annotated.png" /></p>
+
+<h2 id="time-comparisions">Time Comparisions</h2>
+
+<p>You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.</p>
+
+<p><img alt="time compare" src="images/time_compare_annotated.png" /></p>
+
+<h2 id="data-retention">Data Retention</h2>
+
+<p>Scout stores 30 days of metrics and seven days of slow request details.</p>
+
+          <h1 id="reference">Reference</h1>
+
+<h2 id="how-we-collect-metrics">How we collect metrics</h2>
+
+<p>Scout is engineered to monitor the performance of your mission-critical production applications by providing an easy-install, low-overhead monitoring agent with a hosted SaaS service that values your security. The basic flow:</p>
+
+<ul>
+<li>Embed our agent in your application. You don&rsquo;t access to the servers your app is deployed on.</li>
+<li>The agent instruments key libaries (database access, controllers, views, etc) using low-overhead instrumentation. </li>
+<li>Every minute, the agent connects over https (always) through a 256-bit secure, encrypted connection (the same encryption your bank uses) and sends metrics to our servers.</li>
+<li>Over servers store the data.</li>
+</ul>
 
 <h2 id="performance-overhead">Performance Overhead</h2>
 
@@ -493,6 +678,46 @@ tail -n1000 log/production.log | grep "Processing"
 <li><a href="https://github.com/contact">Contact Github</a> about allowing read-only access. This will ensure it stays top-of-mind.</li>
 <li>This is optional and you are able to view backtrace information w/o the integration. It&rsquo;s likely possible to even write a UserScript to open the code locally in your editor or on Github.</li>
 </ul>
+
+<h2 id="billing">Billing</h2>
+
+<p>You can choose the billing approach that makes sense for your organization. We offer two billing options:</p>
+
+<h3 id="per-server">Per-Server</h3>
+
+<p><strong>This is the default approach</strong>. You are billed for the number of servers that are actively reporting on your billing date. </p>
+
+<h3 id="per-request">Per-Request</h3>
+
+<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. </p>
+
+<h3 id="changing-your-billing-option">Changing your Billing Option</h3>
+
+<p>You can pick your billing approach in the billing area within Scout. Your billing preference can not be retroactively applied.</p>
+
+<h2 id="replacing-new-relic">Replacing New Relic</h2>
+
+<p>Scout is an attractive option for modern dev teams (frequent deploys, using Git, deploying to many micro instances &amp; containers, using vendors for key infastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work. </p>
+
+<p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Here&rsquo;s some of the more common scenarios and our suggestions:</p>
+
+<ul>
+<li><strong>Exception Monitoring</strong> - we provide metrics on the rate of exceptions but we don&rsquo;t currently provide details on exceptions. Our favorite tool for this is <a href="http://getsentry.com">Sentry</a>:
+
+<ul>
+<li>Affordable: starts @ $29/mo. </li>
+<li>Realtime exceptions: you&rsquo;ll see new exceptions coming through as-they-happen (every second). </li>
+<li>Great UI</li>
+<li>Context tracking (easy to see how an exception is impacting which users). We implemented a similar API for our slow request tracking.</li>
+</ul></li>
+<li><strong>Alerting</strong> - while on our roadmap, we don&rsquo;t yet provide alerting within application monitoring. However, <a href="https://scoutapp.com/info/server_monitoring">Scout Server Monitoring</a> has robust alerting functionality. With the <a href="https://github.com/scoutapp/scout_statsd_rack">Scout StatsD Rack Gem</a> you can easily get alerted on jumps in error rates and response times.</li>
+<li><strong>Background Job Monitoring</strong> - this is on our roadmap as well. <a href="https://scoutapp.com/info/server_monitoring">Scout Server Monitoring</a> can be used to monitor queue depths, failure rates, etc for all of the common Ruby background job systems. Many background job systems also provide a web ui (for example, the <a href="https://github.com/mperham/sidekiq/wiki/Monitoring#web-ui">Sidekiq Web UI</a>).</li>
+<li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
+</ul>
+
+<h3 id="talk-to-us-about-your-monitoring-stack">Talk to us about your monitoring stack</h3>
+
+<p>Don&rsquo;t hesitate to <a href="mailto:apm.support@scoutapp.com">email us</a> if you need to talk through your monitoring stack. Monitoring is something we know and love.</p>
 
       </div>
       <div class="dark-box">
