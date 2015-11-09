@@ -85,7 +85,7 @@
 <p>Stack Profiling requires Ruby 2.1+.</p>
 
 <p>You must explicitly add the stackprof gem to your Gemfile:</p>
-<pre class="highlight ruby"><code><span class="n">gem</span> <span class="s1">'scout_apm'</span>
+<pre class="highlight ruby"><code><span class="n">gem</span> <span class="s1">'stackprof'</span><span class="p">,</span> <span class="s1">'~&gt; 0.2.7'</span>
 </code></pre>
 
 <h3 id="git-integration-optional">Git Integration - Optional</h3>
@@ -640,7 +640,7 @@ tail -n1000 log/production.log | grep "Processing"
 <p>Stack profiling is separate from the standard request breakdowns. It samples the stack at regular intervals to determine where time is being spent.</p>
 
 <p>Stack Profiling requires Ruby 2.1+. You must explicitly add the stackprof gem to your Gemfile:</p>
-<pre class="highlight ruby"><code><span class="n">gem</span> <span class="s1">'scout_apm'</span>
+<pre class="highlight ruby"><code><span class="n">gem</span> <span class="s1">'stackprof'</span><span class="p">,</span> <span class="s1">'~&gt; 0.2.7'</span>
 </code></pre>
 
 <h2 id="git-integration">Git Integration</h2>
