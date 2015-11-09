@@ -35,17 +35,19 @@
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id="scout-help-docs">Scout Help Docs</h1>
+        <h1 id="scout-apm-help-docs">Scout APM Help Docs</h1>
 
-<p>Welcome to the help site for <strong>Scout Application Monitoring</strong>. Don&rsquo;t have an account? <a href="https://apm.scoutapp.com/users/sign_up">Get started with a free trial</a>.</p>
+<p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://apm.scoutapp.com/users/sign_up">Get started with a free trial</a>.</p>
 
 <p>Browse through the sidebar, search, or <a href="mailto:apm.support@scoutapp.com">ask a question</a>. We&rsquo;re here to help.</p>
 
-<p>Looking for our server monitoring help site? Goto <a href="http://help.scoutapp.com">help.scoutapp.com</a>.</p>
+<p><em>Looking for our server monitoring help? Goto <a href="http://help.scoutapp.com">help.scoutapp.com</a>.</em></p>
 
 <h2 id="overview">Overview</h2>
 
-<p>Scout Application Monitoring is a lightweight, production-grade application monitoring service built for modern development teams. Just embed our agent in your application: we handle the data collection. </p>
+<p>Scout Application Monitoring is a lightweight, production-grade application monitoring service built for modern development teams. Just embed our agent in your application: we handle the rest. </p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/7wMyhc0FZII" frameborder="0" allowfullscreen></iframe>
 
 <p>Here&rsquo;s an overview of the key functionality in our application monitoring service:</p>
 
@@ -53,9 +55,9 @@
 
 <p>We currently monitor Ruby on Rails apps. Support for other languages and frameworks is under development. </p>
 
-<p>Our agent is designed to run in production environments and has low overhead. We&rsquo;ve benchmarked the response time overhead at roughly 3%. Every minute, the agent transmits metrics to our service over SSL. </p>
+<p>Our agent is designed to run in production environments and has low overhead. Every minute, the agent transmits metrics to our service over SSL. </p>
 
-<p>There&rsquo;s nothing to install on your servers: just include our Ruby Gem within your Rails app. You&rsquo;ll quickly see actionable metrics from the <a href="#instrumented-libaries">common libaries we instrument</a>.</p>
+<p>There&rsquo;s nothing to install on your servers: just include our Ruby Gem within your Rails app. You&rsquo;ll quickly see actionable metrics from the <a href="#instrumented-libraries">common libraries we instrument</a>.</p>
 
 <h3 id="user-interface">User Interface</h3>
 
@@ -78,11 +80,11 @@
 <li>WEBrick</li>
 </ul>
 
-<h3 id="stack-profiling">Stack Profiling</h3>
+<h3 id="stack-profiling-optional">Stack Profiling - Optional</h3>
 
 <p>Stack Profiling requires Ruby 2.1+.</p>
 
-<h3 id="git-integration">Git Integration</h3>
+<h3 id="git-integration-optional">Git Integration - Optional</h3>
 
 <p>Viewing your application code within Scout requires that your source code is hosted at Github.com.</p>
 
@@ -128,9 +130,9 @@ bundle install
 <h3 id="erb-evaluation">ERB evaluation</h3>
 
 <p>ERB is evaluated when loading the config file. For example, you can set the app name based on the hostname:</p>
-<pre class="highlight ruby"><code><span class="ss">common: </span><span class="o">&amp;</span><span class="n">defaults</span>
-  <span class="ss">name: </span><span class="o">&lt;</span><span class="sx">%= "ProjectPlanner.io (#{Rails.env})" %&gt;
-</span></code></pre>
+<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= "ProjectPlanner.io (#{Rails.env})" %&gt;</span>
+</code></pre>
 
 <h3 id="configuration-reference">Configuration Reference</h3>
 
@@ -224,6 +226,20 @@ bundle install
       </tr>
       <tr>
         <th>
+          hostname
+        </th>
+        <td>
+          The hostname the metrics should be aggregrated under. 
+        </td>
+        <td>
+          <code>Socket.gethostname</code>
+        </td>
+        <td>
+          No
+        </td>
+      </tr>
+      <tr>
+        <th>
           proxy
         </th>
         <td>Specify the proxy URL (ex: <code>https://proxy</code>) if a proxy is required. 
@@ -252,13 +268,13 @@ bundle install
 
 <h3 id="environment-variables">Environment Variables</h3>
 
-<p>You can also configure Scout APM via environment variables. Environment variables override settings provided in <code class="prettyprint">scout_apm.yml</code>.</p>
+<p>You can also configure Scout APM via environment variables. <em>Environment variables override settings provided in</em> <code class="prettyprint">scout_apm.yml</code>.</p>
 
 <p>Environment variables have the same names as those in the Yaml config file, but are prefixed with <code class="prettyprint">SCOUT_</code>. For example, to set the organization key via environment variables:</p>
 <pre class="highlight ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
 
-<h2 id="heroku">Heroku</h2>
+<h2 id="heroku">Heroku <img src="images/heroku.png" style="float:right;width: 150px" /></h2>
 
 <p>Scout runs on Heroku without any special configuration. When Scout detects that an app is being served via Heroku:</p>
 
@@ -266,6 +282,44 @@ bundle install
 <li>Logging is set to <code class="prettyprint">STDOUT</code> vs. logging to a file. Log messages are prefixed with <code class="prettyprint">[Scout]</code> for easy filtering.</li>
 <li>The dyno name (ex: <code class="prettyprint">web.1</code>) is reported vs. the dyno hostname. Dyno hostnames are dynamically generated and don&rsquo;t have any meaningful information.</li>
 </ul>
+
+<h2 id="cloud-foundry">Cloud Foundry <img src="images/cf_logo.png" style="float:right;width: 150px" /></h2>
+
+<p>Scout runs on Cloud Foundry without any special configuration. </p>
+
+<p>We suggest a few configuration changes in the <code class="prettyprint">scout_apm.yml</code> file to best take advantage of Cloud Foundry:</p>
+
+<ol>
+<li>Set <code class="prettyprint">log_file_path: STDOUT</code> to send your the Scout APM log contents to the Loggregator. </li>
+<li>Use the application name configured via Cloud Foundry to identify the app.</li>
+<li>Override the hostname reported to Scout. Cloud Foundry hostnames are dynamically generated and don&rsquo;t have any meaningful information. We suggest using a combination of the application name and the instance index.</li>
+</ol>
+
+<p>A sample config for Cloud Foundry that implements the above suggestions:</p>
+<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="s">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">true</span>
+  <span class="c1"># use the configured application name to identify the app.</span>
+  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= ENV['VCAP_APPLICATION'] ? JSON.parse(ENV['VCAP_APPLICATION'])['application_name']</span> <span class="pi">:</span> <span class="s2">"</span><span class="s">YOUR</span><span class="nv"> </span><span class="s">APP</span><span class="nv"> </span><span class="s">NAME</span><span class="nv"> </span><span class="s">(#{Rails.env})"</span> <span class="err">%</span><span class="pi">&gt;</span>
+  <span class="no"># make logs available to the Loggregator</span>
+  <span class="no">log_file_path: STDOUT</span>
+  <span class="no"># reports w/a more identifiable instance name using the application name and instance index. ex: rails-sample.0</span>
+  <span class="no">hostname: &lt;%= ENV['VCAP_APPLICATION'] ? "#{JSON.parse(ENV['VCAP_APPLICATION'])['application_name']}.#{ENV['CF_INSTANCE_INDEX']}"  : Socket.gethostname %&gt;</span>
+
+<span class="s">production</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+
+<span class="s">development</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+
+<span class="s">test</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+
+<span class="s">staging</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+</code></pre>
 
 <h3 id="configuration">Configuration</h3>
 
@@ -275,7 +329,7 @@ bundle install
 
 <p>See the configuration section for more information on the available config settings and environment variable functionality.</p>
 
-<h2 id="instrumented-libaries">Instrumented Libaries</h2>
+<h2 id="instrumented-libraries">Instrumented Libraries</h2>
 
 <p>The following libraries are currently instrumented:</p>
 
@@ -365,26 +419,26 @@ bundle install
 <p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments.</p>
 
 <p>Here&rsquo;s an example <code class="prettyprint">scout_apm.yml</code> configuration to achieve this:</p>
-<pre class="highlight ruby"><code><span class="ss">common: </span><span class="o">&amp;</span><span class="n">defaults</span>
-  <span class="ss">name: name: </span><span class="o">&lt;</span><span class="sx">%= "YOUR_APP_NAME (#{Rails.env})" %&gt;
-  key: YOUR_KEY
-  log_level: debug
-  monitor: true
+<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
+  <span class="s">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
+  <span class="s">log_level</span><span class="pi">:</span> <span class="s">debug</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">true</span>
 
-production:
-  &lt;&lt;: *defaults
+<span class="s">production</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 
-development:
-  &lt;&lt;: *defaults
-  monitor: false
+<span class="s">development</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-test:
-  &lt;&lt;: *defaults
-  monitor: false
+<span class="s">test</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-staging:
-  &lt;&lt;: *defaults
-</span></code></pre>
+<span class="s">staging</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+</code></pre>
 
           <h1 id="troubleshooting">Troubleshooting</h1>
 
@@ -613,17 +667,17 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h3 id="endpoints-overview">Endpoints Overview</h3>
 
-<p>The endpoints area within Scout provides a sortable view of your app&rsquo;s overall performance aggregrated by endpoint name. Click on an endpoint to view details.</p>
+<p>The endpoints area within Scout provides a sortable view of your app&rsquo;s overall performance aggregated by endpoint name. Click on an endpoint to view details.</p>
 
 <p><img alt="endpoints overview" src="images/endpoints_annotated.png" /></p>
 
 <h3 id="endpoint-details">Endpoint Details</h3>
 
-<p>View aggregrated metrics across requests for a specific endpoint by clicking on the endpoint name from overview area. You can also drill into slow requests for this endpoint from this page.</p>
+<p>View aggregated metrics across requests for a specific endpoint by clicking on the endpoint name from overview area. You can also drill into slow requests for this endpoint from this page.</p>
 
 <p><img alt="endpoint details" src="images/endpoints_show_annotated.png" /></p>
 
-<h2 id="time-comparisions">Time Comparisions</h2>
+<h2 id="time-comparisons">Time Comparisons</h2>
 
 <p>You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.</p>
 
@@ -641,7 +695,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <ul>
 <li>Embed our agent in your application. You don&rsquo;t access to the servers your app is deployed on.</li>
-<li>The agent instruments key libaries (database access, controllers, views, etc) using low-overhead instrumentation. </li>
+<li>The agent instruments key libraries (database access, controllers, views, etc) using low-overhead instrumentation. </li>
 <li>Every minute, the agent connects over https (always) through a 256-bit secure, encrypted connection (the same encryption your bank uses) and sends metrics to our servers.</li>
 <li>Over servers store the data.</li>
 </ul>
@@ -697,9 +751,9 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="replacing-new-relic">Replacing New Relic</h2>
 
-<p>Scout is an attractive option for modern dev teams (frequent deploys, using Git, deploying to many micro instances &amp; containers, using vendors for key infastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work. </p>
+<p>Scout is an attractive option for modern dev teams (frequent deploys, using Git, deploying to many micro instances &amp; containers, using vendors for key infrastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work. </p>
 
-<p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Here&rsquo;s some of the more common scenarios and our suggestions:</p>
+<p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Don&rsquo;t fret - here&rsquo;s some of the more common scenarios and our suggestions for building a monitoring stack you&rsquo;ll love:</p>
 
 <ul>
 <li><strong>Exception Monitoring</strong> - we provide metrics on the rate of exceptions but we don&rsquo;t currently provide details on exceptions. Our favorite tool for this is <a href="http://getsentry.com">Sentry</a>:
