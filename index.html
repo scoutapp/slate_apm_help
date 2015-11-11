@@ -287,6 +287,14 @@ bundle install
 <li>The dyno name (ex: <code class="prettyprint">web.1</code>) is reported vs. the dyno hostname. Dyno hostnames are dynamically generated and don&rsquo;t have any meaningful information.</li>
 </ul>
 
+<h3 id="configuration">Configuration</h3>
+
+<p>Scout can be configured via environment variables. This means you can use <code class="prettyprint">heroku config:set</code> to configure the agent. For example, you can set the application name that appears in the Scout UI with:</p>
+<pre class="highlight shell"><code>heroku config:set <span class="nv">SCOUT_NAME</span><span class="o">=</span><span class="s1">'My Heroku App'</span>
+</code></pre>
+
+<p>See the configuration section for more information on the available config settings and environment variable functionality.</p>
+
 <h2 id="cloud-foundry">Cloud Foundry <img src="images/cf_logo.png" style="float:right;width: 150px" /></h2>
 
 <p>Scout runs on Cloud Foundry without any special configuration. </p>
@@ -324,14 +332,6 @@ bundle install
 <span class="s">staging</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
-
-<h3 id="configuration">Configuration</h3>
-
-<p>Scout can be configured via environment variables. This means you can use <code class="prettyprint">heroku config:set</code> to configure the agent. For example, you can set the application name that appears in the Scout UI with:</p>
-<pre class="highlight shell"><code>heroku config:set <span class="nv">SCOUT_NAME</span><span class="o">=</span><span class="s1">'My Heroku App'</span>
-</code></pre>
-
-<p>See the configuration section for more information on the available config settings and environment variable functionality.</p>
 
 <h2 id="instrumented-libraries">Instrumented Libraries</h2>
 
