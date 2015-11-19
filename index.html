@@ -278,6 +278,12 @@ bundle install
 <pre class="highlight ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
 
+<h2 id="docker">Docker <img src="images/docker.png" style="float:right;width: 150px" /></h2>
+
+<p>Scout runs within Docker containers without any special configuration. </p>
+
+<p>It&rsquo;s common to configure Docker containers with environment variables. Scout can use <a href="#environment-variables">enviornment variables</a> instead of the <code class="prettyprint">scout_apm.yml</code> config file.</p>
+
 <h2 id="heroku">Heroku <img src="images/heroku.png" style="float:right;width: 150px" /></h2>
 
 <p>Scout runs on Heroku without any special configuration. When Scout detects that an app is being served via Heroku:</p>
