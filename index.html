@@ -14,6 +14,16 @@
 
     <link href='https://fonts.googleapis.com/css?family=Exo:400,400italic,700,700italic,800,800italic|Signika:400,700,300' rel='stylesheet' type='text/css'> 
 
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-3212349-13', 'auto');
+      ga('send', 'pageview');
+    </script>
   </head>
 
   <body class="index">
@@ -786,6 +796,10 @@ tail -n1000 log/production.log | grep "Processing"
 <li><strong>Background Job Monitoring</strong> - this is on our roadmap as well. <a href="https://scoutapp.com/info/server_monitoring">Scout Server Monitoring</a> can be used to monitor queue depths, failure rates, etc for all of the common Ruby background job systems. Many background job systems also provide a web ui (for example, the <a href="https://github.com/mperham/sidekiq/wiki/Monitoring#web-ui">Sidekiq Web UI</a>).</li>
 <li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
 </ul>
+
+<h3 id="our-monitoring-stack">Our Monitoring Stack</h3>
+
+<p>Curious about what a company that lives-and-breathes monitoring (us!) uses to monitor our apps? <a href="http://blog.scoutapp.com/articles/2015/12/02/rails-monitoring-stack-2016">We shared our complete monitoring stack on our blog</a>.</p>
 
 <h3 id="talk-to-us-about-your-monitoring-stack">Talk to us about your monitoring stack</h3>
 
