@@ -577,29 +577,25 @@ tail -n1000 log/production.log | grep "Processing"
 <p>The <strong>easiest<strong> way to ensure this is to check the scout_apm.yml file into your CI repository.</p>
 
 <p>The scout_apm.yml file must be in place even if all it has is disabled monitoring - as in</p>
-
-<p><code class="prettyprint">yaml
-    development:
-     monitor:false
-    test:
-     monitor:false
-    production:
-     monitor:false
-</code> </p>
+<pre class="highlight yaml"><code><span class="s">development</span><span class="pi">:</span>
+ <span class="s">monitor:false</span>
+<span class="s">test</span><span class="pi">:</span>
+  <span class="s">monitor:false</span>
+<span class="s">production</span><span class="pi">:</span>
+ <span class="s">monitor:false</span>
+</code></pre>
 
 <p>You can also use environment variables in the scout_apm.yml file instead of hardcoding items. For example</p>
+<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="s">key</span><span class="pi">:</span> <span class="s">&lt;% ENV[SCOUT_APM_ORG_KEY] %&gt;</span>
+  <span class="s">log_level</span><span class="pi">:</span> <span class="s">debug</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<p>&ldquo;`yaml
-    common: &amp;defaults
-     key: &lt;% ENV[SCOUT_APM_ORG_KEY] %&gt;
-     log_level: debug
-     monitor: false</p>
-
-<p>test:
-     &lt;&lt;: *defaults
-     name: &lt;% ENV[SCOUT_APM_APP_NAME] %&gt; (Production)
-     monitor: false </pre>
-   &rdquo;`</p>
+<span class="s">test</span><span class="pi">:</span>
+  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
+  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;% ENV[SCOUT_APM_APP_NAME] %&gt; (Production)</span>
+  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+</code></pre>
 
 <h2 id="service-status">Service Status</h2>
 
