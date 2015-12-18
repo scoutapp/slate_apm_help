@@ -574,20 +574,23 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>The scout_apm.yml file must be present in your CI environment.</p>
 
-<p>The easiest way to ensure this is to check the scout_apm.yml file into your CI repository.</p>
+<p>The <strong>easiest<strong> way to ensure this is to check the scout_apm.yml file into your CI repository.</p>
 
-<p>The scout_apm.yml file must be in place even if all it has is disabled monitoring</p>
+<p>The scout_apm.yml file must be in place even if all it has is disabled monitoring - as in</p>
 
-<p>development:
+<p><code class="prettyprint">yaml
+    development:
      monitor:false
     test:
      monitor:false
     production:
-     monitor:false</p>
+     monitor:false
+</code> </p>
 
 <p>You can also use environment variables in the scout_apm.yml file instead of hardcoding items. For example</p>
 
-<p>common: &amp;defaults
+<p>&ldquo;`yaml
+    common: &amp;defaults
      key: &lt;% ENV[SCOUT_APM_ORG_KEY] %&gt;
      log_level: debug
      monitor: false</p>
@@ -595,7 +598,8 @@ tail -n1000 log/production.log | grep "Processing"
 <p>test:
      &lt;&lt;: *defaults
      name: &lt;% ENV[SCOUT_APM_APP_NAME] %&gt; (Production)
-     monitor: false</p>
+     monitor: false </pre>
+   &rdquo;`</p>
 
 <h2 id="service-status">Service Status</h2>
 
