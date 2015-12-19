@@ -288,6 +288,56 @@ bundle install
 <pre class="highlight ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
 
+<h2 id="request-queuing">Request Queuing</h2>
+
+<p>Scout can measure the time it takes a request to reach your Rails app from farther upstream (a load balancer or web server). This appears in Scout as &ldquo;Request Queuing&rdquo; and provides an indication of your application&rsquo;s capacity. Large request queuing time is an indication that your app needs more capacity.</p>
+
+<p><img src="images/request_queue_annotated.png" alt="request queuing" /></p>
+
+<p>To see this metric within Scout, you need to configure your upstream software, adding an HTTP header that our agent reads. This is typically a one-line change.</p>
+
+<h3 id="http-header">HTTP Header</h3>
+
+<p>The Scout agent depends on an HTTP request header set by an upstream load balancer (ex: HAProxy) or web server (ex: Apache, Ngnix). </p>
+
+<p><strong>Protip:</strong> We suggest adding the header as early as possible in your infrastructure. This ensures you won&rsquo;t miss performance issues that appear before the header is set.</p>
+
+<p>The agent will read any of the following headers as the start time of the request:</p>
+<pre class="highlight ruby"><code><span class="sx">%w(X-Queue-Start X-Request-Start X-QUEUE-START X-REQUEST-START x-queue-start x-request-start)</span>
+</code></pre>
+
+<p>Include a value in the format <code class="prettyprint">t=MICROSECONDS_SINCE_EPOCH</code> where <code class="prettyprint">MICROSECONDS_SINCE_EPOCH</code> is an integer value of the number of microseconds that have elapsed since the beginning of Unix epoch.</p>
+
+<p><strong>Nearly any front-end HTTP server or load balancer can be configured to add this header.</strong> Some examples are below.</p>
+
+<h3 id="apache">Apache</h3>
+
+<p>Apache&rsquo;s <strong>mod_headers</strong> module includes a <code class="prettyprint">%t</code> variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:</p>
+<pre class="highlight plaintext"><code>RequestHeader set X-Request-Start "%t"
+</code></pre>
+
+<h3 id="haproxy">HAProxy</h3>
+
+<p>HAProxy 1.5+ supports timestamped headers and can be set in the frontend or backend section. We suggest putting this in the frontend to get a more accurate number:</p>
+<pre class="highlight plaintext"><code>http-request set-header X-Request-Start t=%Ts
+</code></pre>
+
+<h3 id="nginx">Nginx</h3>
+
+<p>Nginx 1.2.6+ supports the use of the <code class="prettyprint">#{msec}</code> variable. This makes adding the request queuing header straightforward.</p>
+
+<p>General Nginx usage:</p>
+<pre class="highlight plaintext"><code>proxy_set_header X-Request-Start "t=${msec}";
+</code></pre>
+
+<p>Passenger 5+:</p>
+<pre class="highlight plaintext"><code>passenger_set_header X_REQUEST_START "t=${msec}";
+</code></pre>
+
+<p>Older Passsenger versions:</p>
+<pre class="highlight plaintext"><code>passenger_set_cgi_param X_REQUEST_START "t=${msec}";
+</code></pre>
+
 <h2 id="docker">Docker <img src="images/docker.png" style="float:right;width: 150px" /></h2>
 
 <p>Scout runs within Docker containers without any special configuration. </p>
@@ -360,7 +410,10 @@ bundle install
 <li>Mongoid</li>
 <li>Net::HTTP</li>
 <li>Moped</li>
+<li>Middleware</li>
 </ul>
+
+<p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
 
 <h2 id="adding-custom-context">Adding Custom Context</h2>
 
@@ -574,28 +627,28 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>The scout_apm.yml file must be present in your CI environment.</p>
 
-<p>The <strong>easiest</strong> way to ensure this is to check the scout_apm.yml file into your CI repository.</p>
+<p>The easiest way to ensure this is to check the scout_apm.yml file into your CI repository.</p>
 
-<p>The scout_apm.yml file must be in place even if all it has is disabled monitoring - as in</p>
-<pre class="highlight yaml"><code><span class="s">development</span><span class="pi">:</span>
- <span class="s">monitor:false</span>
-<span class="s">test</span><span class="pi">:</span>
-  <span class="s">monitor:false</span>
-<span class="s">production</span><span class="pi">:</span>
- <span class="s">monitor:false</span>
-</code></pre>
+<p>The scout_apm.yml file must be in place even if all it has is disabled monitoring</p>
+
+<p>development:
+     monitor:false
+    test:
+     monitor:false
+    production:
+     monitor:false</p>
 
 <p>You can also use environment variables in the scout_apm.yml file instead of hardcoding items. For example</p>
-<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
-  <span class="s">key</span><span class="pi">:</span> <span class="s">&lt;% ENV[SCOUT_APM_ORG_KEY] %&gt;</span>
-  <span class="s">log_level</span><span class="pi">:</span> <span class="s">debug</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<span class="s">test</span><span class="pi">:</span>
-  <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
-  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;% ENV[SCOUT_APM_APP_NAME] %&gt; (Production)</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
-</code></pre>
+<p>common: &amp;defaults
+     key: &lt;% ENV[SCOUT_APM_ORG_KEY] %&gt;
+     log_level: debug
+     monitor: false</p>
+
+<p>test:
+     &lt;&lt;: *defaults
+     name: &lt;% ENV[SCOUT_APM_APP_NAME] %&gt; (Production)
+     monitor: false</p>
 
 <h2 id="service-status">Service Status</h2>
 
