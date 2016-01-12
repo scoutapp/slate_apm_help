@@ -730,14 +730,6 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Scout records details on every slow request but limits the collection of call breakdown metrics to ten slow requests per-server to prevent sending too much data to Scout.</p>
 
-<h2 id="stack-profiling">Stack Profiling</h2>
-
-<p>Stack profiling is separate from the standard request breakdowns. It samples the stack at regular intervals to determine where time is being spent.</p>
-
-<p>Stack Profiling requires Ruby 2.1+. You must explicitly add the stackprof gem to your Gemfile:</p>
-<pre class="highlight ruby"><code><span class="n">gem</span> <span class="s1">'stackprof'</span><span class="p">,</span> <span class="s1">'~&gt; 0.2.7'</span>
-</code></pre>
-
 <h2 id="git-integration">Git Integration</h2>
 
 <p>If your code is hosted at Github, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing slow request details. Additionally, you&rsquo;ll also see the:</p>
