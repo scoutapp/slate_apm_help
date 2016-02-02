@@ -937,12 +937,14 @@ tail -n1000 log/production.log | grep "Processing"
 <p>Scout APM has preliminary Java support for the following frameworks:</p>
 
 <ul>
-<li>SpringMVC</li>
+<li>Spring MVC</li>
+<li>Struts</li>
+<li>Hibernate</li>
 <li>JSF</li>
-<li>Grails</li>
-<li>Spark</li>
-<li>Spring Boot</li>
-<li>Vert.x</li>
+<li>JSP</li>
+<li>Servlet API</li>
+<li><em>HTTP Clients:</em> Apache HTTP Client, OkHttp, Ning</li>
+<li><em>Logging:</em> Log4J, Commons Logging, Logback</li>
 </ul>
 
 <h2 id="downloading-the-jar">Downloading the JAR</h2>
@@ -951,23 +953,45 @@ tail -n1000 log/production.log | grep "Processing"
 <pre class="highlight plaintext"><code>wget https://www.dropbox.com/s/bzmvmq2ck8jtzhj/scout-apm.jar?dl=1 -Oscout-apm.jar
 </code></pre>
 
-<h2 id="adding-the-jar-to-your-application">Adding the JAR to your application</h2>
+<h2 id="adding-the-jar-to-your-application">Adding the JAR to your Application</h2>
 
 <p>Installation depends on your app server:</p>
 
 <h3 id="tomcat">Tomcat</h3>
 
 <p>Extend <code class="prettyprint">catalina.sh</code> startup script with the following <code class="prettyprint">JAVA_OPTS</code>:</p>
-<pre class="highlight plaintext"><code>export JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-java-agent/scout-apm.jar"
+<pre class="highlight plaintext"><code>export JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
 </code></pre>
 
 <h3 id="embedded-containers">Embedded Containers</h3>
 
-<p>For environments using embedded containers (Spark, Vert.x, Spring Boot, Grails), just add the <code class="prettyprint">-javaagent:</code> argument to your <code class="prettyprint">java</code> invocation: </p>
-<pre class="highlight plaintext"><code>java -jar ... -javaagent:/full/path/to/scout-java-agent/scout-apm.jar 
+<p>For environments using embedded containers, just add the following <code class="prettyprint">-javaagent:</code> argument to your <code class="prettyprint">java</code> invocation: </p>
+<pre class="highlight plaintext"><code>java -jar ... -javaagent:/full/path/to/scout-apm/scout-apm.jar 
 </code></pre>
 
-<h2 id="getting-started">Getting Started</h2>
+<h3 id="configuration">Configuration</h3>
+
+<p>The Scout Java agent looks for a <code class="prettyprint">scout_apm.yml</code> configuration file in the same directory as <code class="prettyprint">scout-apm.jar</code>.</p>
+<pre class="highlight plaintext"><code>/path/to/scout/scout-apm.jar
+/path/to/scout/scout_apm.yml
+</code></pre>
+
+<p>Download the <code class="prettyprint">scout_apm.yml</code> configuration file from within your account at https://apm.scoutapp.com. It includes your unique account key.</p>
+
+<h3 id="environments">Environments</h3>
+
+<p>The configuration file supports multiple environments. By default, the agent reads the <code class="prettyprint">production</code> environment configuration. </p>
+
+<p><strong>You can usually just leave the configuration file as-is until you need some environment-specific setting.</strong></p>
+
+<p>If you&rsquo;re deploying Scout APM for the first time, we recommend starting on a staging environment. To instruct the agent to use the <code class="prettyprint">staging</code> configuration, either:</p>
+
+<ul>
+<li>(A) Set an environment variable on your server: <code class="prettyprint">export APP_ENV=staging</code></li>
+<li>(B) OR use a system property (<code class="prettyprint">-DAPP_ENV=staging</code>) when executing the Java call or JAVA_OPTS: <code class="prettyprint">java -jar -DAPP_ENV=staging -javaagent:/full/path/to/scout-apm/scout-apm.jar</code><br></li>
+</ul>
+
+<h2 id="questions-getting-help">Questions / Getting Help</h2>
 
 <p>Java Application monitoring is in beta. <a href="mailto:support@scoutapp.com">Email us</a> with any questions about your framework and environment, or for help getting started. </p>
 
