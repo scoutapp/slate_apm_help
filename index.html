@@ -49,7 +49,7 @@
 
 <p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://apm.scoutapp.com/users/sign_up">Get started with a free trial</a>.</p>
 
-<p>Browse through the sidebar, search, or <a href="mailto:apm.support@scoutapp.com">ask a question</a>. We&rsquo;re here to help.</p>
+<p>Browse through the sidebar, search, or <a href="mailto:support@scoutapp.com">ask a question</a>. We&rsquo;re here to help.</p>
 
 <p><em>Looking for our server monitoring help? Goto <a href="http://help.scoutapp.com">help.scoutapp.com</a>.</em></p>
 
@@ -63,7 +63,7 @@
 
 <h3 id="the-agent">The Agent</h3>
 
-<p>We currently monitor Ruby on Rails apps. Support for other languages and frameworks is under development. </p>
+<p>We currently monitor Ruby on Rails apps, with beta support for Java (<a href="#java-applications">see java instructions here</a>). Support for other languages and frameworks is under development. </p>
 
 <p>Our agent is designed to run in production environments and has low overhead. Every minute, the agent transmits metrics to our service over SSL. </p>
 
@@ -108,44 +108,58 @@
 
 <table class="help install">
   <tbody>
-        <tr>
+      <tr>
       <td>
         <span class="step">1</span>
       </td>
       <td>
-                <p>Your Gemfile:</p>
-
+              <p>Your Gemfile:</p>
 <pre>
 gem 'scout_apm'
 </pre>
 
-<p><strong>Shell:</strong></p>
+        <p><strong>Shell:</strong></p>
 
 <pre>
 bundle install
 </pre>
       </td>
-     </tr>
-     <tr>
+    </tr>
+    <tr>
         <td><span class="step">2</span></td>
         <td><p>Download your customized config file, placing it at <code>config/scout_apm.yml</code>.</p></td>
-     </tr>
-          <tr>
+    </tr>
+    <tr>
         <td><span class="step">3</span></td>
         <td><p>Deploy.</p></td>
-     </tr>
+    </tr>
     </tbody>
- </table>
+</table>
 
 <h2 id="updating-to-the-newest-version">Updating to the Newest Version</h2>
 
-<ol>
-<li>Update your Gemfile: <code class="prettyprint">gem &#39;scout_apm&#39;, &#39;~&gt; 1.2&#39;, &#39;&gt;= 1.2.11&#39;</code></li>
-<li>Run <code class="prettyprint">bundle install</code></li>
-<li>Re-deploy your application</li>
-</ol>
+<table class="help install">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td>
+        <p>Update your Gemfile: <code>gem 'scout_apm', '~><span id="latest-gem-version">SEE CHANGELOG</span>'</code> </p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">2</span></td>
+      <td><p>run <code> bundle install</code></p></td>
+    </tr>
+      <tr>
+      <td><span class="step">3</span></td>
+      <td><p>Re-deploy your application.</p></td>
+    </tr>
+  </tbody>
+</table>
 
-<p>The gem version history is <a href="https://github.com/scoutapp/scout_apm_ruby/blob/master/CHANGELOG.markdown">available here</a>.  </p>
+<p>The gem version changelog is <a href="https://github.com/scoutapp/scout_apm_ruby/blob/master/CHANGELOG.markdown">available here</a>.  </p>
 
 <h2 id="configuration-options">Configuration Options</h2>
 
@@ -688,7 +702,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="contacting-support">Contacting Support</h2>
 
-<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapp.com">apm.support@scoutapp.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
+<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
 
           <h1 id="features">Features</h1>
 
@@ -914,11 +928,61 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h3 id="talk-to-us-about-your-monitoring-stack">Talk to us about your monitoring stack</h3>
 
-<p>Don&rsquo;t hesitate to <a href="mailto:apm.support@scoutapp.com">email us</a> if you need to talk through your monitoring stack. Monitoring is something we know and love.</p>
+<p>Don&rsquo;t hesitate to <a href="mailto:support@scoutapp.com">email us</a> if you need to talk through your monitoring stack. Monitoring is something we know and love.</p>
+
+          <h1 id="java-applications">Java Applications</h1>
+
+<h2 id="supported-frameworks">Supported Frameworks</h2>
+
+<p>Scout APM has preliminary Java support for the following frameworks:</p>
+
+<ul>
+<li>SpringMVC</li>
+<li>JSF</li>
+<li>Grails</li>
+<li>Spark</li>
+<li>Spring Boot</li>
+<li>Vert.x</li>
+</ul>
+
+<h2 id="downloading-the-jar">Downloading the JAR</h2>
+
+<p>The most recent Scout Java APM release is <a href="https://www.dropbox.com/s/s1d6f2ydfes8fkj/scout_apm_java_20160202.jar?dl=1">available for download here</a> (direct download link, ~1GMB).</p>
+<pre class="highlight shell"><code>wget https://www.dropbox.com/s/s1d6f2ydfes8fkj/scout_apm_java_20160202.jar?dl<span class="o">=</span>1  -Oscout-apm.jar
+</code></pre>
+
+<h2 id="adding-the-jar-to-your-application">Adding the JAR to your application</h2>
+
+<p>Installation depends on your app server:</p>
+
+<h3 id="tomcat">Tomcat</h3>
+
+<p>Extend <code class="prettyprint">catalina.sh</code> startup script with the following <code class="prettyprint">JAVA_OPTS</code>
+<code class="prettyprint">bash
+export JAVA_OPTS=&quot;$JAVA_OPTS -javaagent:/full/path/to/scout-java-agent/scout-apm.jar&quot;
+</code></p>
+
+<h3 id="embedded-containers">Embedded Containers</h3>
+
+<p>For environments using embedded containers (Spark, Vert.x, Spring Boot, Grails), just add the <code class="prettyprint">-javaagent:</code> argument to your <code class="prettyprint">java</code> invocation: </p>
+<pre class="highlight shell"><code>java -jar ... -javaagent:/full/path/to/scout-java-agent/scout-apm.jar 
+</code></pre>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Java Application monitoring is in beta. <a href="mailto:support@scoutapp.com">Email us</a> with any questions about your framework and environment, or for help getting started. </p>
 
       </div>
       <div class="dark-box">
       </div>
     </div>
   </body>
+  <script>
+    $.ajax({
+      url: "http://apm.scoutapp.com/latest_gem_version",
+      dataType: "jsonp"
+    }).success(function(response){
+      $("#latest-gem-version").html(response.version)
+    });
+  </script>
 </html>
