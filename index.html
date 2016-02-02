@@ -957,10 +957,9 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h3 id="tomcat">Tomcat</h3>
 
-<p>Extend <code class="prettyprint">catalina.sh</code> startup script with the following <code class="prettyprint">JAVA_OPTS</code>
-<code class="prettyprint">bash
-export JAVA_OPTS=&quot;$JAVA_OPTS -javaagent:/full/path/to/scout-java-agent/scout-apm.jar&quot;
-</code></p>
+<p>Extend <code class="prettyprint">catalina.sh</code> startup script with the following <code class="prettyprint">JAVA_OPTS</code>:</p>
+<pre class="highlight shell"><code><span class="nb">export </span><span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"</span><span class="nv">$JAVA_OPTS</span><span class="s2"> -javaagent:/full/path/to/scout-java-agent/scout-apm.jar"</span>
+</code></pre>
 
 <h3 id="embedded-containers">Embedded Containers</h3>
 
