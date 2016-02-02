@@ -947,8 +947,8 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="downloading-the-jar">Downloading the JAR</h2>
 
-<p>The most recent Scout Java APM release is <a href="https://www.dropbox.com/s/s1d6f2ydfes8fkj/scout_apm_java_20160202.jar?dl=1">available for download here</a> (direct download link, ~17MB).</p>
-<pre class="highlight shell"><code>wget https://www.dropbox.com/s/s1d6f2ydfes8fkj/scout_apm_java_20160202.jar?dl<span class="o">=</span>1  -Oscout-apm.jar
+<p>The most recent Scout Java APM release is <a href="https://www.dropbox.com/s/bzmvmq2ck8jtzhj/scout-apm.jar?dl=1">available for download here</a> (direct download link, ~17MB).</p>
+<pre class="highlight plaintext"><code>wget https://www.dropbox.com/s/bzmvmq2ck8jtzhj/scout-apm.jar?dl=1 -Oscout-apm.jar
 </code></pre>
 
 <h2 id="adding-the-jar-to-your-application">Adding the JAR to your application</h2>
@@ -958,13 +958,13 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="tomcat">Tomcat</h3>
 
 <p>Extend <code class="prettyprint">catalina.sh</code> startup script with the following <code class="prettyprint">JAVA_OPTS</code>:</p>
-<pre class="highlight shell"><code><span class="nb">export </span><span class="nv">JAVA_OPTS</span><span class="o">=</span><span class="s2">"</span><span class="nv">$JAVA_OPTS</span><span class="s2"> -javaagent:/full/path/to/scout-java-agent/scout-apm.jar"</span>
+<pre class="highlight plaintext"><code>export JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-java-agent/scout-apm.jar"
 </code></pre>
 
 <h3 id="embedded-containers">Embedded Containers</h3>
 
 <p>For environments using embedded containers (Spark, Vert.x, Spring Boot, Grails), just add the <code class="prettyprint">-javaagent:</code> argument to your <code class="prettyprint">java</code> invocation: </p>
-<pre class="highlight shell"><code>java -jar ... -javaagent:/full/path/to/scout-java-agent/scout-apm.jar 
+<pre class="highlight plaintext"><code>java -jar ... -javaagent:/full/path/to/scout-java-agent/scout-apm.jar 
 </code></pre>
 
 <h2 id="getting-started">Getting Started</h2>
