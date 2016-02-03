@@ -966,7 +966,7 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="embedded-containers">Embedded Containers</h3>
 
 <p>For environments using embedded containers, just add the following <code class="prettyprint">-javaagent:</code> argument to your <code class="prettyprint">java</code> invocation: </p>
-<pre class="highlight plaintext"><code>java -jar -javaagent:/full/path/to/scout-apm/scout-apm.jar ... &lt;app-name&gt;.jar
+<pre class="highlight plaintext"><code>java -javaagent:/full/path/to/scout-apm/scout-apm.jar ... -jar &lt;app-name&gt;.jar
 </code></pre>
 
 <h3 id="configuration">Configuration</h3>
