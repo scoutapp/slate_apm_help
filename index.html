@@ -959,8 +959,24 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h3 id="tomcat">Tomcat</h3>
 
-<p>Extend <code class="prettyprint">catalina.sh</code> startup script with the following <code class="prettyprint">JAVA_OPTS</code>:</p>
+<p>Add the following to your <code class="prettyprint">setenv.sh</code> file (and ensure <code class="prettyprint">setenv.sh</code> is included from <code class="prettyprint">catalina.sh</code>):</p>
 <pre class="highlight plaintext"><code>export JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
+</code></pre>
+
+<ul>
+<li>Of course, you can include the <code class="prettyprint">export JAVA_OPTS</code> directly in your <code class="prettyprint">catalina.sh</code>, but it&rsquo;s recommended to keep your additions in a separate file.<br></li>
+<li>If you&rsquo;re using Windows, edit the settings in the Service Helper instead.</li>
+</ul>
+
+<h2 id="karaf">Karaf:</h2>
+
+<p>Karaf also has a <code class="prettyprint">setenv.[sh|bat]</code> file &ndash; see Tomcat instructions above.</p>
+
+<p>If you run Karaf as a service, youll need to alter <code class="prettyprint">karaf-wrapper.conf</code> and add lines like:</p>
+<pre class="highlight plaintext"><code># Scout app monitoring
+wrapper.java.additional.16=-DAPP_ENV=staging
+wrapper.java.additional.17=-javaagent:d:/path/to/scout-apm.jar
+# (16 and 17 are "the next free" numbers in the config file)
 </code></pre>
 
 <h3 id="embedded-containers">Embedded Containers</h3>
