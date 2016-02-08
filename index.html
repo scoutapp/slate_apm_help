@@ -845,7 +845,13 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="performance-overhead">Performance Overhead</h2>
 
-<p>Our agent is designed to run in production environments. We&rsquo;ve benchmarked the response time overhead at roughly 3%. Generally, overhead increases as the number of methods are instrumented.</p>
+<p>Our agent is designed to run in production environments and is extensively benchmarked to ensure it performs on high-traffic applications. </p>
+
+<p>Our most recent benchmarks (<em>lower is better</em>):</p>
+
+<p><img alt="overhead" src="images/overhead.png" /></p>
+
+<p>We&rsquo;ve <a href="http://blog.scoutapp.com/articles/2016/02/07/overhead-benchmarks-new-relic-vs-scout">open-sourced our benchmarks</a> so you can test on our own. If your results differ, <a href="mailto:support@scoutapp.com">reach out to us at support@scoutapp.com</a>.</p>
 
 <h2 id="security">Security</h2>
 
