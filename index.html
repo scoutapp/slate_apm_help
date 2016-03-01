@@ -1001,6 +1001,43 @@ wrapper.java.additional.17=-javaagent:d:/path/to/scout-apm.jar
 <pre class="highlight plaintext"><code>java -javaagent:/full/path/to/scout-apm/scout-apm.jar ... -jar &lt;app-name&gt;.jar
 </code></pre>
 
+<h3 id="jboss">JBoss</h3>
+
+<h4 id="jboss-domain-mode">JBoss Domain mode</h4>
+
+<p>For JBoss EAP 6.x and 7.0.x AS and above. The JVM properties for each server group are found in <code class="prettyprint">domain/configuration/domain.xml</code>.</p>
+
+<p>The JVM properties for each server group needs to be modified to include the <code class="prettyprint">-javagent</code> argument.</p>
+<pre class="highlight xml"><code><span class="nt">&lt;servers&gt;</span>
+  <span class="nt">&lt;server</span> <span class="na">name=</span><span class="s">"server_01"</span> <span class="na">group=</span><span class="s">"group_01"</span> <span class="na">auto-start=</span><span class="s">"true"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;jvm</span> <span class="na">name=</span><span class="s">"default"</span> <span class="na">debug-enabled=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;jvm-options&gt;</span>
+        <span class="c">&lt;!-- add the following option value --&gt;</span>
+        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">"-javaagent:/full/path/to/scout-apm/scout-apm.jar"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/jvm-options&gt;</span>
+    <span class="nt">&lt;/jvm&gt;</span>
+  <span class="nt">&lt;/server&gt;</span>
+  ...
+</code></pre>
+
+<h4 id="standalone-mode">Standalone mode</h4>
+
+<p>For JBoss 6.x EAP and 7.0.x AS on OSX or Unix, at the bottom of <code class="prettyprint">bin/standalone.conf</code>, add this</p>
+<pre class="highlight plaintext"><code>JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
+</code></pre>
+
+<p>For JBoss 6.x EAP and 7.0.x AS on Windows, at the bottom of <code class="prettyprint">bin/standalone.bat</code>, add this</p>
+<pre class="highlight plaintext"><code>set JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
+</code></pre>
+
+<p>For JBoss 6.x and below on OSX or Unix, at the bottom of <code class="prettyprint">bin/run.conf</code>, add this:</p>
+<pre class="highlight plaintext"><code>JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
+</code></pre>
+
+<p>For JBoss 6.x and below on Windows, at the bottom of <code class="prettyprint">bin/run.bat</code>, add this</p>
+<pre class="highlight plaintext"><code>set JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
+</code></pre>
+
 <h3 id="configuration">Configuration</h3>
 
 <p>The Scout Java agent looks for a <code class="prettyprint">scout_apm.yml</code> configuration file in the same directory as <code class="prettyprint">scout-apm.jar</code>.</p>
