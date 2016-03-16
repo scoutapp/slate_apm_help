@@ -853,14 +853,14 @@ tail -n1000 log/production.log | grep "Processing"
 
 <ul>
 <li>Embed our agent in your application. You don&rsquo;t access to the servers your app is deployed on.</li>
-<li>The agent instruments key libraries (database access, controllers, views, etc) using low-overhead instrumentation. </li>
+<li>The agent instruments key libraries (database access, controllers, views, etc) using low-overhead instrumentation.</li>
 <li>Every minute, the agent connects over https (always) through a 256-bit secure, encrypted connection (the same encryption your bank uses) and sends metrics to our servers.</li>
 <li>Over servers store the data.</li>
 </ul>
 
 <h2 id="performance-overhead">Performance Overhead</h2>
 
-<p>Our agent is designed to run in production environments and is extensively benchmarked to ensure it performs on high-traffic applications. </p>
+<p>Our agent is designed to run in production environments and is extensively benchmarked to ensure it performs on high-traffic applications.</p>
 
 <p>Our most recent benchmarks (<em>lower is better</em>):</p>
 
@@ -939,19 +939,15 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h4 id="per-server">Per-Server</h4>
 
-<p><strong>This is the default approach</strong>. You are billed for the number of servers that are actively reporting on your billing date. </p>
+<p><strong>This is the default approach</strong>. You are billed for the number of servers that are actively reporting on your billing date.</p>
 
 <h4 id="per-request">Per-Request</h4>
 
-<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. </p>
-
-<h3 id="changing-your-subsciption-style">Changing your subsciption style</h3>
-
-<p>You can pick your subscription styles in the billing area within Scout. Your billing preference can not be retroactively applied.</p>
+<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. Contact <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> for pricing options. </p>
 
 <h2 id="replacing-new-relic">Replacing New Relic</h2>
 
-<p>Scout is an attractive option for modern dev teams (frequent deploys, using Git, deploying to many micro instances &amp; containers, using vendors for key infrastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work. </p>
+<p>Scout is an attractive option for modern dev teams (frequent deploys, using Git, deploying to many micro instances &amp; containers, using vendors for key infrastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.</p>
 
 <p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Don&rsquo;t fret - here&rsquo;s some of the more common scenarios and our suggestions for building a monitoring stack you&rsquo;ll love:</p>
 
@@ -959,8 +955,8 @@ tail -n1000 log/production.log | grep "Processing"
 <li><strong>Exception Monitoring</strong> - we provide metrics on the rate of exceptions but we don&rsquo;t currently provide details on exceptions. Our favorite tool for this is <a href="http://getsentry.com">Sentry</a>:
 
 <ul>
-<li>Affordable: starts @ $29/mo. </li>
-<li>Realtime exceptions: you&rsquo;ll see new exceptions coming through as-they-happen (every second). </li>
+<li>Affordable: starts @ $29/mo.</li>
+<li>Realtime exceptions: you&rsquo;ll see new exceptions coming through as-they-happen (every second).</li>
 <li>Great UI</li>
 <li>Context tracking (easy to see how an exception is impacting which users). We implemented a similar API for our slow request tracking.</li>
 </ul></li>
@@ -1092,13 +1088,6 @@ wrapper.java.additional.17=-javaagent:d:/path/to/scout-apm.jar
 </ul>
 
 <h2 id="java-agent-change-log">Java Agent Change Log</h2>
-
-<h4 id="0-2-0">0.2.0</h4>
-
-<ul>
-<li>Support for JAX-RS @Suspended asynchronous tracing</li>
-<li>Support for the Grails framework</li>
-</ul>
 
 <h4 id="0-1-2">0.1.2</h4>
 
