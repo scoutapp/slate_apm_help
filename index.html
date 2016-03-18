@@ -996,6 +996,17 @@ tail -n1000 log/production.log | grep "Processing"
 <pre class="highlight plaintext"><code>wget https://www.dropbox.com/s/bzmvmq2ck8jtzhj/scout-apm.jar?dl=1 -Oscout-apm.jar
 </code></pre>
 
+<h2 id="retrieving-the-current-version-of-the-agent">Retrieving the current version of the agent</h2>
+
+<p>With the following command, you retrieve the current version of the agent.</p>
+<pre class="highlight plaintext"><code>java -jar scout-apm.jar
+</code></pre>
+
+<p>For example:</p>
+<pre class="highlight plaintext"><code>Scout Agent version 0.3.0
+See http://help.apm.scoutapp.com/#java-applications for more information
+</code></pre>
+
 <h2 id="adding-the-jar-to-your-application">Adding the JAR to your Application</h2>
 
 <p>Installation depends on your app server:</p>
@@ -1089,6 +1100,12 @@ wrapper.java.additional.17=-javaagent:d:/path/to/scout-apm.jar
 
 <h2 id="java-agent-change-log">Java Agent Change Log</h2>
 
+<h4 id="0-3-0">0.3.0</h4>
+
+<ul>
+<li>Support for Spring RestTemplate HTTP client</li>
+</ul>
+
 <h4 id="0-2-1">0.2.1</h4>
 
 <ul>
@@ -1126,7 +1143,6 @@ wrapper.java.additional.17=-javaagent:d:/path/to/scout-apm.jar
 <h4 id="0-0-5">0.0.5</h4>
 
 <ul>
-<li>Jedis (sendCommand) support</li>
 <li>Jedis (sendCommand) support</li>
 <li>Temporary remove background jobs from aggregation (wait for endpoint feature)</li>
 </ul>
