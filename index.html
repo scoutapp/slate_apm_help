@@ -316,6 +316,20 @@ bundle install
           No
         </td>
       </tr>
+      <tr>
+        <th>
+          disabled_instruments
+        </th>
+        <td>
+          An Array of instruments that Scout should not install. Each Array element should should be a string-ified, case-sensitive class name (ex: <code>['Elasticsearch','HttpClient']</code>). The default installed instruments can be viewed in the <a href="https://github.com/scoutapp/scout_apm_ruby/tree/master/lib/scout_apm/instruments" target="_blank">agent source</a>.
+        </td>
+        <td>
+          <code>[]</code>
+        </td>
+        <td>
+          No
+        </td>
+      </tr>
     </tbody>
   </table>
 
@@ -457,10 +471,14 @@ bundle install
 <li>ActiveRecord</li>
 <li>ActionView</li>
 <li>ActionController</li>
+<li>ElasticSearch</li>
+<li>HTTPClient</li>
+<li>InfluxDB</li>
 <li>Mongoid</li>
 <li>Net::HTTP</li>
 <li>Moped</li>
 <li>Middleware</li>
+<li>Redis</li>
 </ul>
 
 <p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
