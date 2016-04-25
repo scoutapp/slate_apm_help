@@ -90,14 +90,6 @@
 <li>WEBrick</li>
 </ul>
 
-<h3 id="stack-profiling-optional">Stack Profiling - Optional</h3>
-
-<p>Stack Profiling requires Ruby 2.1+.</p>
-
-<p>You must explicitly add the stackprof gem to your Gemfile:</p>
-<pre class="highlight ruby"><code><span class="n">gem</span> <span class="s1">'stackprof'</span><span class="p">,</span> <span class="s1">'~&gt; 0.2.7'</span>
-</code></pre>
-
 <h3 id="git-integration-optional">Git Integration - Optional</h3>
 
 <p>Viewing your application code within Scout requires that your source code is hosted at Github.com.</p>
@@ -979,7 +971,6 @@ tail -n1000 log/production.log | grep "Processing"
 <li>Context tracking (easy to see how an exception is impacting which users). We implemented a similar API for our slow request tracking.</li>
 </ul></li>
 <li><strong>Alerting</strong> - while on our roadmap, we don&rsquo;t yet provide alerting within application monitoring. However, <a href="https://scoutapp.com/info/server_monitoring">Scout Server Monitoring</a> has robust alerting functionality. With the <a href="https://github.com/scoutapp/scout_statsd_rack">Scout StatsD Rack Gem</a> you can easily get alerted on jumps in error rates and response times.</li>
-<li><strong>Background Job Monitoring</strong> - this is on our roadmap as well. <a href="https://scoutapp.com/info/server_monitoring">Scout Server Monitoring</a> can be used to monitor queue depths, failure rates, etc for all of the common Ruby background job systems. Many background job systems also provide a web ui (for example, the <a href="https://github.com/mperham/sidekiq/wiki/Monitoring#web-ui">Sidekiq Web UI</a>).</li>
 <li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
 </ul>
 
