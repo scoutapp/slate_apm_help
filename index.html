@@ -57,8 +57,6 @@
 
 <p>Scout Application Monitoring is a lightweight, production-grade application monitoring service built for modern development teams. Just embed our agent in your application: we handle the rest. </p>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/7wMyhc0FZII" frameborder="0" allowfullscreen></iframe>
-
 <p>Here&rsquo;s an overview of the key functionality in our application monitoring service:</p>
 
 <h3 id="the-agent">The Agent</h3>
@@ -299,7 +297,7 @@ bundle install
           uri_reporting
         </th>
         <td>
-          By default Scout reports the URL and query parameters of slow requests. To exclude query params, use
+          By default Scout reports the URL and query parameters with transaction traces. To exclude query params, use
           <code>path</code>.
         </td>
         <td>
@@ -737,41 +735,24 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="app-performance-overview">App Performance Overview</h2>
 
-<p>The overview page provides an at-a-glance, auto-refreshing view of your app&rsquo;s performance and resource usage. You can compare metrics in the overview chart and see how your app&rsquo;s performance compares to different time periods.</p>
+<p>The overview page provides an at-a-glance, auto-refreshing view of your app&rsquo;s performance and resource usage (mean response time by category, 95th percentile response time, throughput, error rate, and more). You can quickly dive into endpoint activity via click-and-drag (or pinch-and-expand with a mobile device) on the overview chart.</p>
 
-<p><img alt="overview" src="images/dash_annotated.png" /></p>
+<p><img alt="overview" src="images/app_show.gif" /></p>
 
-<h3 id="zooming-into-slow-requests">Zooming into Slow Requests</h3>
+<p>Additionally, you can compare metrics in the overview chart and see how your app&rsquo;s performance compares to different time periods.</p>
 
-<p>See a large spike in response time? Click-and-drag (or pinch-and-expand on an iPad) on the overview chart. You&rsquo;ll see the number of slow requests over the selected period. Click the link to view details on those requests.</p>
+<h2 id="endpoint-details">Endpoint Details</h2>
 
-<p><img alt="overview drag" src="images/dash_drag_annotated.png" /></p>
+<p>You can view metrics for specific controller-action and background job workers. There is a similar chart interaction to the App Performance Overview page, with one difference: your selection will render an updated list of transaction traces that correspond to the selected time period:
+<img alt="stream" src="images/endpoint_show.gif" /></p>
 
-<h2 id="slow-stream">Slow Stream</h2>
+<p>You can sort traces by response time, object allocations, date, and more.</p>
 
-<p>The Slow Stream gives direct access to slow web requests (&gt;= 2 seconds).</p>
+<h2 id="transaction-traces">Transaction Traces</h2>
 
-<p><img alt="stream" src="images/stream_annotated.png" /></p>
+<p>Scout collects detailed transactions across your endpoints automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. </p>
 
-<p>Requests are aggregrated by the endpoint name. Scout captures details on every slow request your app handles - it doesn&rsquo;t sample - to ensure you have the complete picture of what&rsquo;s slow.</p>
-
-<p>Click on an endpoint name to view details on slow requests for the respective endpoint.</p>
-
-<h2 id="slow-request-details">Slow Request Details</h2>
-
-<p>Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - with the slow request detail view. </p>
-
-<p><img alt="stream show" src="images/stream_show_annotated.png" /></p>
-
-<h3 id="aggregrate-trace">Aggregrate Trace</h3>
-
-<p>When clicking on an endpoint from the Slow Stream, you&rsquo;ll see an <strong>aggregrate trace</strong> by default. This aggregrates slow request traces from multiple requests together so you can see common bottlenecks across requests.</p>
-
-<h3 id="individual-slow-requests">Individual Slow Requests</h3>
-
-<p>You can view details on individual slow requests vs. an aggregrate trace by selecting the request in the sidebar.</p>
-
-<p><img alt="stream show request" src="images/stream_show_request.png" /></p>
+<p><img alt="transaction traces" src="images/transaction_traces.png" /></p>
 
 <h3 id="call-breakdown">Call Breakdown</h3>
 
@@ -797,13 +778,9 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>If you don&rsquo;t enable the Github integration, you&rsquo;ll see a backtrace.</p>
 
-<h3 id="rate-limiting-of-slow-requests">Rate Limiting of Slow Requests</h3>
-
-<p>Scout records details on every slow request but limits the collection of call breakdown metrics to ten slow requests per-server to prevent sending too much data to Scout.</p>
-
 <h2 id="git-integration">Git Integration</h2>
 
-<p>If your code is hosted at Github, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing slow request details. Additionally, you&rsquo;ll also see the:</p>
+<p>If your code is hosted at Github, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing a transaction trace. Additionally, you&rsquo;ll also see the:</p>
 
 <ul>
 <li>author</li>
@@ -827,11 +804,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Adding custom context is easy - <a href="#adding-custom-context">learn how</a>.</p>
 
-<p>When viewing slow request details from the Slow Stream, click the &ldquo;Context&rdquo; link:</p>
-
-<p><img alt="context" src="images/stream_show_context_annotated.png" /></p>
-
-<p>You&rsquo;ll see a histogram representation for each piece of context for the endpoint.</p>
+<p>When viewing a transaction trace, click the &ldquo;Context&rdquo; section to see the context Scout has collected.</p>
 
 <h2 id="endpoints-performance">Endpoints Performance</h2>
 
@@ -841,12 +814,6 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p><img alt="endpoints overview" src="images/endpoints_annotated.png" /></p>
 
-<h3 id="endpoint-details">Endpoint Details</h3>
-
-<p>View aggregated metrics across requests for a specific endpoint by clicking on the endpoint name from overview area. You can also drill into slow requests for this endpoint from this page.</p>
-
-<p><img alt="endpoint details" src="images/endpoints_show_annotated.png" /></p>
-
 <h2 id="time-comparisons">Time Comparisons</h2>
 
 <p>You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.</p>
@@ -855,7 +822,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="data-retention">Data Retention</h2>
 
-<p>Scout stores 30 days of metrics and seven days of slow request details.</p>
+<p>Scout stores 30 days of metrics and seven days of transaction traces.</p>
 
           <h1 id="reference">Reference</h1>
 
@@ -897,7 +864,7 @@ tail -n1000 log/production.log | grep "Processing"
 <ul>
 <li>Timing information collected from our instrumentation</li>
 <li>Gems used by your application</li>
-<li><p>Slow request transaction traces, which include:</p>
+<li><p>Transaction traces, which include:</p>
 
 <ul>
 <li>The URL, including query parameters, of the slow request. This can be modified to exclude query params via the <a href="#configuration-reference"><code>uri_reporting</code></a> configuration option.</li>
