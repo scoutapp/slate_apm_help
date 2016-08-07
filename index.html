@@ -129,6 +129,8 @@ bundle install
 
 <h2 id="updating-to-the-newest-version">Updating to the Newest Version</h2>
 
+<p>The latest version of <code class="prettyprint">scout_apm</code> is <code><span id="latest-gem-version">SEE CHANGELOG</span></code>.</p>
+
 <table class="help install">
   <tbody>
     <tr>
@@ -136,12 +138,12 @@ bundle install
         <span class="step">1</span>
       </td>
       <td>
-        <p>Update your Gemfile: <code>gem 'scout_apm', '~><span id="latest-gem-version">SEE CHANGELOG</span>'</code> </p>
+        <p>Ensure your Gemfile entry for Scout is: <code>gem 'scout_apm'</code> </p>
       </td>
     </tr>
     <tr>
       <td><span class="step">2</span></td>
-      <td><p>run <code> bundle install</code></p></td>
+      <td><p>Run <code> bundle update scout_apm</code></p></td>
     </tr>
       <tr>
       <td><span class="step">3</span></td>
@@ -321,6 +323,17 @@ bundle install
           No
         </td>
       </tr>
+      <tr>
+        <th>dev_trace</th>
+        <td>
+          Indicates if DevTrace, the Scout development profiler, should be enabled. Note this setting only applies
+          to the development environment.
+        </td>
+        <td>
+          <code>false</code>
+        </td>
+        <td>No</td>
+      </tr>
     </tbody>
   </table>
 
@@ -415,6 +428,10 @@ bundle install
 </code></pre>
 
 <p>See the configuration section for more information on the available config settings and environment variable functionality.</p>
+
+<h3 id="using-the-scout-heroku-add-on">Using the Scout Heroku Add-on</h3>
+
+<p>Scout is also available as a <a href="https://elements.heroku.com/addons/scout">Heroku Add-on</a>. The add-on automates setting the proper Heroku config variables during the provisioning process.</p>
 
 <h2 id="cloud-foundry">Cloud Foundry <img src="images/cf_logo.png" style="float:right;width: 150px" /></h2>
 
@@ -786,6 +803,32 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>If you don&rsquo;t enable the Github integration, you&rsquo;ll see a backtrace.</p>
 
+<h2 id="memory-bloat-detection">Memory Bloat Detection</h2>
+
+<p>If a user triggers a request to your Rails application that results in a large number of object allocations (example: loading a large number of ActiveRecord objects), your app may require additional memory. The additional memory required to load the objects in memory is released back very slowly. Therefore, a single memory-hungry request will have a long-term impact on your Rails app’s memory usage.</p>
+
+<p>There are 3 specific features of Scout to aid in fixing memory bloat.</p>
+
+<h3 id="memory-bloat-insights">Memory Bloat Insights</h3>
+
+<p>The Insights area of the dashboard identifies controller-actions and background jobs that have triggered significant memory increases. An overview of the object allocation breakdown by tier (ActiveRecord, ActionView, etc) is displayed on the dashboard.</p>
+
+<p><img alt="memory insights" src="images/memory_insights.png" /></p>
+
+<h3 id="memory-traces">Memory Traces</h3>
+
+<p>When inspecting a <a href="#transaction-traces">transaction trace</a>, you&rsquo;ll see a &ldquo;Memory Allocation Breakdown&rdquo; section:</p>
+
+<p><img alt="memory trace" src="images/memory_trace.png" /></p>
+
+<p>For perspective, we display how this trace&rsquo;s allocations compare to the norm.</p>
+
+<h3 id="sorting">Sorting</h3>
+
+<p>You can sort by memory allocations throughout the UI: from the list of endpoints, to our pulldowns, to transaction traces.</p>
+
+<p><img alt="memory sort" src="images/memory_sort.png" /></p>
+
 <h2 id="git-integration">Git Integration</h2>
 
 <p>If your code is hosted at Github, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing a transaction trace. Additionally, you&rsquo;ll also see the:</p>
@@ -827,6 +870,22 @@ tail -n1000 log/production.log | grep "Processing"
 <p>You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.</p>
 
 <p><img alt="time compare" src="images/time_compare_annotated.png" /></p>
+
+<h2 id="devtrace">DevTrace</h2>
+
+<p>DevTrace is our development profiler: it&rsquo;s included with the <code class="prettyprint">scout_apm</code> gem and can be used for free without signup. Enabling DevTrace adds a speed badge when navigating your Rails app in development. Clicking the speed badge reveals a shareable transaction trace of the request.</p>
+
+<p>DevTrace is a BETA feature.</p>
+
+<p><img alt="devtrace" src="images/devtrace.png" /></p>
+
+<p>To enable DevTrace:</p>
+
+<ol>
+<li>Ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>.</li>
+<li>Add <code class="prettyprint">dev_trace: true</code> to the <code class="prettyprint">development</code> section of your <code class="prettyprint">scout_apm.yml</code> config file or start your local Rails server with:
+<code class="prettyprint">SCOUT_DEV_TRACE=true rails server</code>.</li>
+</ol>
 
 <h2 id="data-retention">Data Retention</h2>
 
