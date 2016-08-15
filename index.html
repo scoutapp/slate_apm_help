@@ -831,17 +831,25 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="scoutprof">ScoutProf</h2>
 
-<p><strong>ScoutProf is an invite-only BETA feature. Contact us at <a href="support@scoutapp.com">support@scoutapp.com</a> to join our waiting list.</strong></p>
-
-<p>Each millisecond, ScoutProf captures a backtrace of what each thread in your application is currently running.  Over many backtraces, when you combine them, it tells a story of what code paths are taking up the most time in your application.</p>
+<p>Every millisecond, ScoutProf captures a backtrace of what each thread in your application is currently running.  Over many backtraces, when you combine them, it tells a story of what code paths are taking up the most time in your application.</p>
 
 <p>Compared with our more traditional instrumentation of libraries like <code class="prettyprint">ActiveRecord</code>, <code class="prettyprint">Net::HTTP</code> and similar, ScoutProf works with your custom code.  Now, when your application spends time processing your data in custom application code, or in libraries that Scout doesn&rsquo;t yet instrument, instead of only being able to assign that to a large bucket of <code class="prettyprint">ActionController</code> time, the time can be broken down to exactly what is taking up the most time.</p>
 
 <p>Notice how the time in <code class="prettyprint">ActionController</code> is broken down:</p>
 
-<p><img alt="scoutprof" src="images/scoutprof.png" /></p>
+<p><a href="/images/scoutprof.png" target="_blank"><img alt="scoutprof" src="images/scoutprof.png" /></a></p>
 
 <p>We still employ our traditional instrumentation, because it can give us deeper insights into common libraries, capturing the SQL being run, or the URL being fetched.</p>
+
+<h3 id="enabling-scoutprof">Enabling ScoutProf</h3>
+
+<p>ScoutProf is a BETA feature. To enable:</p>
+
+<ol>
+<li>Modify your <code class="prettyprint">Gemfile</code> entry for <code class="prettyprint">scout_apm</code>, changing it to: <code class="prettyprint">gem &#39;scout_apm&#39;, &#39;~&gt; 2.2.x&#39;</code></li>
+<li><code class="prettyprint">bundle update scout_apm</code></li>
+<li>Deploy</li>
+</ol>
 
 <p>A <a href="#scoutprof-faq">detailed ScoutProf FAQ</a> is available in our reference area.</p>
 
@@ -917,11 +925,11 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>DevTrace is our development profiler: it&rsquo;s included with the <code class="prettyprint">scout_apm</code> gem and can be used for free without signup. Enabling DevTrace adds a speed badge when navigating your Rails app in development. Clicking the speed badge reveals a shareable transaction trace of the request.</p>
 
-<p>DevTrace is a BETA feature.</p>
-
 <p><img alt="devtrace" src="images/devtrace.png" /></p>
 
-<p>To enable DevTrace:</p>
+<h3 id="enabling-devtrace">Enabling DevTrace</h3>
+
+<p>DevTrace is a BETA feature. To enable:</p>
 
 <ol>
 <li>Ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>.</li>
@@ -1042,7 +1050,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h3 id="what-39-s-supported-during-beta">What&rsquo;s supported during BETA?</h3>
 
-<p>During our invite-only BETA period, ScoutProf has a few limitations:</p>
+<p>During our BETA period, ScoutProf has a few limitations:</p>
 
 <ul>
 <li>ScoutProf only runs on Linux. Support for additional distros will be added.</li>
