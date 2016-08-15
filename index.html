@@ -89,7 +89,7 @@
 <li>Sidekiq</li>
 </ul>
 
-<p><a href="#memory-bloat-detection">Memory Bloat detection</a> requires Ruby 2.1+.</p>
+<p><a href="#memory-bloat-detection">Memory Bloat detection</a> and <a href="#scoutprof">ScoutProf</a> require Ruby 2.1+.</p>
 
 <h3 id="git-integration-optional">Git Integration - Optional</h3>
 
@@ -326,6 +326,20 @@ bundle install
         </td>
       </tr>
       <tr>
+        <th>
+          ignore
+        </th>
+        <td>
+          An Array of web endpoints that Scout should not instrument. Routes that match the prefixed path (ex: <code>['/health', '/status']</code>) will be ignored by the agent.
+        </td>
+        <td>
+          <code>[]</code>
+        </td>
+        <td>
+          No
+        </td>
+      </tr>
+      <tr>
         <th>dev_trace</th>
         <td>
           Indicates if DevTrace, the Scout development profiler, should be enabled. Note this setting only applies
@@ -333,6 +347,16 @@ bundle install
         </td>
         <td>
           <code>false</code>
+        </td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <th>profile</th>
+        <td>
+          Indicates if ScoutProf, the Scout code profiler, should be enabled.
+        </td>
+        <td>
+          <code>true</code>
         </td>
         <td>No</td>
       </tr>
@@ -805,6 +829,22 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>If you don&rsquo;t enable the Github integration, you&rsquo;ll see a backtrace.</p>
 
+<h2 id="scoutprof">ScoutProf</h2>
+
+<p><strong>ScoutProf is an invite-only BETA feature. Contact us at <a href="support@scoutapp.com">support@scoutapp.com</a> to join our waiting list.</strong></p>
+
+<p>Each millisecond, ScoutProf captures a backtrace of what each thread in your application is currently running.  Over many backtraces, when you combine them, it tells a story of what code paths are taking up the most time in your application.</p>
+
+<p>Compared with our more traditional instrumentation of libraries like ActiveRecord, Net::HTTP and similar, ScoutProf works with your custom code.  Now, when your application spends time processing your data in custom application code, or in libraries that Scout doesn&rsquo;t yet instrument, instead of only being able to assign that to a large bucket of &ldquo;Controller Time&rdquo;, the time can be broken down to exactly what is taking up the most time.</p>
+
+<p>Notice how the time in ActionController is broken down:</p>
+
+<p><img alt="scoutprof" src="images/scoutprof.png" /></p>
+
+<p>We still employ our traditional instrumentation, because it can give us deeper insights into common libraries, capturing the SQL being run, or the URL being fetched.</p>
+
+<p>A <a href="#scoutprof-faq">detailed ScoutProf FAQ</a> is available in our reference area.</p>
+
 <h2 id="memory-bloat-detection">Memory Bloat Detection</h2>
 
 <p>If a user triggers a request to your Rails application that results in a large number of object allocations (example: loading a large number of ActiveRecord objects), your app may require additional memory. The additional memory required to load the objects in memory is released back very slowly. Therefore, a single memory-hungry request will have a long-term impact on your Rails app’s memory usage.</p>
@@ -970,6 +1010,46 @@ tail -n1000 log/production.log | grep "Processing"
 <li>Create a new Github user and make them a member of that team.</li>
 <li>Authenticate with this user.</li>
 </ul>
+
+<h2 id="scoutprof-faq">ScoutProf FAQ</h2>
+
+<h3 id="does-scoutprof-work-with-stackprof">Does ScoutProf work with Stackprof?</h3>
+
+<p><a href="#scoutprof">ScoutProf</a> and StackProf are not guaranteed to operate at the same time.  If you wish to use Stackprof, temporarily disable profiling in your config file (<code class="prettyprint">profile: false</code>) or via environment variables (<code class="prettyprint">SCOUT_PROFILE=false</code>). See the agent&rsquo;s <a href="#configuration-options">configuration options</a>.</p>
+
+<h3 id="how-is-scoutprof-different-than-stackprof">How is ScoutProf different than Stackprof?</h3>
+
+<p>Stackprof was the inspiration for ScoutProf.  Although little original Stackprof code remains, we started with Stackprof&rsquo;s core approach, and integrated it with our APM agent gem, changed it heavily to work with threaded applications, and implemented an easy to understand UI on our trace view.</p>
+
+<h3 id="what-do-sample-counts-mean">What do sample counts mean ?</h3>
+
+<p>ScoutProf attempts to sample your application every millisecond, capturing a snapshot backtrace of what is running in each thread.  For each successful backtrace captured, that is a sample.  Later, when we process the raw backtraces, identical traces get combined and the sample count is how many of each unique backtrace were seen.</p>
+
+<h3 id="why-do-sample-counts-vary">Why do sample counts vary?</h3>
+
+<p>Samples will be paused automatically for a few different reasons:</p>
+
+<ul>
+<li>If Ruby is in the middle of a GC run, samples won&rsquo;t be taken.</li>
+<li>If the previous sampling hasn&rsquo;t been run, a new sampling request won&rsquo;t be added.</li>
+</ul>
+
+<p>The specifics of exactly how often these scenarios happen depend on how and in what order your ruby code runs. Different sample counts can be expected, even for the same endpoint.</p>
+
+<h3 id="which-ruby-versions-and-app-servers-does-scoutprof-support">Which Ruby versions and app servers does ScoutProf support?</h3>
+
+<p>The <code class="prettyprint">scout_apm</code> gem will continue to work for Ruby 1.8.7+. ScoutProf requires Ruby 2.1+. </p>
+
+<h3 id="what-39-s-supported-during-beta">What&rsquo;s supported during BETA?</h3>
+
+<p>During our invite-only BETA period, ScoutProf has a few limitations:</p>
+
+<ul>
+<li>ScoutProf only runs on Linux. Support for additional distros will be added.</li>
+<li>ScoutProf only breaks down time spent in ActionController, not ActionView and not Sidekiq. Support for other areas will be added.</li>
+</ul>
+
+<p>The ScoutProf-enabled version of the <code class="prettyprint">scout_apm</code> can be safely installed on all environments our agent supports: the limitations above only prevent ScoutProf from running.</p>
 
 <h2 id="billing">Billing</h2>
 
