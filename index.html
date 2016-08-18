@@ -845,11 +845,26 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>ScoutProf is a BETA feature. To enable:</p>
 
-<ol>
-<li>Modify your <code class="prettyprint">Gemfile</code> entry for <code class="prettyprint">scout_apm</code>, changing it to: <code class="prettyprint">gem &#39;scout_apm&#39;, &#39;~&gt; 2.2.x&#39;</code></li>
-<li><code class="prettyprint">bundle update scout_apm</code></li>
-<li>Deploy</li>
-</ol>
+<table class="help install">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td>
+        <p>Modify your <code>Gemfile</code> entry for <code>scout_apm</code>, changing it to: <code>gem 'scout_apm', '~> 2.2.x'</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">2</span></td>
+      <td><p><code>bundle update scout_apm</code></p></td>
+    </tr>
+      <tr>
+      <td><span class="step">3</span></td>
+      <td><p>Deploy</p></td>
+    </tr>
+  </tbody>
+</table>
 
 <p>A <a href="#scoutprof-faq">detailed ScoutProf FAQ</a> is available in our reference area.</p>
 
@@ -936,6 +951,26 @@ tail -n1000 log/production.log | grep "Processing"
 <li>Add <code class="prettyprint">dev_trace: true</code> to the <code class="prettyprint">development</code> section of your <code class="prettyprint">scout_apm.yml</code> config file or start your local Rails server with:
 <code class="prettyprint">SCOUT_DEV_TRACE=true rails server</code>.</li>
 </ol>
+
+<table class="help install">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td>
+        <p>Ensure you are on the latest version of <code>scout_apm</code>.
+          See our <a href="#updating-to-the-newest-version">upgrade instructions</a>.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">2</span></td>
+      <td><p style="line-height: 170%">Add <code>dev_trace: true</code> to the <code>development</code> section of your <code>scout_apm.yml</code> config file or start your local Rails server with:
+<code>SCOUT_DEV_TRACE=true rails server</code>.</p></td>
+    </tr>
+  </tbody>
+</table>
 
 <h2 id="data-retention">Data Retention</h2>
 
