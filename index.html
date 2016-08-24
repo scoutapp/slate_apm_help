@@ -301,11 +301,11 @@ bundle install
           uri_reporting
         </th>
         <td>
-          By default Scout reports the URL and query parameters with transaction traces. To exclude query params, use
+          By default Scout reports the URL and filtered query parameters with transaction traces. Sensitive parameters in the URL will be redacted. To exclude query params entirely, use
           <code>path</code>.
         </td>
         <td>
-          <code>full_path</code>
+          <code>filtered_params</code>
         </td>
         <td>
           No
@@ -1079,9 +1079,12 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>The specifics of exactly how often these scenarios happen depend on how and in what order your ruby code runs. Different sample counts can be expected, even for the same endpoint.</p>
 
-<h3 id="which-ruby-versions-and-app-servers-does-scoutprof-support">Which Ruby versions and app servers does ScoutProf support?</h3>
+<h3 id="what-are-the-scoutprof-requirements">What are the ScoutProf requirements?</h3>
 
-<p>The <code class="prettyprint">scout_apm</code> gem will continue to work for Ruby 1.8.7+. ScoutProf requires Ruby 2.1+. </p>
+<ul>
+<li>A Linux-based operating system</li>
+<li>Ruby 2.1+</li>
+</ul>
 
 <h3 id="what-39-s-supported-during-beta">What&rsquo;s supported during BETA?</h3>
 
@@ -1092,7 +1095,7 @@ tail -n1000 log/production.log | grep "Processing"
 <li>ScoutProf only breaks down time spent in ActionController, not ActionView and not Sidekiq. Support for other areas will be added.</li>
 </ul>
 
-<p>The ScoutProf-enabled version of the <code class="prettyprint">scout_apm</code> can be safely installed on all environments our agent supports: the limitations above only prevent ScoutProf from running.</p>
+<p>The ScoutProf-enabled version of <code class="prettyprint">scout_apm</code> can be safely installed on all environments our agent supports: the limitations above only prevent ScoutProf from running.</p>
 
 <h2 id="billing">Billing</h2>
 
