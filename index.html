@@ -592,7 +592,11 @@ bundle install
 
 <h2 id="environments">Environments</h2>
 
-<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments.</p>
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments. Configure a unique app name for each environment as Scout aggregrates data by the app name.</p>
+
+<p>There are 2 approaches:</p>
+
+<h3 id="1-modifying-your-scout_apm-yml-config-file">1. Modifying your scout_apm.yml config file</h3>
 
 <p>Here&rsquo;s an example <code class="prettyprint">scout_apm.yml</code> configuration to achieve this:</p>
 <pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
@@ -615,6 +619,16 @@ bundle install
 <span class="s">staging</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
+
+<h3 id="2-setting-the-scout_name-environment-variable">2. Setting the SCOUT_NAME environment variable</h3>
+
+<p>Setting the <code class="prettyprint">SCOUT_NAME</code> and <code class="prettyprint">SCOUT_MONITOR</code> environment variables will override settings settings your <code class="prettyprint">scout_apm.yml</code> config file.</p>
+
+<p>To isolate data for a staging environment: <code class="prettyprint">SCOUT_NAME=&quot;YOUR_APP_NAME (Staging)&quot;</code>. </p>
+
+<p>To disable monitoring: <code class="prettyprint">SCOUT_MONITOR=false</code>.</p>
+
+<p>See the full list of <a href="#configuration-options">configuration options</a>.</p>
 
 <h2 id="disabling-a-node">Disabling a Node</h2>
 
