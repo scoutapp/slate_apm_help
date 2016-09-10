@@ -373,7 +373,9 @@ bundle install
 
 <h2 id="deploy-tracking">Deploy Tracking</h2>
 
-<p>Scout can track deploys, making it easier to correlate changes in your app to performance. Scout identifies deploys via the following:</p>
+<p>Scout can track deploys, making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>. </p>
+
+<p>Scout identifies deploys via the following:</p>
 
 <ol>
 <li>If you are using Capistrano, no extra configuration is required. Scout reads the contents of the <code class="prettyprint">REVISION</code> and/or <code class="prettyprint">revisions.log</code> file and parses out the SHA of the most recent release.</li>
