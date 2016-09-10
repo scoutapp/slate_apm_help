@@ -371,6 +371,17 @@ bundle install
 <pre class="highlight ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
 
+<h2 id="deploy-tracking">Deploy Tracking</h2>
+
+<p>Scout can track deploys, making it easier to correlate changes in your app to performance. Scout identifies deploys via the following:</p>
+
+<ol>
+<li>If you are using Capistrano, no extra configuration is required. Scout reads the contents of the <code class="prettyprint">REVISION</code> and/or <code class="prettyprint">revisions.log</code> file and parses out the SHA of the most recent release.</li>
+<li>If you are using Heroku, enable <a href="https://devcenter.heroku.com/articles/dyno-metadata">Dyno Metadata</a>. This adds a <code class="prettyprint">HEROKU_SLUG_COMMIT</code> environment variable to your dynos, which Scout then associates with deploys. </li>
+<li>If you are deploying via a custom approach, set a <code class="prettyprint">SCOUT_REVISION_SHA</code> environment variable equal to the SHA of your latest release.</li>
+<li>If the app resides in a Git repo, Scout parses the output of <code class="prettyprint">git rev-parse --short HEAD</code> to determine the revision SHA.</li>
+</ol>
+
 <h2 id="request-queuing">Request Queuing</h2>
 
 <p>Scout can measure the time it takes a request to reach your Rails app from farther upstream (a load balancer or web server). This appears in Scout as &ldquo;Request Queuing&rdquo; and provides an indication of your application&rsquo;s capacity. Large request queuing time is an indication that your app needs more capacity.</p>
