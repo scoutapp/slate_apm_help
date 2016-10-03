@@ -371,9 +371,9 @@ bundle install
 <pre class="highlight ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
 
-<h2 id="deploy-tracking">Deploy Tracking</h2>
+<h2 id="deploy-tracking-config">Deploy Tracking Config</h2>
 
-<p>Scout can track deploys, making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>. </p>
+<p>Scout can <a href="#deploy-tracking">track deploys</a>, making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>. </p>
 
 <p>Scout identifies deploys via the following:</p>
 
@@ -914,6 +914,14 @@ tail -n1000 log/production.log | grep "Processing"
 <p><img alt="memory trace" src="images/memory_trace.png" /></p>
 
 <p>For perspective, we display how this trace&rsquo;s allocations compare to the norm.</p>
+
+<h2 id="deploy-tracking">Deploy Tracking</h2>
+
+<p><img alt="deploy tracking" src="images/deploy_tracking.png" /></p>
+
+<p>Correlate deploys with your app&rsquo;s performance: Scout&rsquo;s GitHub-enhanced deploy tracking makes it easy to identify the Git branch or tag running now and which team members contributed to every deploy.</p>
+
+<p>Scout tracks your deploys without additional configuration if you are running Capistrano. If you aren&rsquo;t using Capistrano or deploying your app to Heroku, see our <a href="#deploy-tracking-config">deploy tracking configuration docs</a>.</p>
 
 <h3 id="sorting">Sorting</h3>
 
