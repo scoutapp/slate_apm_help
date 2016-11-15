@@ -1044,6 +1044,12 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>We&rsquo;ve <a href="http://blog.scoutapp.com/articles/2016/02/07/overhead-benchmarks-new-relic-vs-scout">open-sourced our benchmarks</a> so you can test on our own. If your results differ, <a href="mailto:support@scoutapp.com">reach out to us at support@scoutapp.com</a>.</p>
 
+<h3 id="call-aggregation">Call Aggregation</h3>
+
+<p>During a transaction, the Scout agent records each database call, each external HTTP request, each rendering of a view, and several other instrumented libraries. While each individual pieces of this overall trace has a tiny memory footprint, large transactions can sometimes build up thousands and thousands of them.  </p>
+
+<p>To limit our agent&rsquo;s memory usage, we stop recording the details of every instrument after a relatively high limit. Detailed metrics and backtraces are collected for all calls up to the limit and aggregated metrics are collected for calls over the limit.</p>
+
 <h2 id="security">Security</h2>
 
 <p>We take the security of your code metrics extremely seriously. Keeping your data secure is fundamental to our business. Scout is nearing a decade storing critical metrics with our server monitoring product and those same fundamentals are applied here:</p>
@@ -1162,7 +1168,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h4 id="per-request">Per-Request</h4>
 
-<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. Contact <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> for pricing options. </p>
+<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. Contact <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> for pricing options.</p>
 
 <h2 id="replacing-new-relic">Replacing New Relic</h2>
 
