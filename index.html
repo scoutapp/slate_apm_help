@@ -1008,12 +1008,6 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>DevTrace is a BETA feature. To enable:</p>
 
-<ol>
-<li>Ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>.</li>
-<li>Add <code class="prettyprint">dev_trace: true</code> to the <code class="prettyprint">development</code> section of your <code class="prettyprint">scout_apm.yml</code> config file or start your local Rails server with:
-<code class="prettyprint">SCOUT_DEV_TRACE=true rails server</code>.</li>
-</ol>
-
 <table class="help install">
   <tbody>
     <tr>
@@ -1030,6 +1024,15 @@ tail -n1000 log/production.log | grep "Processing"
       <td><span class="step">2</span></td>
       <td><p style="line-height: 170%">Add <code>dev_trace: true</code> to the <code>development</code> section of your <code>scout_apm.yml</code> config file or start your local Rails server with:
 <code>SCOUT_DEV_TRACE=true rails server</code>.</p></td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">3</span>
+      </td>
+      <td>
+        <p>Refresh your browser window and look for the speed badge.
+        </p>
+      </td>
     </tr>
   </tbody>
 </table>
@@ -1213,203 +1216,6 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="talk-to-us-about-your-monitoring-stack">Talk to us about your monitoring stack</h3>
 
 <p>Don&rsquo;t hesitate to <a href="mailto:support@scoutapp.com">email us</a> if you need to talk through your monitoring stack. Monitoring is something we know and love.</p>
-
-          <h1 id="java-applications">Java Applications</h1>
-
-<h2 id="supported-frameworks">Supported Frameworks</h2>
-
-<p>Scout APM has preliminary Java support for the following frameworks:</p>
-
-<ul>
-<li>Spring MVC</li>
-<li>Struts</li>
-<li>Hibernate</li>
-<li>JSF</li>
-<li>JSP</li>
-<li>Servlet API</li>
-<li><em>HTTP Clients:</em> Apache HTTP Client, OkHttp, Ning</li>
-<li><em>Logging:</em> Log4J, Commons Logging, Logback</li>
-</ul>
-
-<h2 id="downloading-the-jar">Downloading the JAR</h2>
-
-<p>The most recent Scout Java APM release is <a href="https://www.dropbox.com/s/bzmvmq2ck8jtzhj/scout-apm.jar?dl=1">available for download here</a> (direct download link, ~10MB).</p>
-<pre class="highlight plaintext"><code>wget https://www.dropbox.com/s/bzmvmq2ck8jtzhj/scout-apm.jar?dl=1 -Oscout-apm.jar
-</code></pre>
-
-<h2 id="retrieving-the-current-version-of-the-agent">Retrieving the current version of the agent</h2>
-
-<p>With the following command, you retrieve the current version of the agent.</p>
-<pre class="highlight plaintext"><code>java -jar scout-apm.jar
-</code></pre>
-
-<p>For example:</p>
-<pre class="highlight plaintext"><code>Scout Agent version 0.3.0
-See http://help.apm.scoutapp.com/#java-applications for more information
-</code></pre>
-
-<h2 id="adding-the-jar-to-your-application">Adding the JAR to your Application</h2>
-
-<p>Installation depends on your app server:</p>
-
-<h3 id="tomcat">Tomcat</h3>
-
-<p>Add the following to your <code class="prettyprint">setenv.sh</code> file (and ensure <code class="prettyprint">setenv.sh</code> is included from <code class="prettyprint">catalina.sh</code>):</p>
-<pre class="highlight plaintext"><code>export JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
-</code></pre>
-
-<ul>
-<li>Of course, you can include the <code class="prettyprint">export JAVA_OPTS</code> directly in your <code class="prettyprint">catalina.sh</code>, but it&rsquo;s recommended to keep your additions in a separate file.<br></li>
-<li>If you&rsquo;re using Windows, edit the settings in the Service Helper instead.</li>
-</ul>
-
-<h3 id="karaf">Karaf</h3>
-
-<p>Karaf also has a <code class="prettyprint">setenv.[sh|bat]</code> file &ndash; see Tomcat instructions above.</p>
-
-<p>If you run Karaf as a service, youll need to alter <code class="prettyprint">karaf-wrapper.conf</code> and add lines like:</p>
-<pre class="highlight plaintext"><code># Scout app monitoring
-wrapper.java.additional.16=-DAPP_ENV=staging
-wrapper.java.additional.17=-javaagent:d:/path/to/scout-apm.jar
-# (16 and 17 are "the next free" numbers in the config file)
-</code></pre>
-
-<h3 id="embedded-containers">Embedded Containers</h3>
-
-<p>For environments using embedded containers, just add the following <code class="prettyprint">-javaagent:</code> argument to your <code class="prettyprint">java</code> invocation:</p>
-<pre class="highlight plaintext"><code>java -javaagent:/full/path/to/scout-apm/scout-apm.jar ... -jar &lt;app-name&gt;.jar
-</code></pre>
-
-<h3 id="jboss">JBoss</h3>
-
-<h4 id="jboss-domain-mode">JBoss Domain mode</h4>
-
-<p>For JBoss EAP 6.x and 7.0.x AS and above. The JVM properties for each server group are found in <code class="prettyprint">domain/configuration/domain.xml</code>.</p>
-
-<p>The JVM properties for each server group needs to be modified to include the <code class="prettyprint">-javagent</code> argument.</p>
-<pre class="highlight xml"><code><span class="nt">&lt;servers&gt;</span>
-  <span class="nt">&lt;server</span> <span class="na">name=</span><span class="s">"server_01"</span> <span class="na">group=</span><span class="s">"group_01"</span> <span class="na">auto-start=</span><span class="s">"true"</span><span class="nt">&gt;</span>
-    <span class="nt">&lt;jvm</span> <span class="na">name=</span><span class="s">"default"</span> <span class="na">debug-enabled=</span><span class="s">"false"</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;jvm-options&gt;</span>
-        <span class="c">&lt;!-- add the following option value --&gt;</span>
-        <span class="nt">&lt;option</span> <span class="na">value=</span><span class="s">"-javaagent:/full/path/to/scout-apm/scout-apm.jar"</span> <span class="nt">/&gt;</span>
-      <span class="nt">&lt;/jvm-options&gt;</span>
-    <span class="nt">&lt;/jvm&gt;</span>
-  <span class="nt">&lt;/server&gt;</span>
-  ...
-</code></pre>
-
-<h4 id="standalone-mode">Standalone mode</h4>
-
-<p>For JBoss 6.x EAP and 7.0.x AS on OSX or Unix, at the bottom of <code class="prettyprint">bin/standalone.conf</code>, add this</p>
-<pre class="highlight plaintext"><code>JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
-</code></pre>
-
-<p>For JBoss 6.x EAP and 7.0.x AS on Windows, at the bottom of <code class="prettyprint">bin/standalone.bat</code>, add this</p>
-<pre class="highlight plaintext"><code>set JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
-</code></pre>
-
-<p>For JBoss 6.x and below on OSX or Unix, at the bottom of <code class="prettyprint">bin/run.conf</code>, add this:</p>
-<pre class="highlight plaintext"><code>JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
-</code></pre>
-
-<p>For JBoss 6.x and below on Windows, at the bottom of <code class="prettyprint">bin/run.bat</code>, add this</p>
-<pre class="highlight plaintext"><code>set JAVA_OPTS="$JAVA_OPTS -javaagent:/full/path/to/scout-apm/scout-apm.jar"
-</code></pre>
-
-<h3 id="configuration">Configuration</h3>
-
-<p>The Scout Java agent looks for a <code class="prettyprint">scout_apm.yml</code> configuration file in the same directory as <code class="prettyprint">scout-apm.jar</code>.</p>
-<pre class="highlight plaintext"><code>/path/to/scout/scout-apm.jar
-/path/to/scout/scout_apm.yml
-</code></pre>
-
-<p>Download the <code class="prettyprint">scout_apm.yml</code> configuration file from within your account at https://apm.scoutapp.com. It includes your unique account key.</p>
-
-<h3 id="environments">Environments</h3>
-
-<p>The configuration file supports multiple environments. By default, the agent reads the <code class="prettyprint">production</code> environment configuration.</p>
-
-<p><strong>You can usually just leave the configuration file as-is until you need some environment-specific setting.</strong></p>
-
-<p>If you&rsquo;re deploying Scout APM for the first time, we recommend starting on a staging environment. To instruct the agent to use the <code class="prettyprint">staging</code> configuration, either:</p>
-
-<ul>
-<li>(A) Set an environment variable on your server: <code class="prettyprint">export APP_ENV=staging</code></li>
-<li>(B) OR use a system property (<code class="prettyprint">-DAPP_ENV=staging</code>) when executing the Java call or JAVA_OPTS: <code class="prettyprint">java -jar -DAPP_ENV=staging -javaagent:/full/path/to/scout-apm/scout-apm.jar</code><br></li>
-</ul>
-
-<h2 id="java-agent-change-log">Java Agent Change Log</h2>
-
-<h4 id="0-5-1">0.5.1</h4>
-
-<ul>
-<li>Minor bugs fixed</li>
-</ul>
-
-<h4 id="0-5-0">0.5.0</h4>
-
-<ul>
-<li>Support for the Playframework 1.x</li>
-</ul>
-
-<h4 id="0-4-0">0.4.0</h4>
-
-<ul>
-<li>Add Thread statistics to Context in slow streams</li>
-<li>Support for Apache HttpAsyncClient</li>
-</ul>
-
-<h4 id="0-3-0">0.3.0</h4>
-
-<ul>
-<li>Support for Spring RestTemplate HTTP client</li>
-</ul>
-
-<h4 id="0-2-1">0.2.1</h4>
-
-<ul>
-<li>Support for Spring @RestController</li>
-<li>Disable static resources in endpoints</li>
-</ul>
-
-<h4 id="0-2-0">0.2.0</h4>
-
-<ul>
-<li>Support for JAX-RS @Suspended asynchronous tracing</li>
-<li>Support for the Grails framework</li>
-</ul>
-
-<h4 id="0-1-2">0.1.2</h4>
-
-<ul>
-<li>Better handling slow transactions</li>
-<li>Add node name</li>
-</ul>
-
-<h4 id="0-1-1">0.1.1</h4>
-
-<ul>
-<li>Better handling auxiliary threads</li>
-<li>Better endpoint naming in Errors</li>
-</ul>
-
-<h4 id="0-1-0">0.1.0</h4>
-
-<ul>
-<li>Add JAX-RS plugin</li>
-</ul>
-
-<h4 id="0-0-5">0.0.5</h4>
-
-<ul>
-<li>Jedis (sendCommand) support</li>
-<li>Temporary remove background jobs from aggregation (wait for endpoint feature)</li>
-</ul>
-
-<h2 id="questions-getting-help">Questions / Getting Help</h2>
-
-<p>Java Application monitoring is in beta. <a href="mailto:support@scoutapp.com">Email us</a> with any questions about your framework and environment, or for help getting started.</p>
 
       </div>
       <div class="dark-box">
