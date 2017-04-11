@@ -613,6 +613,71 @@ bundle install
 <pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
 </code></pre>
 
+<h2 id="adding-custom-instrumentation">Adding Custom Instrumentation</h2>
+
+<p>Traces that allocate significant amount of time to <code class="prettyprint">Controller</code> or <code class="prettyprint">Job</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
+
+<h3 id="limits">Limits</h3>
+
+<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can import the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">self.class.instrument(&quot;user_#{user.id}&quot;, &quot;generate&quot;) { ... })</code> as this can quickly exceed our rate limits.</p>
+
+<h3 id="instrumenting-method-calls">Instrumenting method calls</h3>
+
+<p>To instrument a method call, add the following to the class containing the method:</p>
+<pre class="highlight ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
+    <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Tracer</span>
+
+    <span class="k">def</span> <span class="nf">export_activity</span>
+      <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+    <span class="nf">end</span>
+    <span class="n">instrument_method</span> <span class="ss">:export_activity</span>
+  <span class="k">end</span>
+</code></pre>
+
+<p>The call to <code class="prettyprint">instrument_method</code> should be after the method definition.</p>
+
+<h4 id="naming-methods-instrumented-via-instrument_method">Naming methods instrumented via <code class="prettyprint">instrument_method</code></h4>
+
+<p>In the example above, the metric will appear in traces as <code class="prettyprint">User#export_activity</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">Custom</code> type. </p>
+
+<p><strong>To modify the type</strong>:</p>
+<pre class="highlight ruby"><code><span class="n">instrument_method</span> <span class="ss">:export_activity</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Exporting'</span>
+</code></pre>
+
+<p>A new <code class="prettyprint">Exporting</code> metric will now appear on charts. The trace item will be displayed as <code class="prettyprint">Exporting/User/export_activity</code>. </p>
+
+<p><strong>To modify the name</strong>:</p>
+<pre class="highlight ruby"><code><span class="n">instrument_method</span> <span class="ss">:export_activity</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Exporting'</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'user_activity'</span>
+</code></pre>
+
+<p>The trace item will now be displayed as <code class="prettyprint">Exporting/user_activity</code>.</p>
+
+<h3 id="instrumenting-blocks-of-code">Instrumenting blocks of code</h3>
+
+<p>To instrument a method call, add the following:</p>
+<pre class="highlight ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
+    <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Tracer</span>
+
+    <span class="k">def</span> <span class="nf">generate_profile_pic</span>
+      <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">instrument</span><span class="p">(</span><span class="s2">"User"</span><span class="p">,</span> <span class="s2">"generate_profile_pic"</span><span class="p">)</span> <span class="k">do</span>
+        <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
+      <span class="nf">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre>
+
+<h4 id="naming-methods-instrumented-via-instrument-type-name">Naming methods instrumented via <code class="prettyprint">instrument(type, name)</code></h4>
+
+<p>In the example above, the metric appear in traces as <code class="prettyprint">User/generate_profile_pic</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">User</code> type. To modify the type or simply, simply change the <code class="prettyprint">instrument</code> corresponding method arguments. </p>
+
+<h3 id="testing-instrumentation">Testing instrumentation</h3>
+
+<p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#devtrace">DevTrace</a> and ensuring the new metric appears as desired. </p>
+
+<p>After restarting your dev server with DevTrace enabled, refresh the browser page and view the trace output. The new metric should appear in the trace:</p>
+
+<p><img alt="custom devtrace" src="images/custom_devtrace.png" /></p>
+
 <h2 id="environments">Environments</h2>
 
 <p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments. Configure a unique app name for each environment as Scout aggregrates data by the app name.</p>
