@@ -619,7 +619,7 @@ bundle install
 
 <h3 id="limits">Limits</h3>
 
-<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can import the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">self.class.instrument(&quot;user_#{user.id}&quot;, &quot;generate&quot;) { ... })</code> as this can quickly exceed our rate limits.</p>
+<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">self.class.instrument(&quot;user_#{user.id}&quot;, &quot;generate&quot;) { ... })</code> as this can quickly exceed our rate limits.</p>
 
 <h3 id="instrumenting-method-calls">Instrumenting method calls</h3>
 
