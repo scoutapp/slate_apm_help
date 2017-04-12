@@ -9,6 +9,7 @@
     <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="stylesheets/screen_overrides.css" rel="stylesheet" type="text/css" media="screen" />
     <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
+    <link href="stylesheets/scout.css" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
       <script src="javascripts/all.js" type="text/javascript"></script>
 
@@ -59,25 +60,23 @@
 
 <p>Here&rsquo;s an overview of the key functionality in our application monitoring service:</p>
 
-<h3 id="the-agent">The Agent</h3>
+<h3 id="agents">Agents</h3>
 
-<p>We currently monitor Ruby on Rails apps, with beta support for Java (<a href="#java-applications">see java instructions here</a>). Support for other languages and frameworks is under development. </p>
+<p>We support Ruby on Rails apps and have beta support for Elixir.</p>
 
 <p>Our agent is designed to run in production environments and has low overhead. Every minute, the agent transmits metrics to our service over SSL. </p>
 
-<p>There&rsquo;s nothing to install on your servers: just include our Ruby Gem within your Rails app. You&rsquo;ll quickly see actionable metrics from the <a href="#instrumented-libraries">common libraries we instrument</a>.</p>
+<p>There&rsquo;s nothing to install on your servers.</p>
 
 <h3 id="user-interface">User Interface</h3>
 
 <p>A complete overview of the Scout UX is available in the <a href="#features">features</a> area of this help site.</p>
 
-          <h1 id="configuration">Configuration</h1>
+          <h1 id="ruby-agent">Ruby Agent</h1>
 
 <h2 id="requirements">Requirements</h2>
 
-<h3 id="monitoring">Monitoring</h3>
-
-<p>Scout currently supports Ruby on Rails 2.2+ and Ruby 1.8.7+ and the following app servers/background job frameworks:</p>
+<p>Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+ and the following app servers/background job frameworks:</p>
 
 <ul>
 <li>Phusion Passenger</li>
@@ -90,10 +89,6 @@
 </ul>
 
 <p><a href="#memory-bloat-detection">Memory Bloat detection</a> and <a href="#scoutprof">ScoutProf</a> require Ruby 2.1+.</p>
-
-<h3 id="git-integration-optional">Git Integration - Optional</h3>
-
-<p>Viewing your application code within Scout requires that your source code is hosted at Github.com.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -129,6 +124,148 @@ bundle install
     </tbody>
 </table>
 
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="no-data">No Data</h3>
+
+<p>Not seeing any data?</p>
+
+<table class="help">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td>
+        <p>Is there a <code>log/scout_apm.log</code> file?</p>
+        <p><strong style="color:gray">Yes:</strong></p>
+        <p>Examine the log file for error messages:</p>
+<pre>
+tail -n1000 log/scout_apm.log | grep "Starting monitoring" -A20
+</pre>
+        <p>
+          See something noteworthy? Proceed to <a href="#step8">to the last step</a>. Otherwise, continue to step 2.
+        </p>
+        <p><strong style="color:gray">No:</strong></p>
+        <p>
+          The gem was never initialized by the application.</p>
+        <p>
+          Ensure that the <code>scout_apm</code> gem is not restricted to a specific <code>group</code> in your <code>Gemfile</code>. For example, the configuration below would prevent <code>scout_apm</code> from loading in a <code>staging</code> environment:
+        </p>
+<pre>
+group :production do
+gem 'unicorn'
+gem 'scout_apm'
+end
+</pre>
+        <p><a href="#step8">Jump to the last step</a> if <code>scout_apm</code> is correctly configured in your <code>Gemfile</code>.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td>
+        <p>
+          Using Unicorn?
+        </p>
+        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="http://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">3</span>
+      </td>
+      <td>
+        <p>Was the <code><strong>scout_apm</strong></code> gem deployed with your application?</p>
+<pre>
+bundle list scout_apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">4</span>
+      </td>
+      <td>
+        <p>Did you download the config file, placing it in <code><strong>config/scout_apm.yml</strong></code>?</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">5</span>
+      </td>
+      <td>
+        <p>
+          Did you restart the app?
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">6</span>
+      </td>
+      <td>
+        <a name="step6"></a>
+        <p>Are you sure the application has processed any requests?</p>
+<pre>
+tail -n1000 log/production.log | grep "Processing"
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">7</span>
+      </td>
+      <td>
+        <p>Are your controllers inheriting from <code>ActionController::Metal</code> instead of <code>ActionController::Base</code>?</p>
+        <p><a href="#actioncontroller-metal">Add instrumentation</a> to your <code>ActionController::Metal</code> controllers.</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <a name="step8"></a>
+        <span class="step">8</span>
+      </td>
+      <td>
+        <p>
+          Oops! Looks like messed up. <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
+        </p>
+        <ul>
+          <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
+          </li>
+          <li>Your application&rsquo;s gems <code>bundle list</code>.
+          </li>
+          <li>
+            Rails version
+          </li>
+          <li>
+            Application Server (examples: Passenger, Thin, etc.)
+          </li>
+          <li>
+            Web Server (examples: Apache, Nginx, etc.)
+          </li>
+        </ul>
+        <p>
+          We typically respond within a couple of hours during the business day.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="missing-memory-metrics">Missing memory metrics</h3>
+
+<p>Memory allocation metrics require the following:</p>
+
+<ul>
+<li>Ruby version 2.1+</li>
+<li><code class="prettyprint">scout_apm</code> version 2.0+</li>
+</ul>
+
+<p>If the above requirements are not met, Scout continues to function but does not report allocation-related metrics.</p>
+
 <h2 id="updating-to-the-newest-version">Updating to the Newest Version</h2>
 
 <p>The latest version of <code class="prettyprint">scout_apm</code> is <code><span id="latest-gem-version">SEE CHANGELOG</span></code>.</p>
@@ -158,7 +295,7 @@ bundle install
 
 <h2 id="configuration-options">Configuration Options</h2>
 
-<p>Scout APM can be configured via the <code class="prettyprint">config/scout_apm.yml</code> Yaml file and/or environment variables. A config file with your organization key is available for download as part of the install instructions.</p>
+<p>The Ruby agent can be configured via the <code class="prettyprint">config/scout_apm.yml</code> Yaml file and/or environment variables. A config file with your organization key is available for download as part of the install instructions.</p>
 
 <h3 id="erb-evaluation">ERB evaluation</h3>
 
@@ -744,160 +881,167 @@ bundle install
 
 <p>Aft you&rsquo;ve disabled a node in your configuration file and restarted your app server, the node show up as inactive in the UI after 10 minutes.</p>
 
-          <h1 id="troubleshooting">Troubleshooting</h1>
+          <h1 id="elixir-agent">Elixir Agent</h1>
 
-<h2 id="no-data">No Data</h2>
+<p>Elixir support is in BETA.</p>
 
-<p>Not seeing any data?</p>
+<h2 id="requirements">Requirements</h2>
 
-<table class="help">
-    <tbody><tr>
-      <td>
-        <span class="step">1</span>
-      </td>
-      <td>
-        <p>Is there a <code>log/scout_apm.log</code> file?</p>
-        <p><strong style="color:gray">Yes:</strong></p>
-        <p>Examine the log file for error messages:</p>
-<pre>
-tail -n1000 log/scout_apm.log | grep "Starting monitoring" -A20
-</pre>
-        <p>
-          See something noteworthy? Proceed to <a href="#step8">to the last step</a>. Otherwise, continue to step 2.
-        </p>
-        <p><strong style="color:gray">No:</strong></p>
-        <p>
-          The gem was never initialized by the application.</p>
-        <p>
-          Ensure that the <code>scout_apm</code> gem is not restricted to a specific <code>group</code> in your <code>Gemfile</code>. For example, the configuration below would prevent <code>scout_apm</code> from loading in a <code>staging</code> environment:
-        </p>
-<pre>
-group :production do
-  gem 'unicorn'
-  gem 'scout_apm'
-end
-</pre>
-        <p><a href="#step8">Jump to the last step</a> if <code>scout_apm</code> is correctly configured in your <code>Gemfile</code>.</p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">2</span>
-      </td>
-      <td>
-        <p>
-          Using Unicorn?
-        </p>
-        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="http://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">3</span>
-      </td>
-      <td>
-        <p>Was the <code><strong>scout_apm</strong></code> gem deployed with your application?
-        </p>
-<pre>
-bundle list scout_apm
-</pre>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">4</span>
-      </td>
-      <td>
-        <p>Did you download the config file, placing it in <code><strong>config/scout_apm.yml</strong></code>?
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">5</span>
-      </td>
-      <td>
-        <p>
-          Did you restart the app?
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">6</span>
-      </td>
-      <td>
-        <a name="step6"></a>
-        <p>Are you sure the application has processed any requests?</p>
-<pre>
-tail -n1000 log/production.log | grep "Processing"
-</pre>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">7</span>
-      </td>
-      <td>
-        <p>Are your controllers inheriting from <code>ActionController::Metal</code> instead of <code>ActionController::Base</code>?</p>
-        <p><a href="#actioncontroller-metal">Add instrumentation</a> to your <code>ActionController::Metal</code> controllers.</p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <a name="step8"></a>
-        <span class="step">8</span>
-      </td>
-      <td>
-        <p>
-          Oops! Looks like messed up. <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
-        </p>
-        <ul>
-          <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
-          </li>
-          <li>Your application&rsquo;s gems <code>bundle list</code>.
-          </li>
-          <li>
-            Rails version
-          </li>
-          <li>
-            Application Server (examples: Passenger, Thin, etc.)
-          </li>
-          <li>
-            Web Server (examples: Apache, Nginx, etc.)
-          </li>
-        </ul>
-        <p>
-          We typically respond within a couple of hours during the business day.
-        </p>
-      </td>
-    </tr>
-  </tbody></table>
+<p>Our Elixir agent supports Phoenix 1.2.0+ and Elixir 1.3+.</p>
 
-<h2 id="missing-memory-metrics">Missing memory metrics</h2>
+<h2 id="installation">Installation</h2>
 
-<p>Memory allocation metrics require the following:</p>
+<div class="install">
+
+ <p class="instruct">
+      <span class="step">A</span>Add the <code>scout_apm</code> dependency.
+    </p>
+    <p class="smaller">Your <code>mix.exs</code> file:
+    </p>
+    <pre class="terminal"># mix.exs
+
+ def application do
+   [mod: {YourApp, []},
+    applications: [..., <span>:scout_apm</span>]]
+ end
+
+ def deps do
+   [{:phoenix, "~> 1.2.0"},
+    ...
+    <span>{:scout_apm, "~> 0.0"}</span>]
+ end</pre>
+    <p class="smaller">
+      Shell:
+    </p>
+    <div class="terminal">
+      mix deps.get
+    </div>
+    <p class="instruct">
+      <span class="step">B</span><span class="glyphicon glyphicon-download"></span> Download your customized config file, placing it at <code>config/scout_apm.exs</code>.
+    </p>
+    <p class="smaller">Replace <code>"YourApp"</code> with the app name you&rsquo;d like to appear within Scout.
+    </p>
+    <p class="instruct">
+      <span class="step">C</span>Integrate into your Phoenix app.
+    </p>
+    <p class="smaller"><code>config/config.exs</code>:
+    </p>
+    <pre class="terminal">
+# config/config.exs
+import_config "scout_apm.exs"
+
+config :your_app, YourApp.Repo,
+  loggers: [{Ecto.LogEntry, :log, []}, 
+            <span>{ScoutApm.Instruments.EctoLogger, :log, []}</span>]</pre>
+    <p class="smaller"><code>web/web.ex</code>:
+    </p>
+    <pre class="terminal"># web/web.ex
+defmodule HeroReview.Web do
+  def controller do
+    quote do
+      use Phoenix.Controller
+      <span>use ScoutApm.Instrumentation</span>
+      <span># alias YourApp.Repo</span>
+      <span>alias YourApp.Repo.ScoutApm, as: Repo</span>
+      ...</pre>
+    <p class="smaller"><code>lib/your_app/repo.ex</code>:
+    </p>
+    <pre class="terminal"># lib/your_app/repo.ex
+defmodule YourApp.Repo do
+  use Ecto.Repo, otp_app: :your_app
+  <span>use ScoutApm.Instruments.Ecto</span></pre>
+    <p class="instruct">
+      <span class="step">D</span>Restart your app.
+      <div class="terminal">
+        mix phoenix.server
+      </div>
+    </p>
+
+</div>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>Not seeing data? <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:</p>
 
 <ul>
-<li>Ruby version 2.1+</li>
-<li><code class="prettyprint">scout_apm</code> version 2.0+</li>
+<li>A recent sample of your log file (the more, the better).</li>
+<li>Your application&rsquo;s <code class="prettyprint">mix.lock</code> file.</li>
 </ul>
 
-<p>If the above requirements are not met, Scout continues to function but does not report allocation-related metrics.</p>
+<p>We typically respond within a couple of hours during the business day.</p>
 
-<h2 id="service-status">Service Status</h2>
+<h2 id="configuration">Configuration</h2>
 
-<p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
+<p>The Elixir agent can be configured via the <code class="prettyprint">config/scout_apm.exs</code> file. A config file with your organization key is available for download as part of the install instructions. A application name and key is required:</p>
+<pre class="highlight plaintext"><code>config :scout_apm,
+  name: "Your App", # The app name that will appear within the Scout UI
+  key: "YOUR SCOUT KEY"
+</code></pre>
 
-<ul>
-<li><a href="http://status.scoutapp.com">Check out status site</a>. You can subscribe to service incidents. </li>
-<li><a href="mailto:support@scoutapp.com">Email us</a></li>
-</ul>
+<h3 id="configuration-reference">Configuration Reference</h3>
 
-<h2 id="contacting-support">Contacting Support</h2>
+<p>The following configuration settings are available:</p>
 
-<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
+<table class="lookup">
+    <thead>
+      <tr>
+        <th>
+          Setting&nbsp;Name
+        </th>
+        <th>
+          Description
+        </th>
+        <th>
+          Default
+        </th>
+        <th>
+          Required
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>
+          name
+        </th>
+        <td>
+          Name of the application (ex: &lsquo;Photos App&rsquo;).
+        </td>
+        <td>
+        
+        </td>
+        <td>
+          Yes
+        </td>
+      </tr>
+      <tr>
+        <th>
+          key
+        </th>
+        <td>
+          The organization API key.
+        </td>
+        <td></td>
+        <td>
+          Yes
+        </td>
+      </tr>
+      <tr>
+        <th>
+          host
+        </th>
+        <td>
+          The protocol + domain where the agent should report. 
+        </td>
+        <td>
+          <code>https://apm.scoutapp.com</code>
+        </td>
+        <td>
+          No
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
           <h1 id="features">Features</h1>
 
@@ -1106,7 +1250,20 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Scout stores 30 days of metrics and seven days of transaction traces.</p>
 
-          <h1 id="reference">Reference</h1>
+          <h1 id="service-status">Service Status</h1>
+
+<p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
+
+<ul>
+<li><a href="http://status.scoutapp.com">Check out status site</a>. You can subscribe to service incidents. </li>
+<li><a href="mailto:support@scoutapp.com">Email us</a></li>
+</ul>
+
+<h1 id="contacting-support">Contacting Support</h1>
+
+<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
+
+<h1 id="reference">Reference</h1>
 
 <h2 id="how-we-collect-metrics">How we collect metrics</h2>
 
