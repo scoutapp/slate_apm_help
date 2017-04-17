@@ -1148,6 +1148,34 @@ defmodule HeroReview.Web do
 
 <p>For perspective, we display how this trace&rsquo;s allocations compare to the norm.</p>
 
+<h2 id="alerting">Alerting</h2>
+
+<p><strong>Alerting is a BETA feature.</strong></p>
+
+<p><img alt="alerts_chart" src="images/alerts_chart.png" /></p>
+
+<p>Alerting keeps your team updated if your app&rsquo;s performance degrades. Alerts can be configured on the app as a whole and on individual endpoints. Metrics include:</p>
+
+<ul>
+<li>mean response time</li>
+<li>95th percentile response time</li>
+<li>Apdex</li>
+<li>error rate</li>
+<li>throughput</li>
+</ul>
+
+<h3 id="alert-conditions">Alert conditions</h3>
+
+<p>Configure alert conditions via the &ldquo;Alerts&rdquo; pill in the UI:</p>
+
+<p><img alt="alert_conditions" src="images/alert_conditions.png" /></p>
+
+<h3 id="notification-groups">Notification groups</h3>
+
+<p>Alerts are sent to a notification group, which is composed of notification channels. You can configure these under your org&rsquo;s settings menu:</p>
+
+<p><img alt="alert notification groups" src="images/alert_notification_groups.png" /></p>
+
 <h2 id="deploy-tracking">Deploy Tracking</h2>
 
 <p><img alt="deploy tracking" src="images/deploy_tracking.png" /></p>
@@ -1424,7 +1452,6 @@ defmodule HeroReview.Web do
 <li>Great UI</li>
 <li>Context tracking (easy to see how an exception is impacting which users). We implemented a similar API for our slow request tracking.</li>
 </ul></li>
-<li><strong>Alerting</strong> - while on our roadmap, we don&rsquo;t yet provide alerting within application monitoring. However, <a href="https://scoutapp.com/info/server_monitoring">Scout Server Monitoring</a> has robust alerting functionality. With the <a href="https://github.com/scoutapp/scout_statsd_rack">Scout StatsD Rack Gem</a> you can easily get alerted on jumps in error rates and response times.</li>
 <li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
 </ul>
 
