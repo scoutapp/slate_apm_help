@@ -680,7 +680,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
 
-<h2 id="adding-custom-context">Adding Custom Context</h2>
+<h2 id="custom-context">Custom Context</h2>
 
 <p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
 
@@ -752,7 +752,7 @@ tail -n1000 log/production.log | grep "Processing"
 <pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
 </code></pre>
 
-<h2 id="adding-custom-instrumentation">Adding Custom Instrumentation</h2>
+<h2 id="custom-instrumentation">Custom Instrumentation</h2>
 
 <p>Traces that allocate significant amount of time to <code class="prettyprint">Controller</code> or <code class="prettyprint">Job</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
 
@@ -1064,6 +1064,84 @@ defmodule HeroReview.Web do
 
 
 </div>
+
+<h2 id="instrumented-libraries">Instrumented Libraries</h2>
+
+<p>By default, the following libraries are instrumented:</p>
+
+<ul>
+<li>Phoenix controllers, views, and templates</li>
+<li>Ecto 2.0</li>
+</ul>
+
+<h2 id="custom-instrumentation">Custom Instrumentation</h2>
+
+<p>Traces that allocate significant amount of time to <code class="prettyprint">Controller</code> or <code class="prettyprint">Job</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
+
+<h3 id="limits">Limits</h3>
+
+<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">instrument(&quot;user_#{user.id}&quot;, &quot;generate&quot;, fn -&gt; do_work() end)</code> as this can quickly exceed our rate limits.</p>
+
+<h3 id="instrumenting-blocks-of-code">Instrumenting blocks of code</h3>
+
+<p>Use <code class="prettyprint">ScoutApm.Tracing.instrument</code> to track the execution time of a block of code. Here&rsquo;s an example:</p>
+<pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">User</span> <span class="k">do</span>
+  <span class="kn">require</span> <span class="no">HTTPoison</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+
+  <span class="k">def</span> <span class="n">github_avatar</span><span class="p">(</span><span class="n">user</span> <span class="p">\\</span> <span class="p">%{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">itsderek23"</span><span class="p">})</span> <span class="k">do</span>
+    <span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+      <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sd">"</span><span class="s2">https://github.com/</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.png"</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre>
+
+<p>In the example above, &ldquo;HTTP&rdquo; will appear on timeseries charts and &ldquo;HTTP/GitHub_Avatar&rdquo; will appear in traces.</p>
+
+<h4 id="adding-a-description">Adding a description</h4>
+
+<p>Call <code class="prettyprint">ScoutApm.Tracing.add_desc/1</code> to add relevant information to the instrumented item. This description is then viewable in traces. An example:</p>
+<pre class="highlight elixir"><code><span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+  <span class="n">url</span> <span class="o">=</span> <span class="sd">"</span><span class="s2">https://github.com/</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.png"</span>
+  <span class="n">add_desc</span><span class="p">(</span><span class="sd">"</span><span class="s2">GET </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+<span class="k">end</span><span class="p">)</span>
+</code></pre>
+
+<p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#instrument/3" target="_blank">See the scout_apm hex docs</a> for more details on <code class="prettyprint">instrument</code>.</p>
+
+<h3 id="tracking-already-executed-time">Tracking already executed time</h3>
+
+<p>Libraries like Ecto log details on executed queries. This includes timing information. To add a trace item for this, use <code class="prettyprint">ScoutApm.Tracing.track</code>. An example:</p>
+<pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Mongo</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Repo</span>
+
+  <span class="c1"># Scout instrumentation of Mongo queries. These appear in traces as "Ecto/Read", "Ecto/Write", etc.</span>
+  <span class="k">def</span> <span class="n">log</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
+      <span class="sd">"</span><span class="s2">Ecto"</span><span class="p">,</span>
+      <span class="n">query_name</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span>
+      <span class="n">entry</span><span class="o">.</span><span class="n">query_time</span><span class="p">,</span>
+      <span class="ss">:microseconds</span>
+    <span class="p">)</span>
+    <span class="kn">super</span> <span class="n">entry</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</code></pre>
+
+<p>In the example above, the metric will appear in traces as <code class="prettyprint">Ecto/#{query_time(entry)}</code>. On timeseries charts, the time will be allocated to <code class="prettyprint">Ecto</code>.</p>
+
+<h4 id="adding-a-description">Adding a description</h4>
+
+<p>Metadata - like a raw query - can be passed to <code class="prettyprint">track</code>. Pass it via the <code class="prettyprint">desc</code> option. Example:</p>
+<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="sd">"</span><span class="s2">Ecto"</span><span class="p">,</span> <span class="n">query_name</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> <span class="n">entry</span><span class="o">.</span><span class="n">query_time</span><span class="p">,</span> <span class="ss">:microseconds</span><span class="p">,</span> <span class="ss">desc:</span> <span class="n">entry</span><span class="o">.</span><span class="n">raw_query</span><span class="p">)</span>
+</code></pre>
+
+<p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
 
           <h1 id="features">Features</h1>
 
