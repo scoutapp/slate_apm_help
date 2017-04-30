@@ -13,7 +13,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
       <script src="javascripts/all.js" type="text/javascript"></script>
 
-    <link href='https://fonts.googleapis.com/css?family=Exo:400,400italic,700,700italic,800,800italic|Signika:400,700,300' rel='stylesheet' type='text/css'> 
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
 
 
     <script>
@@ -46,13 +46,35 @@
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <h1 id="scout-apm-help-docs">Scout APM Help Docs</h1>
+        <h1 id="scout-help-docs">Scout Help Docs</h1>
 
-<p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://apm.scoutapp.com/users/sign_up">Get started with a free trial</a>.</p>
+<p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Get started - it&rsquo;s free</a>.</p>
 
 <p>Browse through the sidebar, search, or <a href="mailto:support@scoutapp.com">ask a question</a>. We&rsquo;re here to help.</p>
 
-<p><em>Looking for our server monitoring help? Goto <a href="http://help.scoutapp.com">help.scoutapp.com</a>.</em></p>
+<div id="overview_container">
+  <div>
+    <h3><a href="#ruby-agent">Ruby Agent</a></h3>
+    <p>
+      View our docs for installing, configuring, and troubleshooting the Scout Ruby agent.
+    </p>
+  </div>
+
+  <div>
+    <h3><a href="#elixir-agent">Elixir Agent</a></h3>
+    <p>
+      View our docs for installing, configuring, and troubleshooting the Scout Elixir agent.
+    </p>
+  </div>
+
+  <div>
+    <h3><a href="https://scoutapp.com/info/pricing" target="_blank">Signup - it&rsquo;s free</a></h3>
+    <p>
+      Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Signup</a> - our free plan
+      monitors apps both large and small.
+    </p>
+  </div>
+</div>
 
 <h2 id="overview">Overview</h2>
 
@@ -1144,7 +1166,12 @@ defmodule HeroReview.Web do
 <h4 id="adding-a-description">Adding a description</h4>
 
 <p>Metadata - like a raw query - can be passed to <code class="prettyprint">track</code>. Pass it via the <code class="prettyprint">desc</code> option. Example:</p>
-<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span><span class="sd">"</span><span class="s2">Ecto"</span><span class="p">,</span> <span class="n">query_name</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> <span class="n">entry</span><span class="o">.</span><span class="n">query_time</span><span class="p">,</span> <span class="ss">:microseconds</span><span class="p">,</span> <span class="ss">desc:</span> <span class="n">entry</span><span class="o">.</span><span class="n">raw_query</span><span class="p">)</span>
+<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
+  <span class="sd">"</span><span class="s2">Ecto"</span><span class="p">,</span> 
+  <span class="n">query_name</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> 
+  <span class="n">entry</span><span class="o">.</span><span class="n">query_time</span><span class="p">,</span> 
+  <span class="ss">:microseconds</span><span class="p">,</span> 
+  <span class="ss">desc:</span> <span class="n">entry</span><span class="o">.</span><span class="n">raw_query</span><span class="p">)</span>
 </code></pre>
 
 <p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
