@@ -1176,6 +1176,17 @@ defmodule HeroReview.Web do
 
 <p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
 
+<h2 id="environments">Environments</h2>
+
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout. To do so, configure a unique app name for each environment. Scout aggregrates data by the app name. </p>
+
+<p>An example:</p>
+<pre class="highlight elixir"><code><span class="c1"># config/staging.exs</span>
+
+<span class="n">config</span> <span class="ss">:scout_apm</span><span class="p">,</span>
+  <span class="ss">name:</span> <span class="sd">"</span><span class="s2">YOUR APP - Staging"</span>
+</code></pre>
+
           <h1 id="features">Features</h1>
 
 <p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a free trial</a>.</p>
