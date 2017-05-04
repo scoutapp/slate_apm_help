@@ -1158,10 +1158,10 @@ defmodule HeroReview.Web do
 
 <h4 id="adding-a-description">Adding a description</h4>
 
-<p>Call <code class="prettyprint">ScoutApm.Tracing.add_desc/1</code> to add relevant information to the instrumented item. This description is then viewable in traces. An example:</p>
+<p>Call <code class="prettyprint">ScoutApm.Tracing.update_desc/1</code> to add relevant information to the instrumented item. This description is then viewable in traces. An example:</p>
 <pre class="highlight elixir"><code><span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
   <span class="n">url</span> <span class="o">=</span> <span class="sd">"</span><span class="s2">https://github.com/</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.png"</span>
-  <span class="n">add_desc</span><span class="p">(</span><span class="sd">"</span><span class="s2">GET </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+  <span class="n">update_desc</span><span class="p">(</span><span class="sd">"</span><span class="s2">GET </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
   <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="k">end</span><span class="p">)</span>
 </code></pre>
@@ -1203,6 +1203,59 @@ defmodule HeroReview.Web do
 </code></pre>
 
 <p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
+
+<h2 id="custom-context">Custom Context</h2>
+
+<p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
+
+<ul>
+<li>How many users are impacted by slow requests?</li>
+<li>How many trial customers are impacted by slow requests?</li>
+<li>How much of an impact are slow requests having on our highest paying customers?</li>
+</ul>
+
+<p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app. There are two types of context:</p>
+
+<h3 id="user-context">User Context</h3>
+
+<p>For context used to identify users (ex: email, name):</p>
+<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</code></pre>
+
+<p>Examples:</p>
+<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="ss">:email</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+<span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</code></pre>
+
+<h3 id="general-context">General Context</h3>
+<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</code></pre>
+
+<p>Examples:</p>
+<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:account</span><span class="p">,</span> <span class="n">account</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:monthly_spend</span><span class="p">,</span> <span class="n">account</span><span class="o">.</span><span class="n">monthly_spend</span><span class="p">)</span>
+</code></pre>
+
+<h3 id="default-context">Default Context</h3>
+
+<p>Scout reports the Request URI and the user&rsquo;s remote IP Address by default.</p>
+
+<h3 id="context-value-types">Context Value Types</h3>
+
+<p>Context values can be any of the following types:</p>
+
+<ul>
+<li>Printable strings (<code class="prettyprint">String/printable?/1</code> returns <code class="prettyprint">true</code>)</li>
+<li>Boolean</li>
+<li>Number</li>
+</ul>
+
+<h3 id="context-key-restrictions">Context Key Restrictions</h3>
+
+<p>The context <code class="prettyprint">key</code> must be a printable String. Generally, an <code class="prettyprint">atom</code> is used as a key.
+Custom context keys may contain alphanumeric characters, dashes, and underscores. Spaces are not allowed.</p>
+
+<p>Attempts to add invalid context will be ignored.</p>
 
 <h2 id="environments">Environments</h2>
 
@@ -1389,7 +1442,7 @@ defmodule HeroReview.Web do
 <li>How much of an impact are slow requests having on our highest paying customers?</li>
 </ul>
 
-<p>Adding custom context is easy - <a href="#adding-custom-context">learn how</a>.</p>
+<p>Adding custom context is easy - learn how via <a href="#custom-context">Ruby</a> or <a href="#custom-context27">Elixir</a>.</p>
 
 <p>When viewing a transaction trace, click the &ldquo;Context&rdquo; section to see the context Scout has collected.</p>
 
@@ -1517,6 +1570,17 @@ defmodule HeroReview.Web do
 <li>Sanitized SQL query statements</li>
 </ul></li>
 </ul>
+
+<h3 id="hipaa-compliance">HIPAA compliance</h3>
+
+<p>While Scout itself is not HIPAA compliant, our agent can be installed safely in HIPAA compliant environments. To ensure user data is properly de-identified:</p>
+
+<ol>
+<li>Disable sending HTTP query params if these contain sensitive data via the <code class="prettyprint">uri_reporting</code> config option.</li>
+<li>Do not add custom context (like reporting the current user in the session).</li>
+</ol>
+
+<p>Email support@scoutapp.com with any questions on security compliance.</p>
 
 <h3 id="git-integration">Git Integration</h3>
 
