@@ -1601,9 +1601,10 @@ config :scout_apm,
 <p>We take the security of your code metrics extremely seriously. Keeping your data secure is fundamental to our business. Scout is nearing a decade storing critical metrics with our server monitoring product and those same fundamentals are applied here:</p>
 
 <ul>
-<li>All data transmitted by our agent to our servers is sent via SSL.</li>
+<li>All data transmitted by our agent to our servers is sent as serialized JSON over SSL.</li>
 <li>Our UI is only served under SSL.</li>
 <li>When additional data is collected for slow calls (ex: SQL queries), query parameters are sanitized before sending these to our servers.</li>
+<li>Our infrastructure resides in an SOC2 compliant datacenter.</li>
 </ul>
 
 <h3 id="information-sent-to-our-servers">Information sent to our servers</h3>
@@ -1613,13 +1614,15 @@ config :scout_apm,
 <ul>
 <li>Timing information collected from our instrumentation</li>
 <li>Gems used by your application</li>
-<li><p>Transaction traces, which include:</p>
+<li>Transaction traces, which include:
 
 <ul>
 <li>The URL, including query parameters, of the slow request. This can be modified to exclude query params via the <a href="#configuration-reference"><code>uri_reporting</code></a> configuration option.</li>
 <li>IP Address of the client initiating the request</li>
 <li>Sanitized SQL query statements</li>
 </ul></li>
+<li>Process memory and CPU usage</li>
+<li>Error counts</li>
 </ul>
 
 <h3 id="hipaa-compliance">HIPAA compliance</h3>
