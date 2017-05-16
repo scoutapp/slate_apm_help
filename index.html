@@ -954,7 +954,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>In the example above, the metric appear in traces as <code class="prettyprint">User/generate_profile_pic</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">User</code> type. To modify the type or simply, simply change the <code class="prettyprint">instrument</code> corresponding method arguments.</p>
 
-<h3 id="testing-instrumentation">Testing instrumentation</h3>
+<h3 id="ruby-testing-instrumentation">Testing instrumentation</h3>
 
 <p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#devtrace">DevTrace</a> and ensuring the new metric appears as desired.</p>
 
@@ -1407,7 +1407,7 @@ defmodule HeroReview.Web do
 </code></pre>
 <p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
 
-<h3 id="testing-instrumentation">Testing instrumentation</h3>
+<h3 id="elixir-testing-instrumentation">Testing instrumentation</h3>
 
 <p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#elixir-devtrace">DevTrace</a> and ensuring the new metric appears as desired.</p>
 
@@ -1934,5 +1934,19 @@ config :scout_apm,
     }).success(function(response){
       $("#latest-gem-version").html(response.version)
     });
+
+    /**
+ * AnchorJS v3.2.0 options and selector
+ */
+
+(function (global) {
+  'use strict';
+  console.log("anchor")
+  anchors.options.placement = 'right';
+
+  anchors.add('.content > h2, .content > h3, .content > h4');
+
+})(window);
+
   </script>
 </html>
