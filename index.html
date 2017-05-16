@@ -6,15 +6,209 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>Help Docs ~ Scout APM</title>
 
-    <link href="stylesheets/screen.css" rel="stylesheet" type="text/css" media="screen" />
-    <link href="stylesheets/screen_overrides.css" rel="stylesheet" type="text/css" media="screen" />
-    <link href="stylesheets/print.css" rel="stylesheet" type="text/css" media="print" />
-    <link href="stylesheets/scout.css" rel="stylesheet" type="text/css" />
+    <style>
+      .highlight table td { padding: 5px; }
+.highlight table pre { margin: 0; }
+.highlight .gh {
+  color: #999999;
+}
+.highlight .sr {
+  color: #f6aa11;
+}
+.highlight .go {
+  color: #888888;
+}
+.highlight .gp {
+  color: #555555;
+}
+.highlight .gs {
+}
+.highlight .gu {
+  color: #aaaaaa;
+}
+.highlight .nb {
+  color: #f6aa11;
+}
+.highlight .cm {
+  color: #75715e;
+}
+.highlight .cp {
+  color: #75715e;
+}
+.highlight .c1 {
+  color: #75715e;
+}
+.highlight .cs {
+  color: #75715e;
+}
+.highlight .c, .highlight .cd {
+  color: #75715e;
+}
+.highlight .err {
+  color: #960050;
+}
+.highlight .gr {
+  color: #960050;
+}
+.highlight .gt {
+  color: #960050;
+}
+.highlight .gd {
+  color: #49483e;
+}
+.highlight .gi {
+  color: #49483e;
+}
+.highlight .ge {
+  color: #49483e;
+}
+.highlight .kc {
+  color: #66d9ef;
+}
+.highlight .kd {
+  color: #66d9ef;
+}
+.highlight .kr {
+  color: #66d9ef;
+}
+.highlight .no {
+  color: #66d9ef;
+}
+.highlight .kt {
+  color: #66d9ef;
+}
+.highlight .mf {
+  color: #ae81ff;
+}
+.highlight .mh {
+  color: #ae81ff;
+}
+.highlight .il {
+  color: #ae81ff;
+}
+.highlight .mi {
+  color: #ae81ff;
+}
+.highlight .mo {
+  color: #ae81ff;
+}
+.highlight .m, .highlight .mb, .highlight .mx {
+  color: #ae81ff;
+}
+.highlight .sc {
+  color: #ae81ff;
+}
+.highlight .se {
+  color: #ae81ff;
+}
+.highlight .ss {
+  color: #ae81ff;
+}
+.highlight .sd {
+  color: #e6db74;
+}
+.highlight .s2 {
+  color: #e6db74;
+}
+.highlight .sb {
+  color: #e6db74;
+}
+.highlight .sh {
+  color: #e6db74;
+}
+.highlight .si {
+  color: #e6db74;
+}
+.highlight .sx {
+  color: #e6db74;
+}
+.highlight .s1 {
+  color: #e6db74;
+}
+.highlight .s {
+  color: #e6db74;
+}
+.highlight .na {
+  color: #a6e22e;
+}
+.highlight .nc {
+  color: #a6e22e;
+}
+.highlight .nd {
+  color: #a6e22e;
+}
+.highlight .ne {
+  color: #a6e22e;
+}
+.highlight .nf {
+  color: #a6e22e;
+}
+.highlight .vc {
+  color: #ffffff;
+}
+.highlight .nn {
+  color: #ffffff;
+}
+.highlight .nl {
+  color: #ffffff;
+}
+.highlight .ni {
+  color: #ffffff;
+}
+.highlight .bp {
+  color: #ffffff;
+}
+.highlight .vg {
+  color: #ffffff;
+}
+.highlight .vi {
+  color: #ffffff;
+}
+.highlight .nv {
+  color: #ffffff;
+}
+.highlight .w {
+  color: #ffffff;
+}
+.highlight {
+  color: #ffffff;
+}
+.highlight .n, .highlight .py, .highlight .nx {
+  color: #ffffff;
+}
+.highlight .ow {
+  color: #f92672;
+}
+.highlight .nt {
+  color: #f92672;
+}
+.highlight .k, .highlight .kv {
+  color: #f92672;
+}
+.highlight .kn {
+  color: #f92672;
+}
+.highlight .kp {
+  color: #f92672;
+}
+.highlight .o {
+  color: #f92672;
+}
+    </style>
+    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/screen_overrides.css" rel="stylesheet" media="screen" />
+    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
+    <link href="stylesheets/scout.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-      <script src="javascripts/all.js" type="text/javascript"></script>
+      <script src="javascripts/all.js"></script>
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
 
+      <script>
+        $(function() {
+          setupLanguages([]);
+        });
+      </script>
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -27,15 +221,15 @@
     </script>
   </head>
 
-  <body class="index">
+  <body class="index" data-languages="[]">
     <a href="#" id="nav-button">
       <span>
         NAV
-        <img src="images/navbar.png" />
+        <img src="images/navbar.png" alt="Navbar" />
       </span>
     </a>
     <div class="tocify-wrapper">
-      <a target="_blank" href="https://scoutapp.com"><img id="logo" src="images/logo.png" /></a>
+      <a href="https://scoutapp.com" target="_blank"><img src="images/logo.png" id="logo" alt="Logo" /></a>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
         </div>
@@ -96,7 +290,7 @@
 
           <h1 id="ruby-agent">Ruby Agent</h1>
 
-<h2 id="requirements">Requirements</h2>
+<h2 id="ruby-requirements">Requirements</h2>
 
 <p>Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+ and the following app servers/background job frameworks:</p>
 
@@ -112,7 +306,7 @@
 
 <p><a href="#memory-bloat-detection">Memory Bloat detection</a> and <a href="#scoutprof">ScoutProf</a> require Ruby 2.1+.</p>
 
-<h2 id="installation">Installation</h2>
+<h2 id="ruby_install">Installation</h2>
 
 <p>Tailored instructions are provided within our user interface. General instructions:</p>
 
@@ -148,7 +342,7 @@ bundle install
     </tbody>
 </table>
 
-<h2 id="troubleshooting">Troubleshooting</h2>
+<h2 id="ruby-troubleshooting">Troubleshooting</h2>
 
 <h3 id="no-data">No Data</h3>
 
@@ -178,8 +372,8 @@ tail -n1000 log/scout_apm.log | grep "Starting monitoring" -A20
         </p>
 <pre>
 group :production do
-gem 'unicorn'
-gem 'scout_apm'
+  gem 'unicorn'
+  gem 'scout_apm'
 end
 </pre>
         <p><a href="#step8">Jump to the last step</a> if <code>scout_apm</code> is correctly configured in your <code>Gemfile</code>.</p>
@@ -315,20 +509,18 @@ tail -n1000 log/production.log | grep "Processing"
   </tbody>
 </table>
 
-<p>The gem version changelog is <a href="https://github.com/scoutapp/scout_apm_ruby/blob/master/CHANGELOG.markdown">available here</a>.  </p>
-
-<h2 id="configuration-options">Configuration Options</h2>
+<p>The gem version changelog is <a href="https://github.com/scoutapp/scout_apm_ruby/blob/master/CHANGELOG.markdown">available here</a>.<br>
+<h2 id="ruby-configuration-options">Configuration Options</h2></p>
 
 <p>The Ruby agent can be configured via the <code class="prettyprint">config/scout_apm.yml</code> Yaml file and/or environment variables. A config file with your organization key is available for download as part of the install instructions.</p>
 
 <h3 id="erb-evaluation">ERB evaluation</h3>
 
 <p>ERB is evaluated when loading the config file. For example, you can set the app name based on the hostname:</p>
-<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
-  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= "ProjectPlanner.io (#{Rails.env})" %&gt;</span>
+<pre class="highlight yaml tab-yaml"><code><span class="na">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;%= "ProjectPlanner.io (#{Rails.env})" %&gt;</span>
 </code></pre>
-
-<h3 id="configuration-reference">Configuration Reference</h3>
+<h3 id="ruby-configuration-reference">Configuration Reference</h3>
 
 <p>The following configuration settings are available:</p>
 
@@ -534,14 +726,13 @@ tail -n1000 log/production.log | grep "Processing"
   </tbody>
 </table>
 
-<h3 id="environment-variables">Environment Variables</h3>
+<h3 id="ruby-env-vars">Environment Variables</h3>
 
 <p>You can also configure Scout APM via environment variables. <em>Environment variables override settings provided in</em> <code class="prettyprint">scout_apm.yml</code>.</p>
 
 <p>Environment variables have the same names as those in the Yaml config file, but are prefixed with <code class="prettyprint">SCOUT_</code>. For example, to set the organization key via environment variables:</p>
-<pre class="highlight ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
+<pre class="highlight ruby tab-ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
-
 <h2 id="deploy-tracking-config">Deploy Tracking Config</h2>
 
 <p>Scout can <a href="#deploy-tracking">track deploys</a>, making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>.</p>
@@ -555,7 +746,7 @@ tail -n1000 log/production.log | grep "Processing"
 <li>If the app resides in a Git repo, Scout parses the output of <code class="prettyprint">git rev-parse --short HEAD</code> to determine the revision SHA.</li>
 </ol>
 
-<h2 id="enabling-devtrace">Enabling DevTrace</h2>
+<h2 id="ruby-devtrace">Enabling DevTrace</h2>
 
 <p>To enable <a href="#devtrace">DevTrace</a>, our in-browser profiler:</p>
 
@@ -606,9 +797,8 @@ tail -n1000 log/production.log | grep "Processing"
 <p><strong>Protip:</strong> We suggest adding the header as early as possible in your infrastructure. This ensures you won&rsquo;t miss performance issues that appear before the header is set.</p>
 
 <p>The agent will read any of the following headers as the start time of the request:</p>
-<pre class="highlight ruby"><code><span class="sx">%w(X-Queue-Start X-Request-Start X-QUEUE-START X-REQUEST-START x-queue-start x-request-start)</span>
+<pre class="highlight ruby tab-ruby"><code><span class="sx">%w(X-Queue-Start X-Request-Start X-QUEUE-START X-REQUEST-START x-queue-start x-request-start)</span>
 </code></pre>
-
 <p>Include a value in the format <code class="prettyprint">t=MICROSECONDS_SINCE_EPOCH</code> where <code class="prettyprint">MICROSECONDS_SINCE_EPOCH</code> is an integer value of the number of microseconds that have elapsed since the beginning of Unix epoch.</p>
 
 <p><strong>Nearly any front-end HTTP server or load balancer can be configured to add this header.</strong> Some examples are below.</p>
@@ -616,43 +806,37 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="apache">Apache</h3>
 
 <p>Apache&rsquo;s <strong>mod_headers</strong> module includes a <code class="prettyprint">%t</code> variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:</p>
-<pre class="highlight plaintext"><code>RequestHeader set X-Request-Start "%t"
+<pre class="highlight  tab-plaintext"><code>RequestHeader set X-Request-Start "%t"
 </code></pre>
-
 <h3 id="haproxy">HAProxy</h3>
 
 <p>HAProxy 1.5+ supports timestamped headers and can be set in the frontend or backend section. We suggest putting this in the frontend to get a more accurate number:</p>
-<pre class="highlight plaintext"><code>http-request set-header X-Request-Start t=%Ts
+<pre class="highlight  tab-plaintext"><code>http-request set-header X-Request-Start t=%Ts
 </code></pre>
-
 <h3 id="nginx">Nginx</h3>
 
 <p>Nginx 1.2.6+ supports the use of the <code class="prettyprint">#{msec}</code> variable. This makes adding the request queuing header straightforward.</p>
 
 <p>General Nginx usage:</p>
-<pre class="highlight plaintext"><code>proxy_set_header X-Request-Start "t=${msec}";
+<pre class="highlight  tab-plaintext"><code>proxy_set_header X-Request-Start "t=${msec}";
 </code></pre>
-
 <p>Passenger 5+:</p>
-<pre class="highlight plaintext"><code>passenger_set_header X_REQUEST_START "t=${msec}";
+<pre class="highlight  tab-plaintext"><code>passenger_set_header X_REQUEST_START "t=${msec}";
 </code></pre>
-
 <p>Older Passsenger versions:</p>
-<pre class="highlight plaintext"><code>passenger_set_cgi_param X_REQUEST_START "t=${msec}";
+<pre class="highlight  tab-plaintext"><code>passenger_set_cgi_param X_REQUEST_START "t=${msec}";
 </code></pre>
-
 <h2 id="actioncontroller-metal">ActionController::Metal</h2>
 
 <p>Scout instruments controllers that inherit from <code class="prettyprint">ActionController::Base</code> automatically, but not those that inherit from <code class="prettyprint">ActionController::Metal</code> (including <code class="prettyprint">ActionController::API</code>). We instrument <code class="prettyprint">ActionController::Base</code> as this allows us to instrument the full request cycle (which includes before/after filters). If we just instrumented <code class="prettyprint">ActionController::Metal</code>, we&rsquo;d miss this instrumentation.</p>
 
 <p>However, adding instrumentation to controllers that inherit from <code class="prettyprint">ActionController::Metal</code> is simple. Just include our instrumentation library in the controller:</p>
-<pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">FastController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Metal</span>
+<pre class="highlight ruby tab-ruby"><code><span class="k">class</span> <span class="nc">FastController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Metal</span>
   <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Instruments</span><span class="o">::</span><span class="no">ActionControllerRails3Rails4Instruments</span>
 </code></pre>
-
 <p>This won&rsquo;t interfere with our regular instrumentation. Your controller-action metrics will appear under the endpoints area of Scout, just like any other controller-action.</p>
 
-<h2 id="custom-context">Custom Context</h2>
+<h2 id="ruby-custom-context">Custom Context</h2>
 
 <p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
 
@@ -667,23 +851,19 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="user-context">User Context</h3>
 
 <p>For context used to identify users (ex: email, name):</p>
-<pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add_user</span><span class="p">({})</span>
+<pre class="highlight ruby tab-ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add_user</span><span class="p">({})</span>
 </code></pre>
-
 <p>Examples:</p>
-<pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add_user</span><span class="p">(</span><span class="ss">email: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">email</span><span class="p">)</span>
+<pre class="highlight ruby tab-ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add_user</span><span class="p">(</span><span class="ss">email: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">email</span><span class="p">)</span>
 <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add_user</span><span class="p">(</span><span class="ss">email: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">email</span><span class="p">,</span> <span class="ss">location: </span><span class="vi">@user</span><span class="p">.</span><span class="nf">location</span><span class="p">.</span><span class="nf">to_s</span><span class="p">)</span>
 </code></pre>
-
 <h3 id="general-context">General Context</h3>
-<pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">({})</span>
+<pre class="highlight ruby tab-ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">({})</span>
 </code></pre>
-
 <p>Examples:</p>
-<pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">account: </span><span class="vi">@account</span><span class="p">.</span><span class="nf">name</span><span class="p">)</span>
+<pre class="highlight ruby tab-ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">account: </span><span class="vi">@account</span><span class="p">.</span><span class="nf">name</span><span class="p">)</span>
 <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">database_shard: </span><span class="vi">@db</span><span class="p">.</span><span class="nf">shard_id</span><span class="p">,</span> <span class="ss">monthly_spend: </span><span class="vi">@account</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span>
 </code></pre>
-
 <h3 id="default-context">Default Context</h3>
 
 <p>Scout reports the Request URI and the user&rsquo;s remote IP Address by default.</p>
@@ -706,25 +886,22 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Attempts to add invalid context will be ignored.</p>
 
-<h3 id="example-adding-the-current-user-39-s-email-as-context">Example: adding the current user&rsquo;s email as context</h3>
+<h3 id="example-adding-the-current-users-email-as-context">Example: adding the current user&rsquo;s email as context</h3>
 
 <p>Add the following to your <code class="prettyprint">ApplicationController</code> class:</p>
-<pre class="highlight ruby"><code><span class="n">before_filter</span> <span class="ss">:set_scout_context</span>
+<pre class="highlight ruby tab-ruby"><code><span class="n">before_filter</span> <span class="ss">:set_scout_context</span>
 </code></pre>
-
 <p>Create the following method:</p>
-<pre class="highlight ruby"><code><span class="k">def</span> <span class="nf">set_scout_context</span>
+<pre class="highlight ruby tab-ruby"><code><span class="k">def</span> <span class="nf">set_scout_context</span>
   <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add_user</span><span class="p">(</span><span class="ss">email: </span><span class="n">current_user</span><span class="p">.</span><span class="nf">email</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_user</span><span class="p">.</span><span class="nf">is_a?</span><span class="p">(</span><span class="no">User</span><span class="p">)</span>
 <span class="k">end</span>
 </code></pre>
-
 <h3 id="example-adding-the-monthly-spend-as-context">Example: adding the monthly spend as context</h3>
 
 <p>Add the following line to the <code class="prettyprint">ApplicationController#set_scout_context</code> method defined above:</p>
-<pre class="highlight ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
+<pre class="highlight ruby tab-ruby"><code><span class="no">ScoutApm</span><span class="o">::</span><span class="no">Context</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="ss">monthly_spend: </span><span class="n">current_org</span><span class="p">.</span><span class="nf">monthly_spend</span><span class="p">)</span> <span class="k">if</span> <span class="n">current_org</span>
 </code></pre>
-
-<h2 id="custom-instrumentation">Custom Instrumentation</h2>
+<h2 id="ruby-custom-instrumentation">Custom Instrumentation</h2>
 
 <p>Traces that allocate significant amount of time to <code class="prettyprint">Controller</code> or <code class="prettyprint">Job</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
 
@@ -735,16 +912,15 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="instrumenting-method-calls">Instrumenting method calls</h3>
 
 <p>To instrument a method call, add the following to the class containing the method:</p>
-<pre class="highlight ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
+<pre class="highlight ruby tab-ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
     <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Tracer</span>
 
     <span class="k">def</span> <span class="nf">export_activity</span>
-      <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
-    <span class="nf">end</span>
+      <span class="c1"># Do export work</span>
+    <span class="k">end</span>
     <span class="n">instrument_method</span> <span class="ss">:export_activity</span>
   <span class="k">end</span>
 </code></pre>
-
 <p>The call to <code class="prettyprint">instrument_method</code> should be after the method definition.</p>
 
 <h4 id="naming-methods-instrumented-via-instrument_method">Naming methods instrumented via <code class="prettyprint">instrument_method</code></h4>
@@ -752,31 +928,28 @@ tail -n1000 log/production.log | grep "Processing"
 <p>In the example above, the metric will appear in traces as <code class="prettyprint">User#export_activity</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">Custom</code> type.</p>
 
 <p><strong>To modify the type</strong>:</p>
-<pre class="highlight ruby"><code><span class="n">instrument_method</span> <span class="ss">:export_activity</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Exporting'</span>
+<pre class="highlight ruby tab-ruby"><code><span class="n">instrument_method</span> <span class="ss">:export_activity</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Exporting'</span>
 </code></pre>
-
 <p>A new <code class="prettyprint">Exporting</code> metric will now appear on charts. The trace item will be displayed as <code class="prettyprint">Exporting/User/export_activity</code>.</p>
 
 <p><strong>To modify the name</strong>:</p>
-<pre class="highlight ruby"><code><span class="n">instrument_method</span> <span class="ss">:export_activity</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Exporting'</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'user_activity'</span>
+<pre class="highlight ruby tab-ruby"><code><span class="n">instrument_method</span> <span class="ss">:export_activity</span><span class="p">,</span> <span class="ss">type: </span><span class="s1">'Exporting'</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'user_activity'</span>
 </code></pre>
-
 <p>The trace item will now be displayed as <code class="prettyprint">Exporting/user_activity</code>.</p>
 
 <h3 id="instrumenting-blocks-of-code">Instrumenting blocks of code</h3>
 
 <p>To instrument a method call, add the following:</p>
-<pre class="highlight ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
+<pre class="highlight ruby tab-ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
     <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Tracer</span>
 
     <span class="k">def</span> <span class="nf">generate_profile_pic</span>
       <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">instrument</span><span class="p">(</span><span class="s2">"User"</span><span class="p">,</span> <span class="s2">"generate_profile_pic"</span><span class="p">)</span> <span class="k">do</span>
-        <span class="p">.</span><span class="nf">.</span><span class="p">.</span>
-      <span class="nf">end</span>
+        <span class="c1"># Do work</span>
+      <span class="k">end</span>
     <span class="k">end</span>
   <span class="k">end</span>
 </code></pre>
-
 <h4 id="naming-methods-instrumented-via-instrument-type-name">Naming methods instrumented via <code class="prettyprint">instrument(type, name)</code></h4>
 
 <p>In the example above, the metric appear in traces as <code class="prettyprint">User/generate_profile_pic</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">User</code> type. To modify the type or simply, simply change the <code class="prettyprint">instrument</code> corresponding method arguments.</p>
@@ -787,7 +960,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>After restarting your dev server with DevTrace enabled, refresh the browser page and view the trace output. The new metric should appear in the trace:</p>
 
-<p><img alt="custom devtrace" src="images/custom_devtrace.png" /></p>
+<p><img src="images/custom_devtrace.png" alt="custom devtrace" /></p>
 
 <h2 id="docker">Docker <img src="images/docker.png" style="float:right;width: 150px" /></h2>
 
@@ -809,7 +982,6 @@ tail -n1000 log/production.log | grep "Processing"
 <p>Scout can be configured via environment variables. This means you can use <code class="prettyprint">heroku config:set</code> to configure the agent. For example, you can set the application name that appears in the Scout UI with:</p>
 <pre class="highlight shell"><code>heroku config:set <span class="nv">SCOUT_NAME</span><span class="o">=</span><span class="s1">'My Heroku App'</span>
 </code></pre>
-
 <p>See the configuration section for more information on the available config settings and environment variable functionality.</p>
 
 <h3 id="using-the-scout-heroku-add-on">Using the Scout Heroku Add-on</h3>
@@ -829,32 +1001,31 @@ tail -n1000 log/production.log | grep "Processing"
 </ol>
 
 <p>A sample config for Cloud Foundry that implements the above suggestions:</p>
-<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
-  <span class="s">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">true</span>
+<pre class="highlight yaml tab-yaml"><code><span class="na">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="na">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">true</span>
   <span class="c1"># use the configured application name to identify the app.</span>
-  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= ENV['VCAP_APPLICATION'] ? JSON.parse(ENV['VCAP_APPLICATION'])['application_name']</span> <span class="pi">:</span> <span class="s2">"</span><span class="s">YOUR</span><span class="nv"> </span><span class="s">APP</span><span class="nv"> </span><span class="s">NAME</span><span class="nv"> </span><span class="s">(#{Rails.env})"</span> <span class="err">%</span><span class="pi">&gt;</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;%= ENV['VCAP_APPLICATION'] ? JSON.parse(ENV['VCAP_APPLICATION'])['application_name']</span> <span class="pi">:</span> <span class="s2">"</span><span class="s">YOUR</span><span class="nv"> </span><span class="s">APP</span><span class="nv"> </span><span class="s">NAME</span><span class="nv"> </span><span class="s">(#{Rails.env})"</span> <span class="err">%</span><span class="pi">&gt;</span>
   <span class="no"># make logs available to the Loggregator</span>
   <span class="no">log_file_path: STDOUT</span>
   <span class="no"># reports w/a more identifiable instance name using the application name and instance index. ex: rails-sample.0</span>
   <span class="no">hostname: &lt;%= ENV['VCAP_APPLICATION'] ? "#{JSON.parse(ENV['VCAP_APPLICATION'])['application_name']}.#{ENV['CF_INSTANCE_INDEX']}"  : Socket.gethostname %&gt;</span>
 
-<span class="s">production</span><span class="pi">:</span>
+<span class="na">production</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 
-<span class="s">development</span><span class="pi">:</span>
+<span class="na">development</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<span class="s">test</span><span class="pi">:</span>
+<span class="na">test</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<span class="s">staging</span><span class="pi">:</span>
+<span class="na">staging</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
-
-<h2 id="instrumented-libraries">Instrumented Libraries</h2>
+<h2 id="ruby-instrumented-libs">Instrumented Libraries</h2>
 
 <p>The following libraries are currently instrumented:</p>
 
@@ -875,7 +1046,9 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
 
-<h2 id="environments">Environments</h2>
+<p>You can instrument your own code or other libraries via <a href="#ruby-custom-instrumentation">custom instrumentation</a>.</p>
+
+<h2 id="ruby-environments">Environments</h2>
 
 <p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments. Configure a unique app name for each environment as Scout aggregrates data by the app name.</p>
 
@@ -884,27 +1057,26 @@ tail -n1000 log/production.log | grep "Processing"
 <h3 id="1-modifying-your-scout_apm-yml-config-file">1. Modifying your scout_apm.yml config file</h3>
 
 <p>Here&rsquo;s an example <code class="prettyprint">scout_apm.yml</code> configuration to achieve this:</p>
-<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
-  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
-  <span class="s">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
-  <span class="s">log_level</span><span class="pi">:</span> <span class="s">info</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">true</span>
+<pre class="highlight yaml tab-yaml"><code><span class="na">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
+  <span class="na">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
+  <span class="na">log_level</span><span class="pi">:</span> <span class="s">info</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">true</span>
 
-<span class="s">production</span><span class="pi">:</span>
+<span class="na">production</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 
-<span class="s">development</span><span class="pi">:</span>
+<span class="na">development</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<span class="s">test</span><span class="pi">:</span>
+<span class="na">test</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<span class="s">staging</span><span class="pi">:</span>
+<span class="na">staging</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
-
 <h3 id="2-setting-the-scout_name-environment-variable">2. Setting the SCOUT_NAME environment variable</h3>
 
 <p>Setting the <code class="prettyprint">SCOUT_NAME</code> and <code class="prettyprint">SCOUT_MONITOR</code> environment variables will override settings settings your <code class="prettyprint">scout_apm.yml</code> config file.</p>
@@ -918,27 +1090,25 @@ tail -n1000 log/production.log | grep "Processing"
 <h2 id="disabling-a-node">Disabling a Node</h2>
 
 <p>To disable Scout APM on any node in your environment, just set <code class="prettyprint">monitor: false</code> in your <code class="prettyprint">scout_apm.yml</code> configuration file on that server, and restart your app server. Example:</p>
-<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
-  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
-  <span class="s">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
-  <span class="s">log_level</span><span class="pi">:</span> <span class="s">info</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">false</span>
+<pre class="highlight yaml tab-yaml"><code><span class="na">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
+  <span class="na">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
+  <span class="na">log_level</span><span class="pi">:</span> <span class="s">info</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">false</span>
 
-<span class="s">production</span><span class="pi">:</span>
+<span class="na">production</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
-
 <p>Since the YAML config file allows ERB evaluation, you can even programatically enable/disable nodes based on host name. This example enables Scout APM on web1 through web5:</p>
-<pre class="highlight yaml"><code><span class="s">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
-  <span class="s">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
-  <span class="s">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
-  <span class="s">log_level</span><span class="pi">:</span> <span class="s">info</span>
-  <span class="s">monitor</span><span class="pi">:</span> <span class="s">&lt;%= Socket.gethostname.match(/web[1..5]/) %&gt;</span>
+<pre class="highlight yaml tab-yaml"><code><span class="na">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">&lt;%= "YOUR_APP_NAME (#{Rails.env})" %&gt;</span>
+  <span class="na">key</span><span class="pi">:</span> <span class="s">YOUR_KEY</span>
+  <span class="na">log_level</span><span class="pi">:</span> <span class="s">info</span>
+  <span class="na">monitor</span><span class="pi">:</span> <span class="s">&lt;%= Socket.gethostname.match(/web[1..5]/) %&gt;</span>
 
-<span class="s">production</span><span class="pi">:</span>
+<span class="na">production</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
-
 <p>Aft you&rsquo;ve disabled a node in your configuration file and restarted your app server, the node show up as inactive in the UI after 10 minutes.</p>
 
           <h1 id="elixir-agent">Elixir Agent</h1>
@@ -947,11 +1117,14 @@ tail -n1000 log/production.log | grep "Processing"
 Elixir support is in BETA.
 </aside>
 
-<h2 id="requirements">Requirements</h2>
+<h2 id="elixir-requirements">Requirements</h2>
 
 <p>Our Elixir agent supports Phoenix 1.2.0+ and Elixir 1.4+.</p>
 
-<h2 id="installation">Installation</h2>
+<!-- old unique-ified anchor link -->
+
+<p><a name="#installation22"></a>
+<h2 id="elixir-install">Installation</h2></p>
 
 <aside class="notice">
   A free Scout account is required. <a href="https://apm.scoutapp.com/users/sign_up" target: '_blank'>Signup here</a>.
@@ -1020,7 +1193,7 @@ defmodule HeroReview.Web do
 
 </div>
 
-<h2 id="troubleshooting">Troubleshooting</h2>
+<h2 id="elixir-troubleshooting">Troubleshooting</h2>
 
 <p>Not seeing data? <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:</p>
 
@@ -1031,14 +1204,13 @@ defmodule HeroReview.Web do
 
 <p>We typically respond within a couple of hours during the business day.</p>
 
-<h2 id="configuration">Configuration</h2>
+<h2 id="elixir-configuration">Configuration</h2>
 
 <p>The Elixir agent can be configured via the <code class="prettyprint">config/scout_apm.exs</code> file. A config file with your organization key is available for download as part of the install instructions. A application name and key is required:</p>
-<pre class="highlight plaintext"><code>config :scout_apm,
+<pre class="highlight  tab-plaintext"><code>config :scout_apm,
   name: "Your App", # The app name that will appear within the Scout UI
   key: "YOUR SCOUT KEY"
 </code></pre>
-
 <h3 id="configuration-reference">Configuration Reference</h3>
 
 <p>The following configuration settings are available:</p>
@@ -1131,7 +1303,7 @@ defmodule HeroReview.Web do
   </tbody>
 </table>
 
-<h2 id="updating-to-the-newest-version">Updating to the Newest Version</h2>
+<h2 id="elixir-upgrade">Updating to the Newest Version</h2>
 
 <div class="install">
 
@@ -1150,7 +1322,7 @@ defmodule HeroReview.Web do
 
 </div>
 
-<h2 id="instrumented-libraries">Instrumented Libraries</h2>
+<h2 id="elixir-instrumented-libaries">Instrumented Libraries</h2>
 
 <p>By default, the following libraries are instrumented:</p>
 
@@ -1165,7 +1337,7 @@ defmodule HeroReview.Web do
 <li>Ecto 2.0</li>
 </ul>
 
-<h2 id="custom-instrumentation">Custom Instrumentation</h2>
+<h2 id="elixir-custom-instrumentation">Custom Instrumentation</h2>
 
 <p>Traces that allocate significant amount of time to <code class="prettyprint">Controller</code> or <code class="prettyprint">Job</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
 
@@ -1176,7 +1348,7 @@ defmodule HeroReview.Web do
 <h3 id="instrumenting-blocks-of-code">Instrumenting blocks of code</h3>
 
 <p>Use <code class="prettyprint">ScoutApm.Tracing.instrument</code> to track the execution time of a block of code. Here&rsquo;s an example:</p>
-<pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">User</span> <span class="k">do</span>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">User</span> <span class="k">do</span>
   <span class="kn">require</span> <span class="no">HTTPoison</span>
   <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
@@ -1188,25 +1360,23 @@ defmodule HeroReview.Web do
 
 <span class="k">end</span>
 </code></pre>
-
 <p>In the example above, &ldquo;HTTP&rdquo; will appear on timeseries charts and &ldquo;HTTP/GitHub_Avatar&rdquo; will appear in traces.</p>
 
 <h4 id="adding-a-description">Adding a description</h4>
 
 <p>Call <code class="prettyprint">ScoutApm.Tracing.update_desc/1</code> to add relevant information to the instrumented item. This description is then viewable in traces. An example:</p>
-<pre class="highlight elixir"><code><span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+<pre class="highlight elixir tab-elixir"><code><span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
   <span class="n">url</span> <span class="o">=</span> <span class="sd">"</span><span class="s2">https://github.com/</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.png"</span>
   <span class="n">update_desc</span><span class="p">(</span><span class="sd">"</span><span class="s2">GET </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
   <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <span class="k">end</span><span class="p">)</span>
 </code></pre>
-
 <p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#instrument/3" target="_blank">See the scout_apm hex docs</a> for more details on <code class="prettyprint">instrument</code>.</p>
 
 <h3 id="tracking-already-executed-time">Tracking already executed time</h3>
 
 <p>Libraries like Ecto log details on executed queries. This includes timing information. To add a trace item for this, use <code class="prettyprint">ScoutApm.Tracing.track</code>. An example:</p>
-<pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Mongo</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Mongo</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Repo</span>
 
   <span class="c1"># Scout instrumentation of Mongo queries. These appear in traces as "Ecto/Read", "Ecto/Write", etc.</span>
@@ -1223,29 +1393,27 @@ defmodule HeroReview.Web do
 <span class="k">end</span>
 
 </code></pre>
-
 <p>In the example above, the metric will appear in traces as <code class="prettyprint">Ecto/#{query_time(entry)}</code>. On timeseries charts, the time will be allocated to <code class="prettyprint">Ecto</code>.</p>
 
 <h4 id="adding-a-description">Adding a description</h4>
 
 <p>Metadata - like a raw query - can be passed to <code class="prettyprint">track</code>. Pass it via the <code class="prettyprint">desc</code> option. Example:</p>
-<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
+<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
   <span class="sd">"</span><span class="s2">Ecto"</span><span class="p">,</span> 
   <span class="n">query_name</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> 
   <span class="n">entry</span><span class="o">.</span><span class="n">query_time</span><span class="p">,</span> 
   <span class="ss">:microseconds</span><span class="p">,</span> 
   <span class="ss">desc:</span> <span class="n">entry</span><span class="o">.</span><span class="n">raw_query</span><span class="p">)</span>
 </code></pre>
-
 <p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
 
 <h3 id="testing-instrumentation">Testing instrumentation</h3>
 
-<p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#enabling-devtrace30">DevTrace</a> and ensuring the new metric appears as desired.</p>
+<p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#elixir-devtrace">DevTrace</a> and ensuring the new metric appears as desired.</p>
 
 <p>After restarting your app with DevTrace enabled, refresh the browser page and view the trace output. The new metric should appear in the trace.</p>
 
-<h2 id="custom-context">Custom Context</h2>
+<h2 id="elixir-custom-context">Custom Context</h2>
 
 <p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
 
@@ -1260,23 +1428,19 @@ defmodule HeroReview.Web do
 <h3 id="user-context">User Context</h3>
 
 <p>For context used to identify users (ex: email, name):</p>
-<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </code></pre>
-
 <p>Examples:</p>
-<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="ss">:email</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="ss">:email</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
 <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 </code></pre>
-
 <h3 id="general-context">General Context</h3>
-<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </code></pre>
-
 <p>Examples:</p>
-<pre class="highlight elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:account</span><span class="p">,</span> <span class="n">account</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:account</span><span class="p">,</span> <span class="n">account</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="ss">:monthly_spend</span><span class="p">,</span> <span class="n">account</span><span class="o">.</span><span class="n">monthly_spend</span><span class="p">)</span>
 </code></pre>
-
 <h3 id="default-context">Default Context</h3>
 
 <p>Scout reports the Request URI and the user&rsquo;s remote IP Address by default.</p>
@@ -1297,21 +1461,23 @@ defmodule HeroReview.Web do
 
 <p>Attempts to add invalid context will be ignored.</p>
 
-<h2 id="environments">Environments</h2>
+<h2 id="elixir-environments">Environments</h2>
 
 <p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout. To do so, configure a unique app name for each environment. Scout aggregrates data by the app name. </p>
 
 <p>An example:</p>
-<pre class="highlight elixir"><code><span class="c1"># config/staging.exs</span>
+<pre class="highlight elixir tab-elixir"><code><span class="c1"># config/staging.exs</span>
 
 <span class="n">config</span> <span class="ss">:scout_apm</span><span class="p">,</span>
   <span class="ss">name:</span> <span class="sd">"</span><span class="s2">YOUR APP - Staging"</span>
 </code></pre>
+<!-- old reference -->
 
-<h2 id="enabling-devtrace">Enabling DevTrace</h2>
+<p><a name="enabling-devtrace30"></a>
+<h2 id="elixir-devtrace">Enabling DevTrace</h2></p>
 
 <aside class="notice" style="font-size: 12px">
-Follow the install instructions first. There&rsquo;s no need to download the config file as signup isn&rsquo;t required.
+Follow the <a href="#elixir-install">install instructions</a> first. There&rsquo;s no need to download the config file as signup isn&rsquo;t required.
 </aside>
 
 <p>To enable <a href="#devtrace">DevTrace</a>, our in-browser profiler:</p>
@@ -1358,14 +1524,14 @@ config :scout_apm,
 
 <p>The overview page provides an at-a-glance, auto-refreshing view of your app&rsquo;s performance and resource usage (mean response time by category, 95th percentile response time, throughput, error rate, and more). You can quickly dive into endpoint activity via click-and-drag (or pinch-and-expand with a mobile device) on the overview chart.</p>
 
-<p><img alt="overview" src="images/app_show.gif" /></p>
+<p><img src="images/app_show.gif" alt="overview" /></p>
 
 <p>Additionally, you can compare metrics in the overview chart and see how your app&rsquo;s performance compares to different time periods.</p>
 
 <h2 id="endpoint-details">Endpoint Details</h2>
 
 <p>You can view metrics for specific controller-action and background job workers. There is a similar chart interaction to the App Performance Overview page, with one difference: your selection will render an updated list of transaction traces that correspond to the selected time period:
-<img alt="stream" src="images/endpoint_show.gif" /></p>
+<img src="images/endpoint_show.gif" alt="stream" /></p>
 
 <p>You can sort traces by response time, object allocations, date, and more.</p>
 
@@ -1373,21 +1539,21 @@ config :scout_apm,
 
 <p>Scout collects detailed transactions across your endpoints automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. </p>
 
-<p><img alt="transaction traces" src="images/transaction_traces.png" /></p>
+<p><img src="images/transaction_traces.png" alt="transaction traces" /></p>
 
 <h3 id="call-breakdown">Call Breakdown</h3>
 
 <p>Method calls are aggregrated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).</p>
 
-<p><img alt="stream show breakdown" src="images/stream_show_call_breakdown.png" /></p>
+<p><img src="images/stream_show_call_breakdown.png" alt="stream show breakdown" /></p>
 
 <h3 id="sql-queries">SQL Queries</h3>
 
 <p>Scout captures a santized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details. </p>
 
-<p><img alt="stream show sql" src="images/stream_show_sql_annotated.png" /></p>
+<p><img src="images/stream_show_sql_annotated.png" alt="stream show sql" /></p>
 
-<h4 id="don-39-t-see-the-query-next-to-an-sql-call">Don&rsquo;t see the query next to an SQL call?</h4>
+<h4 id="dont-see-the-query-next-to-an-sql-call">Don&rsquo;t see the query next to an SQL call?</h4>
 
 <p>For performance reasons, Scout doesn&rsquo;t attempt to sanitize large SQL queries. When this occurs, you won&rsquo;t see an &ldquo;SQL&rdquo; button to view the raw query next to an SQL method call.</p>
 
@@ -1395,7 +1561,7 @@ config :scout_apm,
 
 <p>You&rsquo;ll see &ldquo;CODE&rdquo; buttons next to method calls that are &gt;= 500 ms. If you&rsquo;ve enabled the Github integration, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.</p>
 
-<p><img alt="stream show git" src="images/stream_slow_git_annotated.png" /></p>
+<p><img src="images/stream_slow_git_annotated.png" alt="stream show git" /></p>
 
 <p>If you don&rsquo;t enable the Github integration, you&rsquo;ll see a backtrace.</p>
 
@@ -1407,7 +1573,7 @@ config :scout_apm,
 
 <p>Notice how the time in <code class="prettyprint">ActionController</code> is broken down:</p>
 
-<p><a href="/images/scoutprof.png" target="_blank"><img alt="scoutprof" src="images/scoutprof.png" /></a></p>
+<p><a href="images/scoutprof.png" target="_blank"><img src="images/scoutprof.png" alt="scoutprof" /></a></p>
 
 <p>We still employ our traditional instrumentation, because it can give us deeper insights into common libraries, capturing the SQL being run, or the URL being fetched.</p>
 
@@ -1448,13 +1614,13 @@ config :scout_apm,
 
 <p>The Insights area of the dashboard identifies controller-actions and background jobs that have triggered significant memory increases. An overview of the object allocation breakdown by tier (ActiveRecord, ActionView, etc) is displayed on the dashboard.</p>
 
-<p><img alt="memory insights" src="images/memory_insights.png" /></p>
+<p><img src="images/memory_insights.png" alt="memory insights" /></p>
 
 <h3 id="memory-traces">Memory Traces</h3>
 
 <p>When inspecting a <a href="#transaction-traces">transaction trace</a>, you&rsquo;ll see a &ldquo;Memory Allocation Breakdown&rdquo; section:</p>
 
-<p><img alt="memory trace" src="images/memory_trace.png" /></p>
+<p><img src="images/memory_trace.png" alt="memory trace" /></p>
 
 <p>For perspective, we display how this trace&rsquo;s allocations compare to the norm.</p>
 
@@ -1462,7 +1628,7 @@ config :scout_apm,
 
 <p><strong>Alerting is a BETA feature.</strong></p>
 
-<p><img alt="alerts_chart" src="images/alerts_chart.png" /></p>
+<p><img src="images/alerts_chart.png" alt="alerts_chart" /></p>
 
 <p>Alerting keeps your team updated if your app&rsquo;s performance degrades. Alerts can be configured on the app as a whole and on individual endpoints. Metrics include:</p>
 
@@ -1478,17 +1644,17 @@ config :scout_apm,
 
 <p>Configure alert conditions via the &ldquo;Alerts&rdquo; pill in the UI:</p>
 
-<p><img alt="alert_conditions" src="images/alert_conditions.png" /></p>
+<p><img src="images/alert_conditions.png" alt="alert_conditions" /></p>
 
 <h3 id="notification-groups">Notification groups</h3>
 
 <p>Alerts are sent to a notification group, which is composed of notification channels. You can configure these under your org&rsquo;s settings menu:</p>
 
-<p><img alt="alert notification groups" src="images/alert_notification_groups.png" /></p>
+<p><img src="images/alert_notification_groups.png" alt="alert notification groups" /></p>
 
 <h2 id="deploy-tracking">Deploy Tracking</h2>
 
-<p><img alt="deploy tracking" src="images/deploy_tracking.png" /></p>
+<p><img src="images/deploy_tracking.png" alt="deploy tracking" /></p>
 
 <p>Correlate deploys with your app&rsquo;s performance: Scout&rsquo;s GitHub-enhanced deploy tracking makes it easy to identify the Git branch or tag running now and which team members contributed to every deploy.</p>
 
@@ -1498,7 +1664,7 @@ config :scout_apm,
 
 <p>You can sort by memory allocations throughout the UI: from the list of endpoints, to our pulldowns, to transaction traces.</p>
 
-<p><img alt="memory sort" src="images/memory_sort.png" /></p>
+<p><img src="images/memory_sort.png" alt="memory sort" /></p>
 
 <h2 id="git-integration">Git Integration</h2>
 
@@ -1512,7 +1678,7 @@ config :scout_apm,
 
 <p>Git integration must be configured on the settings page for each app. Scout integrates with Github via OAuth. Pick the repository name and branch name used for your application.</p>
 
-<p><img alt="git settings" src="images/git_settings_annotated.png" /></p>
+<p><img src="images/git_settings_annotated.png" alt="git settings" /></p>
 
 <h2 id="context">Context</h2>
 
@@ -1524,7 +1690,7 @@ config :scout_apm,
 <li>How much of an impact are slow requests having on our highest paying customers?</li>
 </ul>
 
-<p>Adding custom context is easy - learn how via <a href="#custom-context">Ruby</a> or <a href="#custom-context27">Elixir</a>.</p>
+<p>Adding custom context is easy - learn how via <a href="#ruby-custom-context">Ruby</a> or <a href="#elixir-custom-context">Elixir</a>.</p>
 
 <p>When viewing a transaction trace, click the &ldquo;Context&rdquo; section to see the context Scout has collected.</p>
 
@@ -1534,21 +1700,21 @@ config :scout_apm,
 
 <p>The endpoints area within Scout provides a sortable view of your app&rsquo;s overall performance aggregated by endpoint name. Click on an endpoint to view details.</p>
 
-<p><img alt="endpoints overview" src="images/endpoints_annotated.png" /></p>
+<p><img src="images/endpoints_annotated.png" alt="endpoints overview" /></p>
 
 <h2 id="time-comparisons">Time Comparisons</h2>
 
 <p>You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.</p>
 
-<p><img alt="time compare" src="images/time_compare_annotated.png" /></p>
+<p><img src="images/time_compare_annotated.png" alt="time compare" /></p>
 
 <h2 id="devtrace">DevTrace</h2>
 
 <p>DevTrace is our development profiler: it&rsquo;s included with our Ruby and Elixir libraries. DevTrace can be used for free without signup. Enabling DevTrace adds a speed badge when navigating your app in development. Clicking the speed badge reveals a shareable transaction trace of the request.</p>
 
-<p><img alt="devtrace" src="images/devtrace.png" /></p>
+<p><img src="images/devtrace.png" alt="devtrace" /></p>
 
-<p>View our <a href="#enabling-devtrace">Ruby</a> and <a href="#enabling-devtrace30">Elixir</a> instructions.</p>
+<p>View our <a href="#ruby-devtrace">Ruby</a> and <a href="#elixir-devtrace">Elixir</a> instructions.</p>
 
 <h2 id="data-retention">Data Retention</h2>
 
@@ -1586,7 +1752,7 @@ config :scout_apm,
 
 <p>Our most recent benchmarks (<em>lower is better</em>):</p>
 
-<p><img alt="overhead" src="images/overhead.png" /></p>
+<p><img src="images/overhead.png" alt="overhead" /></p>
 
 <p>We&rsquo;ve <a href="http://blog.scoutapp.com/articles/2016/02/07/overhead-benchmarks-new-relic-vs-scout">open-sourced our benchmarks</a> so you can test on our own. If your results differ, <a href="mailto:support@scoutapp.com">reach out to us at support@scoutapp.com</a>.</p>
 
@@ -1697,7 +1863,7 @@ config :scout_apm,
 <li>Ruby 2.1+</li>
 </ul>
 
-<h3 id="what-39-s-supported-during-beta">What&rsquo;s supported during BETA?</h3>
+<h3 id="whats-supported-during-beta">What&rsquo;s supported during BETA?</h3>
 
 <p>During our BETA period, ScoutProf has a few limitations:</p>
 
