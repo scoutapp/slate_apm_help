@@ -1322,9 +1322,9 @@ defmodule HeroReview.Web do
 
 </div>
 
-<h2 id="elixir-instrumented-libaries">Instrumented Libraries</h2>
+<h2 id="elixir-instrumented-libaries">Auto-Instrumented Libraries</h2>
 
-<p>By default, the following libraries are instrumented:</p>
+<p>Our <a href="#elixir-install">install instructions</a> walk through instrumenting the following libraries:</p>
 
 <ul>
 <li>Phoenix
@@ -1337,43 +1337,225 @@ defmodule HeroReview.Web do
 <li>Ecto 2.0</li>
 </ul>
 
-<h2 id="elixir-custom-instrumentation">Custom Instrumentation</h2>
+<p>See <a href="/#instrumenting-common-libraries">instrumenting common librariess</a> for guides on instrumenting other Elixir libraries.</p>
 
-<p>Traces that allocate significant amount of time to <code class="prettyprint">Controller</code> or <code class="prettyprint">Job</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
+<h2 id="instrumenting-common-libraries">Instrumenting Common Libraries</h2>
 
-<h3 id="limits">Limits</h3>
+<p>We&rsquo;ve collected best practices for instrumenting common transactions and timing functions below. If you have a suggestion, <a href="mailto:support@scoutapp.com">please share it</a>. See our <a href="#elixir-custom-instrumentation">custom instrumentation quickstart</a> for more details on adding instrumentation.</p>
 
-<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">instrument(&quot;user_#{user.id}&quot;, &quot;generate&quot;, fn -&gt; do_work() end)</code> as this can quickly exceed our rate limits.</p>
+<ul>
+<li>Transactions
 
-<h3 id="instrumenting-blocks-of-code">Instrumenting blocks of code</h3>
+<ul>
+<li><a href="#phoenix-channels">Phoenix Channels</a></li>
+<li><a href="#genserver-calls">GenServer calls</a></li>
+<li><a href="#task-start">Task.start</a></li>
+<li><a href="#task-supervisor-start_child">Task.Supervisor.start_child</a></li>
+<li><a href="#exq">Exq</a></li>
+<li><a href="#absinthe">Absinthe (GraphQL)</a></li>
+</ul></li>
+<li>Timing
 
-<p>Use <code class="prettyprint">ScoutApm.Tracing.instrument</code> to track the execution time of a block of code. Here&rsquo;s an example:</p>
-<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">User</span> <span class="k">do</span>
-  <span class="kn">require</span> <span class="no">HTTPoison</span>
-  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+<ul>
+<li><a href="#httpoison">HTTPoison</a></li>
+<li><a href="#mongodb-ecto">MongoDB Ecto</a></li>
+</ul></li>
+</ul>
 
-  <span class="k">def</span> <span class="n">github_avatar</span><span class="p">(</span><span class="n">user</span> <span class="p">\\</span> <span class="p">%{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">itsderek23"</span><span class="p">})</span> <span class="k">do</span>
-    <span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
-      <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sd">"</span><span class="s2">https://github.com/</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.png"</span><span class="p">)</span>
-    <span class="k">end</span><span class="p">)</span>
+<h3 id="phoenix-channels">Phoenix Channels</h3>
+
+<h4 id="web-or-background-transactions">Web or background transactions?</h4>
+
+<ul>
+<li><strong>web</strong>: For channel-related functions that impact the user-facing experience. Time spent in these transactions will appear on your app overboard dashboard and appear in the &ldquo;Web&rdquo; area of the UI.</li>
+<li><strong>background</strong>: For functions that don&rsquo;t have an impact on the user-facing experience (example: click-tracking). These will be available in the &ldquo;Background Jobs&rdquo; area of the UI.</li>
+</ul>
+
+<h4 id="naming-channel-transactions">Naming channel transactions</h4>
+
+<p>Provide an identifiable name based on the message the <code class="prettyprint">handle_out/</code> or <code class="prettyprint">handle_in/</code> function receives.</p>
+
+<p>An example:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">FirestormWeb</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">PostsChannel</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">FirestormWeb</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:channel</span>
+
+  <span class="c1"># Will appear under "Web" in the UI, named "PostsChannel.update"</span>
+  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">PostsChannel.update"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">handle_out</span><span class="p">(</span><span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">push</span> <span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="no">FetchView</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="sd">"</span><span class="s2">index.json"</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
   <span class="k">end</span>
+</code></pre>
+<h3 id="genserver-calls">GenServer calls</h3>
 
+<p>It&rsquo;s common to use <code class="prettyprint">GenServer</code> to handle background work outside the web request flow. Suggestions:</p>
+
+<ul>
+<li>Treat these as <code class="prettyprint">background</code> transactions</li>
+<li>Provide a <code class="prettyprint">name</code> based on the message each <code class="prettyprint">handle_call/</code> function handles.</li>
+</ul>
+
+<p>An example:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Flight</span><span class="o">.</span><span class="no">Checker</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">GenServer</span>
+  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+
+  <span class="c1"># Will appear under "Background Jobs" in the UI, named "Flight.handle_check".</span>
+  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">check"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">handle_call</span><span class="p">({</span><span class="ss">:check</span><span class="p">,</span> <span class="n">flight</span><span class="p">},</span> <span class="n">_from</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># Do work...</span>
+  <span class="k">end</span>
+</code></pre>
+<h3 id="task-start">Task.start</h3>
+
+<p>These execute asynchronously, so treat as a <code class="prettyprint">background</code> transaction.</p>
+<pre class="highlight elixir tab-elixir"><code><span class="no">Task</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
+  <span class="c1"># Will appear under "Background Jobs" in the UI, named "Crawler.crawl".</span>
+  <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">:background</span><span class="p">,</span><span class="sd">"</span><span class="s2">Crawler.crawl"</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Crawler</span><span class="o">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">)</span>
+</code></pre>
+<h3 id="task-supervisor-start_child">Task.Supervisor.start_child</h3>
+
+<p>Like <code class="prettyprint">Task.start</code>, these execute asynchronously, so treat as a <code class="prettyprint">background</code> transaction.</p>
+<pre class="highlight elixir tab-elixir"><code><span class="no">Task</span><span class="o">.</span><span class="no">Supervisor</span><span class="o">.</span><span class="n">start_child</span><span class="p">(</span><span class="no">YourApp</span><span class="o">.</span><span class="no">TaskSupervisor</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+  <span class="c1"># Will appear under "Background Jobs" in the UI, named "Crawler.crawl". </span>
+  <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">:background</span><span class="p">,</span><span class="sd">"</span><span class="s2">Crawler.crawl"</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Crawler</span><span class="o">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span><span class="p">)</span>
+</code></pre>
+<h3 id="exq">Exq</h3>
+
+<p>To instrument <a href="https://github.com/akira/exq">Exq</a> background jobs, add a <code class="prettyprint">@transaction</code> module attribute to each worker&rsquo;s <code class="prettyprint">perform/</code> function:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">MyWorker</span> <span class="k">do</span>
+  <span class="c1"># Will appear under "Background Jobs" in the UI, named "MyWorker.perform".</span>
+  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">perform</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># do work</span>
+  <span class="k">end</span>
 <span class="k">end</span>
 </code></pre>
-<p>In the example above, &ldquo;HTTP&rdquo; will appear on timeseries charts and &ldquo;HTTP/GitHub_Avatar&rdquo; will appear in traces.</p>
+<h3 id="absinthe">Absinthe</h3>
+
+<p>Requests to the Absinthe plug can be grouped by the GraphQL <code class="prettyprint">operationName</code> under the &ldquo;Web&rdquo; UI by adding <a href="https://gist.github.com/itsderek23/d9435b21c9a44cd9629e93c4e8c2750e" target="_blank">this plug</a> to your pipeline.  </p>
+
+<h3 id="httpoison">HTTPoison</h3>
+
+<p>Download this <a href="https://gist.github.com/itsderek23/50296b49df16b266e47cc04d227d4b4a" target="_blank">ScoutApm.HTTPoison module</a> into your app&rsquo;s <code class="prettyprint">/lib</code> folder, then <code class="prettyprint">alias ScoutApm.HTTPoison</code> when calling <code class="prettyprint">HTTPoison</code> functions:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Demo</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">PageController</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Demo</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:controller</span>
+  <span class="c1"># Will route function calls to `HTTPoision` through `ScoutApm.HTTPoison`, which times the execution of the HTTP call.</span>
+  <span class="n">alias</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">HTTPoison</span>
+
+  <span class="k">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="c1"># "HTTP" will appear on timeseries charts. "HTTP/get" and the url "https://cnn.com" will appear in traces.</span>
+    <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sd">"</span><span class="s2">https://cnn.com"</span><span class="p">)</span>
+    <span class="n">render</span> <span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">index.html"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+<h3 id="mongodb-ecto">MongoDB Ecto</h3>
+
+<p>Download <a href="https://gist.github.com/itsderek23/051327a152bc4d95451fd76808b8e83f" target="_blank">this example MongoDB Repo module</a> to use inplace of your existing MongoDB Repo module.</p>
+
+<h2 id="elixir-custom-instrumentation">Custom Instrumentation</h2>
+
+<p>You can extend Scout to record additional types of transactions (background jobs, for example) and time the execution of code that fall outside our custom instrumentation.</p>
+
+<p>For full details on instrumentation functions, see our <a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html" target="_blank">ScoutApm.Tracing Hex docs</a>.</p>
+
+<h3 id="transactions-timing">Transactions &amp; Timing</h3>
+
+<p>Scout’s instrumentation is divided into 2 areas:</p>
+
+<ol>
+<li><strong>Transactions</strong>: these wrap around a flow of work, like a web request or a GenServer call. The UI groups data under transactions. Use <code class="prettyprint">@transaction</code> module attributes and the <code class="prettyprint">transaction/4</code> macro.</li>
+<li><strong>Timing</strong>: these measure individual pieces of work, like an HTTP request to an outside service or an Ecto query. Use <code class="prettyprint">@timing</code> module attributes and the <code class="prettyprint">timing/4</code> macro.</li>
+</ol>
+
+<h3 id="instrumenting-transactions">Instrumenting transactions</h3>
+
+<p>Via <code class="prettyprint">@transaction</code> module attributes:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">RoomChannel</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Channel</span>
+  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+
+  <span class="c1"># Will appear under "Web" in the UI, named "YourApp.Web.RoomChannel.join".</span>
+  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="sd">"</span><span class="s2">topic:html"</span><span class="p">,</span> <span class="n">_message</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Will appear under "Background Jobs" in the UI, named "RoomChannel.ping".</span>
+  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">RoomChannel.ping"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="sd">"</span><span class="s2">ping"</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">body"</span> <span class="o">=&gt;</span> <span class="n">body</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">broadcast!</span> <span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">new_msg"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">body:</span> <span class="n">body</span><span class="p">}</span>
+    <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
+  <span class="k">end</span>
+</code></pre>
+<p>Via <code class="prettyprint">transaction/4</code>:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracking</span>
+
+<span class="k">def</span> <span class="n">do_async_work</span> <span class="k">do</span>
+  <span class="no">Task</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
+    <span class="c1"># Will appear under "Background Jobs" in the UI, named "Do Work".</span>
+    <span class="n">transaction</span><span class="p">(</span><span class="ss">:background</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Do Work"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="c1"># Do work...</span>
+    <span class="k">end</span>
+  <span class="k">end</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre>
+<p>See the <a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html" target="_blank">ScoutApm.Tracing Hexdocs</a> for details on instrumenting transactions.</p>
+
+<h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
+
+<p>Via <code class="prettyprint">@timing</code> module attributes:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Searcher</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+
+  <span class="c1"># Time associated with this function will appear under "Hound" in timeseries charts.</span>
+  <span class="c1"># The function will appear as `Hound/open_search` in transaction traces.</span>
+  <span class="nv">@timing</span><span class="p">(</span><span class="ss">category:</span> <span class="sd">"</span><span class="s2">Hound"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">open_search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">navigate_to</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Time associated with this function will appear under "Hound" in timeseries charts.</span>
+  <span class="c1"># The function will appear as `Hound/homepage` in transaction traces.</span>
+  <span class="nv">@timing</span><span class="p">(</span><span class="ss">category:</span> <span class="sd">"</span><span class="s2">Hound"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">homepage"</span><span class="p">)</span>
+  <span class="k">def</span> <span class="n">open_homepage</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">navigate_to</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre>
+<p>Via <code class="prettyprint">timing/4</code>:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">PhoenixApp</span><span class="o">.</span><span class="no">PageController</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">PhoenixApp</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:controller</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+
+  <span class="k">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">timing</span><span class="p">(</span><span class="sd">"</span><span class="s2">Timer"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">sleep"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="ss">:timer</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="m">3000</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">render</span> <span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">index.html"</span>
+  <span class="k">end</span>
+</code></pre>
+<p>See the <a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html" target="_blank">ScoutApm.Tracing Hexdocs</a> for details on timing functions and blocks of code.</p>
+
+<h4 id="limits-on-category-arity">Limits on category arity</h4>
+
+<p>We limit the number of unique categories that can be instrumented. Tracking too many unique category can impact the performance of our UI. Do not dynamically generate categories in your instrumentation (ie <code class="prettyprint">timing(&quot;user_#{user.id}&quot;, &quot;generate&quot;, do: do_work())</code> as this can quickly exceed our rate limits.</p>
 
 <h4 id="adding-a-description">Adding a description</h4>
 
 <p>Call <code class="prettyprint">ScoutApm.Tracing.update_desc/1</code> to add relevant information to the instrumented item. This description is then viewable in traces. An example:</p>
-<pre class="highlight elixir tab-elixir"><code><span class="n">instrument</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
+<pre class="highlight elixir tab-elixir"><code><span class="n">timing</span><span class="p">(</span><span class="sd">"</span><span class="s2">HTTP"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">GitHub_Avatar"</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">url</span> <span class="o">=</span> <span class="sd">"</span><span class="s2">https://github.com/</span><span class="si">#{</span><span class="n">user</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">.png"</span>
   <span class="n">update_desc</span><span class="p">(</span><span class="sd">"</span><span class="s2">GET </span><span class="si">#{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
   <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-<span class="k">end</span><span class="p">)</span>
+<span class="k">end</span>
 </code></pre>
-<p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#instrument/3" target="_blank">See the scout_apm hex docs</a> for more details on <code class="prettyprint">instrument</code>.</p>
-
-<h3 id="tracking-already-executed-time">Tracking already executed time</h3>
+<h4 id="tracking-already-executed-time">Tracking already executed time</h4>
 
 <p>Libraries like Ecto log details on executed queries. This includes timing information. To add a trace item for this, use <code class="prettyprint">ScoutApm.Tracing.track</code>. An example:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Mongo</span><span class="o">.</span><span class="no">Repo</span> <span class="k">do</span>
@@ -1391,21 +1573,10 @@ defmodule HeroReview.Web do
   <span class="k">end</span>
 
 <span class="k">end</span>
-
 </code></pre>
 <p>In the example above, the metric will appear in traces as <code class="prettyprint">Ecto/#{query_time(entry)}</code>. On timeseries charts, the time will be allocated to <code class="prettyprint">Ecto</code>.</p>
 
-<h4 id="adding-a-description">Adding a description</h4>
-
-<p>Metadata - like a raw query - can be passed to <code class="prettyprint">track</code>. Pass it via the <code class="prettyprint">desc</code> option. Example:</p>
-<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">track</span><span class="p">(</span>
-  <span class="sd">"</span><span class="s2">Ecto"</span><span class="p">,</span> 
-  <span class="n">query_name</span><span class="p">(</span><span class="n">entry</span><span class="p">),</span> 
-  <span class="n">entry</span><span class="o">.</span><span class="n">query_time</span><span class="p">,</span> 
-  <span class="ss">:microseconds</span><span class="p">,</span> 
-  <span class="ss">desc:</span> <span class="n">entry</span><span class="o">.</span><span class="n">raw_query</span><span class="p">)</span>
-</code></pre>
-<p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track</code>.</p>
+<p><a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html#track/5" target="_blank">See the scout_apm hex docs</a> for more information on <code class="prettyprint">track/</code>.</p>
 
 <h3 id="elixir-testing-instrumentation">Testing instrumentation</h3>
 
@@ -1463,7 +1634,7 @@ defmodule HeroReview.Web do
 
 <h2 id="elixir-environments">Environments</h2>
 
-<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout. To do so, configure a unique app name for each environment. Scout aggregrates data by the app name. </p>
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout. To do so, configure a unique app name for each environment. Scout aggregates data by the app name. </p>
 
 <p>An example:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="c1"># config/staging.exs</span>
@@ -1936,16 +2107,16 @@ config :scout_apm,
     });
 
     /**
- * AnchorJS v3.2.0 options and selector
- */
+     * AnchorJS v3.2.0 options and selector
+     */
 
-(function (global) {
-  'use strict';
-  anchors.options.placement = 'right';
+    (function (global) {
+      'use strict';
+      anchors.options.placement = 'right';
 
-  anchors.add('.content > h2, .content > h3, .content > h4');
+      anchors.add('.content > h2, .content > h3, .content > h4');
 
-})(window);
+    })(window);
 
   </script>
 </html>
