@@ -966,7 +966,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>Scout runs within Docker containers without any special configuration.</p>
 
-<p>It&rsquo;s common to configure Docker containers with environment variables. Scout can use <a href="#environment-variables">enviornment variables</a> instead of the <code class="prettyprint">scout_apm.yml</code> config file.</p>
+<p>It&rsquo;s common to configure Docker containers with environment variables. Scout can use <a href="#environment-variables">environment variables</a> instead of the <code class="prettyprint">scout_apm.yml</code> config file.</p>
 
 <h2 id="heroku">Heroku <img src="images/heroku.png" style="float:right;width: 150px" /></h2>
 
@@ -1050,7 +1050,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <h2 id="ruby-environments">Environments</h2>
 
-<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments. Configure a unique app name for each environment as Scout aggregrates data by the app name.</p>
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments. Configure a unique app name for each environment as Scout aggregates data by the app name.</p>
 
 <p>There are 2 approaches:</p>
 
@@ -1687,6 +1687,128 @@ config :scout_apm,
   </tbody>
 </table>
 
+          <h1 id="api">API</h1>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>The ScoutAPM API is currently fairly narrow in scope. It is intended to
+support 3rd party dashboards, exporting summary data from your applications.</p>
+
+<p>If you have ideas on API enhancements, please contact us at support@scoutapp.com</p>
+
+<h2 id="authorization">Authorization</h2>
+
+<h3 id="obtaining-a-token">Obtaining a token</h3>
+
+<ol>
+<li>Log into the ScoutAPM website</li>
+<li>Go to your organization&rsquo;s settings</li>
+<li>Enter a name (for your use), and obtain a token</li>
+</ol>
+
+<h3 id="sending-authorization">Sending Authorization</h3>
+
+<p>The key must be provided with every request, via one of several methods:</p>
+
+<ul>
+<li>An HTTP Header named <code class="prettyprint">X-SCOUT-API</code></li>
+<li>As part of the JSON request body, as the top level key: <code class="prettyprint">key</code></li>
+<li>A URL query string argument named <code class="prettyprint">key</code></li>
+</ul>
+
+<h3 id="response-format">Response Format</h3>
+
+<p>Every endpoint returns a JSON object. The object will at the minimum,
+have a <code class="prettyprint">&quot;header&quot;</code> field with embedded status and message fields. If the
+endpoint returned results, it will be under a results keys.</p>
+<pre class="highlight  tab-plaintext"><code>{
+  "header": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "apiVersion": "0.1"
+  },
+  "results": { ... }
+}
+</code></pre>
+<h2 id="api-endpoints">API Endpoints</h2>
+
+<h3 id="applications">Applications</h3>
+
+<h4 id="applications-list">Applications List</h4>
+
+<p><code class="prettyprint">/api/v0/apps</code> - returns a list of applications and their ids</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  "apps": [
+    {
+      "name": "MyApp Staging",
+      "id": 100
+    },
+    {
+      "name": "MyApp Production",
+      "id": 101
+    }
+}
+</code></pre>
+<h4 id="application-detail">Application Detail</h4>
+
+<p><code class="prettyprint">/api/v0/apps/:id</code> - returns information about a specific application</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  "app": {
+    "id": 101,
+    "name": "MyApp Production"
+  }
+}
+</code></pre>
+<h3 id="metrics">Metrics</h3>
+
+<h4 id="known-metric-list">Known Metric List</h4>
+
+<p><code class="prettyprint">/api/v0/apps/:id/metrics</code> returns a list of known metric types</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  availableMetrics": [
+    "response_time",
+    "errors",
+    "throughput"
+  ]
+}
+</code></pre>
+<h4 id="metric-data">Metric Data</h4>
+
+<p><code class="prettyprint">/api/v0/apps/:id/metrics/:metric_type</code> - will return a time series dataset for the metric.</p>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li><strong>from</strong> - start time, ISO8601 formatted</li>
+<li><strong>to</strong> - end time, ISO8601 formatted</li>
+</ul>
+
+<p>These two times must not be more than 2 weeks apart</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  series": {
+    "response_time": [
+      [
+        "2016-05-16T22:00:00Z",
+        90.33333333333333
+      ],
+      [
+        "2016-05-16T22:01:00Z",
+        86.87233333333333
+      ]
+    ]
+  }
+}
+</code></pre>
           <h1 id="features">Features</h1>
 
 <p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a free trial</a>.</p>
@@ -1714,13 +1836,13 @@ config :scout_apm,
 
 <h3 id="call-breakdown">Call Breakdown</h3>
 
-<p>Method calls are aggregrated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).</p>
+<p>Method calls are aggregated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).</p>
 
 <p><img src="images/stream_show_call_breakdown.png" alt="stream show breakdown" /></p>
 
 <h3 id="sql-queries">SQL Queries</h3>
 
-<p>Scout captures a santized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details. </p>
+<p>Scout captures a sanitized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details. </p>
 
 <p><img src="images/stream_show_sql_annotated.png" alt="stream show sql" /></p>
 
@@ -1730,11 +1852,11 @@ config :scout_apm,
 
 <h3 id="code-backtraces">Code Backtraces</h3>
 
-<p>You&rsquo;ll see &ldquo;CODE&rdquo; buttons next to method calls that are &gt;= 500 ms. If you&rsquo;ve enabled the Github integration, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.</p>
+<p>You&rsquo;ll see &ldquo;CODE&rdquo; buttons next to method calls that are &gt;= 500 ms. If you&rsquo;ve enabled the GitHub integration, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.</p>
 
 <p><img src="images/stream_slow_git_annotated.png" alt="stream show git" /></p>
 
-<p>If you don&rsquo;t enable the Github integration, you&rsquo;ll see a backtrace.</p>
+<p>If you don&rsquo;t enable the GitHub integration, you&rsquo;ll see a backtrace.</p>
 
 <h2 id="scoutprof">ScoutProf</h2>
 
@@ -1777,7 +1899,7 @@ config :scout_apm,
 
 <h2 id="memory-bloat-detection">Memory Bloat Detection</h2>
 
-<p>If a user triggers a request to your Rails application that results in a large number of object allocations (example: loading a large number of ActiveRecord objects), your app may require additional memory. The additional memory required to load the objects in memory is released back very slowly. Therefore, a single memory-hungry request will have a long-term impact on your Rails app’s memory usage.</p>
+<p>If a user triggers a request to your Rails application that results in a large number of object allocations (example: loading a large number of ActiveRecord objects), your app may require additional memory. The additional memory required to load the objects in memory is released back very slowly. Therefore, a single memory-hungry request will have a long-term impact on your Rails app&rsquo;s memory usage.</p>
 
 <p>There are 3 specific features of Scout to aid in fixing memory bloat.</p>
 
@@ -1839,7 +1961,7 @@ config :scout_apm,
 
 <h2 id="git-integration">Git Integration</h2>
 
-<p>If your code is hosted at Github, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing a transaction trace. Additionally, you&rsquo;ll also see the:</p>
+<p>If your code is hosted at GitHub, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing a transaction trace. Additionally, you&rsquo;ll also see the:</p>
 
 <ul>
 <li>author</li>
@@ -1847,7 +1969,7 @@ config :scout_apm,
 <li>deploy time</li>
 </ul>
 
-<p>Git integration must be configured on the settings page for each app. Scout integrates with Github via OAuth. Pick the repository name and branch name used for your application.</p>
+<p>Git integration must be configured on the settings page for each app. Scout integrates with GitHub via OAuth. Pick the repository name and branch name used for your application.</p>
 
 <p><img src="images/git_settings_annotated.png" alt="git settings" /></p>
 
