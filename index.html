@@ -244,7 +244,7 @@
 
 <p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Get started - it&rsquo;s free</a>.</p>
 
-<p>Browse through the sidebar, search, or <a href="mailto:support@scoutapp.com">ask a question</a>. We&rsquo;re here to help.</p>
+<p>Browse through the sidebar, search, <a href="mailto:support@scoutapp.com">email us</a>, or <a href="http://slack.scoutapp.com" target="_blank">join our Slack community</a>. We&rsquo;re here to help.</p>
 
 <div id="overview_container">
   <div>
@@ -835,6 +835,47 @@ tail -n1000 log/production.log | grep "Processing"
   <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Instruments</span><span class="o">::</span><span class="no">ActionControllerRails3Rails4Instruments</span>
 </code></pre>
 <p>This won&rsquo;t interfere with our regular instrumentation. Your controller-action metrics will appear under the endpoints area of Scout, just like any other controller-action.</p>
+
+<h2 id="rack">Rack</h2>
+
+<p>Rack instrumentation is more explicit than Rails instrumentation, since Rack applications can take
+nearly any form. Instrumenting Rack is a two step process, starting the agent, then wrapping
+endpoints in tracing.</p>
+
+<h3 id="starting-the-agent">Starting the Agent</h3>
+
+<p>Add the <code class="prettyprint">ScoutApm::Rack.install!</code> startup call as close to the spot you
+<code class="prettyprint">run</code> your Rack application.  <span style="white-space: nowrap;"><code class="prettyprint">install!</code></span>
+should be called after you require other gems (ActiveRecord, Mongo, etc)
+to install instrumentation for those libraries.</p>
+<pre class="highlight ruby tab-ruby"><code><span class="c1"># config.ru</span>
+
+<span class="nb">require</span> <span class="s1">'scout_apm'</span>
+<span class="no">ScoutApm</span><span class="o">::</span><span class="no">Rack</span><span class="p">.</span><span class="nf">install!</span>
+
+<span class="n">run</span> <span class="no">MyApp</span>
+</code></pre>
+<h3 id="adding-endpoints">Adding endpoints</h3>
+
+<p>Wrap each endpoint in a call to <code class="prettyprint">ScoutApm::Rack.transaction(name, env)</code>.</p>
+
+<ul>
+<li><code class="prettyprint">name</code> - an unchanging string argument for what the endpoint is. Example: <code class="prettyprint">&quot;API User Listing&quot;</code></li>
+<li><code class="prettyprint">env</code> - the rack environment hash</li>
+</ul>
+
+<p>This may be fairly application specific in details.</p>
+
+<p>Example:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="n">app</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">env</span><span class="o">|</span>
+  <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Rack</span><span class="p">.</span><span class="nf">transaction</span><span class="p">(</span><span class="s2">"API User Listing"</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">User</span><span class="p">.</span><span class="nf">all</span><span class="p">.</span><span class="nf">to_json</span>
+    <span class="p">[</span><span class="s1">'200'</span><span class="p">,</span> <span class="p">{</span><span class="s1">'Content-Type'</span> <span class="o">=&gt;</span> <span class="s1">'application/json'</span><span class="p">},</span> <span class="p">[</span><span class="n">users</span><span class="p">]]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+<p>If you run into any issues, or want advice on naming or wrapping endpoints, contact us at
+support@scoutapp.com for additional help.</p>
 
 <h2 id="ruby-custom-context">Custom Context</h2>
 
