@@ -1217,7 +1217,7 @@ Elixir support is in BETA.
 import_config "scout_apm.exs"
 
 config :your_app, YourApp.Repo,
-  loggers: [{Ecto.LogEntry, :log, []}, 
+  loggers: [{Ecto.LogEntry, :log, []},
             <span>{ScoutApm.Instruments.EctoLogger, :log, []}</span>]</pre>
     <p class="smaller"><code>web/web.ex</code>:
     </p>
@@ -1228,7 +1228,7 @@ defmodule HeroReview.Web do
       use Phoenix.Controller
       <span>use ScoutApm.Instrumentation</span>
       ...</pre>
-  
+
     <p class="instruct">
       <span class="step">D</span>Restart your app.
       <div class="terminal">
@@ -1336,7 +1336,7 @@ defmodule HeroReview.Web do
         host
       </th>
       <td>
-        The protocol + domain where the agent should report. 
+        The protocol + domain where the agent should report.
       </td>
       <td>
         <code>https://apm.scoutapp.com</code>
@@ -1437,6 +1437,7 @@ defmodule HeroReview.Web do
 <p>An example:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">FirestormWeb</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">PostsChannel</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">FirestormWeb</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:channel</span>
+  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Will appear under "Web" in the UI, named "PostsChannel.update"</span>
   <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">PostsChannel.update"</span><span class="p">)</span>
@@ -1478,7 +1479,7 @@ defmodule HeroReview.Web do
 
 <p>Like <code class="prettyprint">Task.start</code>, these execute asynchronously, so treat as a <code class="prettyprint">background</code> transaction.</p>
 <pre class="highlight elixir tab-elixir"><code><span class="no">Task</span><span class="o">.</span><span class="no">Supervisor</span><span class="o">.</span><span class="n">start_child</span><span class="p">(</span><span class="no">YourApp</span><span class="o">.</span><span class="no">TaskSupervisor</span><span class="p">,</span> <span class="k">fn</span> <span class="o">-&gt;</span>
-  <span class="c1"># Will appear under "Background Jobs" in the UI, named "Crawler.crawl". </span>
+  <span class="c1"># Will appear under "Background Jobs" in the UI, named "Crawler.crawl".</span>
   <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span><span class="o">.</span><span class="n">transaction</span><span class="p">(</span><span class="ss">:background</span><span class="p">,</span><span class="sd">"</span><span class="s2">Crawler.crawl"</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">Crawler</span><span class="o">.</span><span class="n">crawl</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
   <span class="k">end</span>
@@ -1693,7 +1694,7 @@ defmodule HeroReview.Web do
 
 <h2 id="elixir-environments">Environments</h2>
 
-<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout. To do so, configure a unique app name for each environment. Scout aggregates data by the app name. </p>
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout. To do so, configure a unique app name for each environment. Scout aggregates data by the app name.</p>
 
 <p>An example:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="c1"># config/staging.exs</span>
