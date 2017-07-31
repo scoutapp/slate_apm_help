@@ -302,6 +302,8 @@
 <li>Unicorn</li>
 <li>WEBrick</li>
 <li>Sidekiq</li>
+<li>DelayedJob</li>
+<li>Resque</li>
 </ul>
 
 <p><a href="#memory-bloat-detection">Memory Bloat detection</a> and <a href="#scoutprof">ScoutProf</a> require Ruby 2.1+.</p>
@@ -362,7 +364,7 @@ bundle install
 tail -n1000 log/scout_apm.log | grep "Starting monitoring" -A20
 </pre>
         <p>
-          See something noteworthy? Proceed to <a href="#step8">to the last step</a>. Otherwise, continue to step 2.
+          See something noteworthy? Proceed to <a href="#step7">to the last step</a>. Otherwise, continue to step 2.
         </p>
         <p><strong style="color:gray">No:</strong></p>
         <p>
@@ -376,21 +378,12 @@ group :production do
   gem 'scout_apm'
 end
 </pre>
-        <p><a href="#step8">Jump to the last step</a> if <code>scout_apm</code> is correctly configured in your <code>Gemfile</code>.</p>
+        <p><a href="#step7">Jump to the last step</a> if <code>scout_apm</code> is correctly configured in your <code>Gemfile</code>.</p>
       </td>
     </tr>
     <tr>
       <td>
         <span class="step">2</span>
-      </td>
-      <td>
-        <p>Are your controllers inheriting from <code>ActionController::Metal</code> instead of <code>ActionController::Base</code>?</p>
-        <p><a href="#actioncontroller-metal">Add instrumentation</a> to your <code>ActionController::Metal</code> controllers.</p>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <span class="step">3</span>
       </td>
       <td>
         <p>Was the <code><strong>scout_apm</strong></code> gem deployed with your application?</p>
@@ -401,7 +394,7 @@ bundle list scout_apm
     </tr>
     <tr>
       <td>
-        <span class="step">4</span>
+        <span class="step">3</span>
       </td>
       <td>
         <p>Did you download the config file, placing it in <code><strong>config/scout_apm.yml</strong></code>?</p>
@@ -409,7 +402,7 @@ bundle list scout_apm
     </tr>
     <tr>
       <td>
-        <span class="step">5</span>
+        <span class="step">4</span>
       </td>
       <td>
         <p>
@@ -419,10 +412,10 @@ bundle list scout_apm
     </tr>
     <tr>
       <td>
-        <span class="step">6</span>
+        <span class="step">5</span>
       </td>
       <td>
-        <a name="step6"></a>
+        <a name="step5"></a>
         <p>Are you sure the application has processed any requests?</p>
 <pre>
 tail -n1000 log/production.log | grep "Processing"
@@ -431,7 +424,7 @@ tail -n1000 log/production.log | grep "Processing"
     </tr>
     <tr>
       <td>
-        <span class="step">7</span>
+        <span class="step">6</span>
       </td>
       <td>
         <p>
@@ -443,8 +436,8 @@ tail -n1000 log/production.log | grep "Processing"
     </tr>
     <tr>
       <td>
-        <a name="step8"></a>
-        <span class="step">8</span>
+        <a name="step7"></a>
+        <span class="step">7</span>
       </td>
       <td>
         <p>
@@ -828,28 +821,37 @@ tail -n1000 log/production.log | grep "Processing"
 </code></pre>
 <h2 id="actioncontroller-metal">ActionController::Metal</h2>
 
-<p>Scout instruments controllers that inherit from <code class="prettyprint">ActionController::Base</code> automatically, but not those that inherit from <code class="prettyprint">ActionController::Metal</code> (including <code class="prettyprint">ActionController::API</code>). We instrument <code class="prettyprint">ActionController::Base</code> as this allows us to instrument the full request cycle (which includes before/after filters). If we just instrumented <code class="prettyprint">ActionController::Metal</code>, we&rsquo;d miss this instrumentation.</p>
+<p>Prior to agent version 2.1.26, an extra step was required to instrument <code class="prettyprint">ActionController::Metal</code>
+and <span style="white-space: nowrap;"><code class="prettyprint">ActionController::Api</code></span> controllers. After 2.1.26, this is automatic.</p>
 
-<p>However, adding instrumentation to controllers that inherit from <code class="prettyprint">ActionController::Metal</code> is simple. Just include our instrumentation library in the controller:</p>
-<pre class="highlight ruby tab-ruby"><code><span class="k">class</span> <span class="nc">FastController</span> <span class="o">&lt;</span> <span class="no">ActionController</span><span class="o">::</span><span class="no">Metal</span>
-  <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Instruments</span><span class="o">::</span><span class="no">ActionControllerRails3Rails4Instruments</span>
-</code></pre>
-<p>This won&rsquo;t interfere with our regular instrumentation. Your controller-action metrics will appear under the endpoints area of Scout, just like any other controller-action.</p>
+<p>The previous instructions which had an explicit <code class="prettyprint">include</code> are no longer
+needed, but if that code is still in your controller, it will not harm
+anything. It will be ignored by the agent and have no effect.</p>
 
 <h2 id="rack">Rack</h2>
 
 <p>Rack instrumentation is more explicit than Rails instrumentation, since Rack applications can take
-nearly any form. After <a href="#ruby_install">installing our agent</a>, instrumenting Rack is a two step process:</p>
+nearly any form. After <a href="#ruby_install">installing our agent</a>, instrumenting Rack is a three step process:</p>
 
 <ol>
+<li>Configuring the agent</li>
 <li>Starting the agent</li>
 <li>Wrapping endpoints in tracing</li>
 </ol>
 
+<h3 id="rack-config">Configuration</h3>
+
+<p>Rack apps are configured using the same approach as a Rails app: either via a <code class="prettyprint">config/scout_apm.yml</code> config file or environment variables.</p>
+
+<ul>
+<li><strong>configuration file</strong>: create a <code class="prettyprint">config/scout_apm.yml</code> file under your application root directory. The file structure is outlined <a href="#ruby-configuration-options">here</a>.</li>
+<li><strong>environment variables</strong>: see our docs on configuring the agent via <a href="#ruby-env-vars">environment variables</a>.</li>
+</ul>
+
 <h3 id="starting-the-agent">Starting the Agent</h3>
 
 <p>Add the <code class="prettyprint">ScoutApm::Rack.install!</code> startup call as close to the spot you
-<code class="prettyprint">run</code> your Rack application.  <span style="white-space: nowrap;"><code class="prettyprint">install!</code></span>
+<code class="prettyprint">run</code> your Rack application as possible.  <span style="white-space: nowrap;"><code class="prettyprint">install!</code></span>
 should be called after you require other gems (ActiveRecord, Mongo, etc)
 to install instrumentation for those libraries.</p>
 <pre class="highlight ruby tab-ruby"><code><span class="c1"># config.ru</span>
@@ -861,7 +863,7 @@ to install instrumentation for those libraries.</p>
 </code></pre>
 <h3 id="adding-endpoints">Adding endpoints</h3>
 
-<p>Wrap each endpoint in a call to <code class="prettyprint">ScoutApm::Rack.transaction(name, env)</code>.</p>
+<p>Wrap each endpoint in a call to <code class="prettyprint">ScoutApm::Rack#transaction(name, env)</code>.</p>
 
 <ul>
 <li><code class="prettyprint">name</code> - an unchanging string argument for what the endpoint is. Example: <code class="prettyprint">&quot;API User Listing&quot;</code></li>
@@ -880,6 +882,38 @@ to install instrumentation for those libraries.</p>
 </code></pre>
 <p>If you run into any issues, or want advice on naming or wrapping endpoints, contact us at
 support@scoutapp.com for additional help.</p>
+
+<h2 id="sinatra">Sinatra</h2>
+
+<p>Instrumenting a Sinatra application is similar to instrumenting a generic <a href="#rack">Rack application</a>.</p>
+
+<h3 id="sinatra-configuration">Configuration</h3>
+
+<p>The agent configuration (API key, app name, etc) follows the same process as the <a href="#rack-config">Rack application config</a>.</p>
+
+<h3 id="sinatra-starting-agent">Starting the agent</h3>
+
+<p>Add the <code class="prettyprint">ScoutApm::Rack.install!</code> startup call as close to the spot you
+<code class="prettyprint">run</code> your Sinatra application as possible.  <span style="white-space: nowrap;"><code class="prettyprint">install!</code></span>
+should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc).</p>
+<pre class="highlight ruby tab-ruby"><code><span class="nb">require</span> <span class="s1">'./main'</span>
+
+<span class="nb">require</span> <span class="s1">'scout_apm'</span>
+<span class="no">ScoutApm</span><span class="o">::</span><span class="no">Rack</span><span class="p">.</span><span class="nf">install!</span>
+
+<span class="n">run</span> <span class="no">Sinatra</span><span class="o">::</span><span class="no">Application</span>
+</code></pre>
+<h3 id="sinatra-transactions">Adding endpoints</h3>
+
+<p>Wrap each endpoint in a call to <code class="prettyprint">ScoutApm::Rack#transaction(name, env)</code>. For example:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="n">get</span> <span class="s1">'/'</span> <span class="k">do</span>
+  <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Rack</span><span class="p">.</span><span class="nf">transaction</span><span class="p">(</span><span class="s2">"get /"</span><span class="p">,</span> <span class="n">request</span><span class="p">.</span><span class="nf">env</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span><span class="p">.</span><span class="nf">connection</span><span class="p">.</span><span class="nf">execute</span><span class="p">(</span><span class="s2">"SELECT * FROM pg_catalog.pg_tables"</span><span class="p">)</span>
+    <span class="s2">"Hello!"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
+<p>See our <a href="#adding-endpoints">Rack docs for adding an endpoint</a> for more details.</p>
 
 <h2 id="ruby-custom-context">Custom Context</h2>
 
@@ -1087,6 +1121,8 @@ support@scoutapp.com for additional help.</p>
 <li>Middleware</li>
 <li>Redis</li>
 <li>Sidekiq</li>
+<li>DelayedJob</li>
+<li>Resque</li>
 </ul>
 
 <p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
@@ -2155,7 +2191,7 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p>Email support@scoutapp.com with any questions on security compliance.</p>
 
-<h3 id="git-integration">Git Integration</h3>
+<h3 id="git-integration-security">Git Integration</h3>
 
 <p>Scout only needs read-only access to your repository, but unfortunately, Github doesn&rsquo;t currently allow this - they only offer read-write permissions through their OAuth API.</p>
 
