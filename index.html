@@ -1534,8 +1534,10 @@ defmodule HeroReview.Web do
 </code></pre>
 <h3 id="exq">Exq</h3>
 
-<p>To instrument <a href="https://github.com/akira/exq">Exq</a> background jobs, add a <code class="prettyprint">@transaction</code> module attribute to each worker&rsquo;s <code class="prettyprint">perform/</code> function:</p>
+<p>To instrument <a href="https://github.com/akira/exq">Exq</a> background jobs, <code class="prettyprint">use ScoutApm.Tracing</code>, and add a <code class="prettyprint">@transaction</code> module attribute to each worker&rsquo;s <code class="prettyprint">perform</code> function:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">MyWorker</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+
   <span class="c1"># Will appear under "Background Jobs" in the UI, named "MyWorker.perform".</span>
   <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">)</span>
   <span class="k">def</span> <span class="n">perform</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span> <span class="k">do</span>
