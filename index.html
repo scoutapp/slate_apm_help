@@ -2006,6 +2006,60 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p>A <a href="#scoutprof-faq">detailed ScoutProf FAQ</a> is available in our reference area.</p>
 
+<h2 id="database-monitoring">Database Monitoring</h2>
+
+<p>A database is shared resource: one expensive query can trigger a flood of slow queries that impact many web endpoints and background jobs. Scout&rsquo;s database monitoring helps in three primary areas:</p>
+
+<ol>
+<li>Identifying the cause of database capacity issues.</li>
+<li>Understanding your query workload and which web endpoints and background jobs are the greatest users of database time.</li>
+<li>Highlighting changes in query workload and performance metrics vs. the norm.</li>
+</ol>
+
+<p>Database metrics are available under the &ldquo;Database&rdquo; area within the Scout UI:</p>
+
+<p><img src="images/db_monitoring.png" alt="database monitoring" /></p>
+
+<h3 id="overview-chart">Overview chart</h3>
+
+<p>The database monitoring overview chart helps answer important questions at-a-glance. For example:</p>
+
+<ul>
+<li>Is time consumed by queries increasing because throughput is increasing?</li>
+<li>Is one type of query showing a dramatic increase in time consumed?</li>
+<li>How are query response times changing under load?</li>
+</ul>
+
+<p>The overview chart shows the top 4 most time-consuming queries and an aggregate of all other queries vs. overall query throughput.</p>
+
+<h3 id="zooming">Zooming</h3>
+
+<p>The primary interaction point of Scout&rsquo;s database monitoring is the zoom functionality.</p>
+
+<p>If you notice a spike in time spent by database queries, simply click and drag on the overview chart. The queries list will update, showing changes during the zoom window. </p>
+
+<p>Annotations are added to the queries list when zooming:</p>
+
+<ul>
+<li>The change in rank, based on % time consumed, of each query. Queries that jump significantly in rank may trigger a dramatic change in database performance.</li>
+<li>The % change across metrics in the zoom window vs. the larger timeframe. If the % change is not significant, the metric is faded.</li>
+<li>A bullseye appears next to the max query time if the slowest occurrence of this query was executed during the zoom window. This may indicate a single slow query triggered a problem.</li>
+</ul>
+
+<h3 id="queries-list">Queries List</h3>
+
+<p>A list of queries, broken down by their ActiveRecord model, operation, and caller (either a web endpoint or background job) is listed below the overview chart.</p>
+
+<p>By default, this list is truncated to display just the most time-consuming queries.</p>
+
+<h3 id="database-events">Database Events</h3>
+
+<p>Scout highlights significant events in database performance in the sidebar. For example, if time spent in database queries increases dramatically, you&rsquo;ll find an insight here. Clicking on an insight jumps to the time window referenced by the insight.</p>
+
+<h3 id="library-support">Library Support</h3>
+
+<p>Scout currently monitors queries executed via ActiveRecord, which includes most relational databases (PostgreSQL, MySQL, etc).</p>
+
 <h2 id="memory-bloat-detection">Memory Bloat Detection</h2>
 
 <p>If a user triggers a request to your Rails application that results in a large number of object allocations (example: loading a large number of ActiveRecord objects), your app may require additional memory. The additional memory required to load the objects in memory is released back very slowly. Therefore, a single memory-hungry request will have a long-term impact on your Rails app&rsquo;s memory usage.</p>
