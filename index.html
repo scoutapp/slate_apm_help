@@ -705,6 +705,20 @@ tail -n1000 log/production.log | grep "Processing"
       </td>
     </tr>
     <tr>
+      <th>
+        enable_background_jobs
+      </th>
+      <td>
+        Indicates if background jobs should be monitored.
+      </td>
+      <td>
+        <code>true</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
       <th>dev_trace</th>
       <td>
         Indicates if DevTrace, the Scout development profiler, should be enabled. Note this setting only applies
@@ -1210,6 +1224,24 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
 <p>Aft you&rsquo;ve disabled a node in your configuration file and restarted your app server, the node show up as inactive in the UI after 10 minutes.</p>
+
+<h2 id="ignoring-transactions">Ignoring transactions</h2>
+
+<p>There are a couple of approaches to ignore web requests and background jobs you don&rsquo;t care to instrument. These approaches are listed below.</p>
+
+<h3 id="by-the-web-endpoint-path-name">By the web endpoint path name</h3>
+
+<p>You can ignore requests to web endpoints that match specific paths (like <code class="prettyprint">/health_check</code>). See the <code class="prettyprint">ignore</code> setting in the <a href="http://localhost:4567/#ruby-configuration-options">configuration options</a>.</p>
+
+<h3 id="in-your-code">In your code</h3>
+
+<p>To selectively ignore a web request or background job in your code, add the following within the transaction:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="n">req</span> <span class="o">=</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">RequestManager</span><span class="p">.</span><span class="nf">lookup</span>
+<span class="n">req</span><span class="p">.</span><span class="nf">ignore_request!</span>
+</code></pre>
+<h3 id="ignoring-all-background-jobs">Ignoring all background jobs</h3>
+
+<p>You can ignore all background jobs by setting <code class="prettyprint">enable_background_jobs: false</code> in your configuration file. See the <a href="http://localhost:4567/#ruby-configuration-options">configuration options</a>.</p>
 
           <h1 id="elixir-agent">Elixir Agent</h1>
 
