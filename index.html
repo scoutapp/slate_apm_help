@@ -759,7 +759,7 @@ tail -n1000 log/production.log | grep "Processing"
 <p>Environment variables have the same names as those in the Yaml config file, but are prefixed with <code class="prettyprint">SCOUT_</code>. For example, to set the organization key via environment variables:</p>
 <pre class="highlight ruby tab-ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
-<h2 id="deploy-tracking-config">Deploy Tracking Config</h2>
+<h2 id="ruby-deploy-tracking-config">Deploy Tracking Config</h2>
 
 <p>Scout can <a href="#deploy-tracking">track deploys</a>, making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#updating-to-the-newest-version">upgrade instructions</a>.</p>
 
@@ -1468,6 +1468,10 @@ defmodule HeroReview.Web do
 
 </div>
 
+<h2 id="elixir-deploy-tracking-config">Deploy Tracking Config</h2>
+
+<p>The Elixir agent doesn&rsquo;t support deploy tracking yet. Contact <a href="support@scoutapp.com">support@scoutapp.com</a> to be notified of updates.</p>
+
 <h2 id="elixir-instrumented-libaries">Auto-Instrumented Libraries</h2>
 
 <p>Our <a href="#elixir-install">install instructions</a> walk through instrumenting the following libraries:</p>
@@ -2062,6 +2066,10 @@ endpoint returned results, it will be under a results keys.</p>
 <li><a href="#database-overview">Database Overview</a></li>
 <li><a href="#endpoint-database-breakdown">Web Endpoint &amp; Background Job Breakdown</a></li>
 </ol>
+
+<p>The video below shows the two areas in action. There is a detailed description of each area beneath the video.</p>
+
+<iframe src="https://player.vimeo.com/video/241390934" width="640" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
 <h3 id="database-overview">Database Overview</h3>
 
