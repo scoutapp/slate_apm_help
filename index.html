@@ -847,11 +847,13 @@ tail -n1000 log/production.log | grep "Processing"
 <pre class="highlight  tab-plaintext"><code>proxy_set_header X-Request-Start "t=${msec}";
 </code></pre>
 <p>Passenger 5+:</p>
-<pre class="highlight  tab-plaintext"><code>passenger_set_header X_REQUEST_START "t=${msec}";
+<pre class="highlight  tab-plaintext"><code>passenger_set_header X-Request-Start "t=${msec}";
 </code></pre>
 <p>Older Passsenger versions:</p>
-<pre class="highlight  tab-plaintext"><code>passenger_set_cgi_param X_REQUEST_START "t=${msec}";
+<pre class="highlight  tab-plaintext"><code>passenger_set_cgi_param X-REQUEST-START "t=${msec}";
 </code></pre>
+<p>Note: The Nginx option is local to the <a href="https://www.phusionpassenger.com/library/config/nginx/reference/#this-configuration-option-is-not-inherited-across-contexts">location block</a>, and isn&rsquo;t inherited.</p>
+
 <h2 id="actioncontroller-metal">ActionController::Metal</h2>
 
 <p>Prior to agent version 2.1.26, an extra step was required to instrument <code class="prettyprint">ActionController::Metal</code>
@@ -1342,6 +1344,12 @@ defmodule HeroReview.Web do
 <pre class="highlight  tab-plaintext"><code>config :scout_apm,
   name: "Your App", # The app name that will appear within the Scout UI
   key: "YOUR SCOUT KEY"
+</code></pre>
+<p>Alternately, you can also use environment variables of your choosing by formatting your configuration as a tuple
+with :system as the first value and the environment variable expected as the second.</p>
+<pre class="highlight  tab-plaintext"><code>config :scout_apm,
+  name: { :system, "SCOUT_APP_NAME" },
+  key: { :system, "SCOUT_APP_KEY" }
 </code></pre>
 <h3 id="configuration-reference">Configuration Reference</h3>
 
