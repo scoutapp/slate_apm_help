@@ -2300,13 +2300,12 @@ endpoint returned results, it will be under a results keys.</p>
 
 <h2 id="how-we-collect-metrics">How we collect metrics</h2>
 
-<p>Scout is engineered to monitor the performance of your mission-critical production applications by providing an easy-install, low-overhead monitoring agent with a hosted SaaS service that values your security. The basic flow:</p>
+<p>Scout is engineered to monitor the performance of mission-critical production applications. Here&rsquo;s a short overview of how this happens:</p>
 
 <ul>
-<li>Embed our agent in your application. You don&rsquo;t access to the servers your app is deployed on.</li>
-<li>The agent instruments key libraries (database access, controllers, views, etc) using low-overhead instrumentation.</li>
-<li>Every minute, the agent connects over https (always) through a 256-bit secure, encrypted connection (the same encryption your bank uses) and sends metrics to our servers.</li>
-<li>Over servers store the data.</li>
+<li>Embed our agent in your application (ex: for Ruby apps, add our gem to your Gemfile).</li>
+<li>The agent instruments key libraries (database access, controllers, views, etc) automatically using low-overhead instrumentation.</li>
+<li>Every minute, the agent connects over HTTPS through a 256-bit secure, encrypted connection and sends metrics to our servers.</li>
 </ul>
 
 <h2 id="performance-overhead">Performance Overhead</h2>
