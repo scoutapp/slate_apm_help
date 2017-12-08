@@ -18,7 +18,7 @@ Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+ and the following app
 
 <h2 id="ruby_install">Installation</h2>
 
-Tailored instructions are provided within our user interface. General instructions:
+Tailored instructions are provided within our user interface. If you installed APM via the Heroku Add-on, refer to our [Heroku documentation](#heroku). General instructions:
 
 <table class="help install install_ruby">
   <tbody>
@@ -42,7 +42,7 @@ bundle install
     <tr>
      	<td><span class="step">2</span></td>
      	<td><p>Download your customized config file, placing it at <code>config/scout_apm.yml</code>.</p>
-        <p class="smaller">Your customized config file is available within your Scout account.</p>
+        <p class="smaller">Your customized config file is available within your Scout account, via [this link](https://apm.scoutapp.com/apps/new_ruby_application_configuration).</p>
       </td>
     </tr>
     <tr>
