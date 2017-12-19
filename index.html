@@ -2027,9 +2027,11 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p><img src="images/stream_show_sql_annotated.png" alt="stream show sql" /></p>
 
-<h4 id="dont-see-the-query-next-to-an-sql-call">Don&rsquo;t see the query next to an SQL call?</h4>
+<h4 id="dont-an-sql-query-next-to-an-sql-call">Don&rsquo;t an SQL query next to an SQL call?</h4>
 
-<p>For performance reasons, Scout doesn&rsquo;t attempt to sanitize large SQL queries. When this occurs, you won&rsquo;t see an &ldquo;SQL&rdquo; button to view the raw query next to an SQL method call.</p>
+<p>Scout collects a sanitized version of SQL queries and displays these in transaction traces. To limit agent overhead sanitizing queries, we do not collect query statements with more than 16k characters.</p>
+
+<p>This limit was raised to 16k characters from 4k characters in version 2.3.3 of the Ruby agent after determining the higher threshold was safe for production environments. If you have an older version of <code class="prettyprint">scout_apm</code>, <a href="#updating-to-the-newest-version">update to the latest</a>.</p>
 
 <h3 id="code-backtraces">Code Backtraces</h3>
 
