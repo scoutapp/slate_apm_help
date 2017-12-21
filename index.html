@@ -2031,7 +2031,7 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p>Scout collects a sanitized version of SQL queries and displays these in transaction traces. To limit agent overhead sanitizing queries, we do not collect query statements with more than 16k characters.</p>
 
-<p>This limit was raised to 16k characters from 4k characters in version 2.4.0 of the Ruby agent after determining the higher threshold was safe for production environments. If you have an older version of <code class="prettyprint">scout_apm</code>, <a href="#updating-to-the-newest-version">update to the latest</a>.</p>
+<p>This limit was raised to 16k characters from 4k characters in version 2.3.3 of the Ruby agent after determining the higher threshold was safe for production environments. If you have an older version of <code class="prettyprint">scout_apm</code>, <a href="#updating-to-the-newest-version">update to the latest</a>.</p>
 
 <h3 id="code-backtraces">Code Backtraces</h3>
 
@@ -2082,78 +2082,67 @@ endpoint returned results, it will be under a results keys.</p>
 
 <h2 id="database-monitoring">Database Monitoring</h2>
 
-<p>A database is shared resource: one expensive query can trigger a flood of slow queries that impact many web endpoints and background jobs. Scout&rsquo;s database monitoring helps in three primary areas:</p>
+<p>When the database monitoring addon is enabled, you&rsquo;ll gain access to both a high-level overview of your database query performance and detailed information on specific queries. Together, these pieces make it easier to get to the source of slow query performance.</p>
 
-<ol>
-<li>Identifying the cause of database capacity issues.</li>
-<li>Understanding your query workload and which web endpoints and background jobs are the greatest users of database time.</li>
-<li>Highlighting changes in query workload and performance metrics vs. the norm.</li>
-</ol>
+<h3 id="database-queries-overview">Database Queries Overview</h3>
 
-<p>Database metrics appear in two areas of the UI:</p>
+<p>The high-level view helps you identify where to start:</p>
 
-<ol>
-<li><a href="#database-overview">Database Overview</a></li>
-<li><a href="#endpoint-database-breakdown">Web Endpoint &amp; Background Job Breakdown</a></li>
-</ol>
+<p><a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/overview.png"><img alt="overview" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/overview.png"/></a></p>
 
-<p>The video below shows the two areas in action. There is a detailed description of each area beneath the video.</p>
+<p>The chart at the top shows your app&rsquo;s most time-consuming queries over time. Beneath the chart, you&rsquo;ll find a sortable list of queries grouped by a label (for Rails apps, this is the ActiveRecord model and operation) and the caller (a web endpoint or a background job):</p>
 
-<iframe src="https://player.vimeo.com/video/241390934" width="640" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-
-<h3 id="database-overview">Database Overview</h3>
-
-<p><img src="images/db_monitoring.png" alt="database monitoring" /></p>
-
-<h4 id="overview-chart">Overview chart</h4>
-
-<p>The database monitoring overview chart helps answer important questions at-a-glance. For example:</p>
+<p>This high-level view is engineered to reduce the investigation time required to:</p>
 
 <ul>
-<li>Is time consumed by queries increasing because throughput is increasing?</li>
-<li>Is one type of query showing a dramatic increase in time consumed?</li>
-<li>How are query response times changing under load?</li>
+<li><strong>identify slow queries</strong>: it&rsquo;s easy for queries to become more inefficient over time as the size of your data grows. Sorting queries by &ldquo;95th percentile response time&rdquo; and &ldquo;mean response time&rdquo; makes it easy to identify your slowest queries.</li>
+<li><strong>solve capacity issues</strong>: an overloaded database can have a dramatic impact on your app&rsquo;s performance. Sorting the list of queries by &ldquo;% time consumed&rdquo; shows you which queries are consuming the most time in your database.</li>
 </ul>
-
-<p>The overview chart shows the top 4 most time-consuming queries and an aggregate of all other queries vs. overall query throughput.</p>
 
 <h4 id="zooming">Zooming</h4>
 
-<p>The primary interaction point of Scout&rsquo;s database monitoring is the zoom functionality.</p>
+<p><strong>If there is a spike in time consumed or throughput, you can easily see what changed during that period</strong>. Click and drag over the area of interest on the chart:</p>
 
-<p>If you notice a spike in time spent by database queries, simply click and drag on the overview chart. The queries list will update, showing changes during the zoom window. </p>
+<p><a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/zoom.png"><img alt="zoom" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/zoom.png" /></a></p>
 
 <p>Annotations are added to the queries list when zooming:</p>
 
 <ul>
 <li>The change in rank, based on % time consumed, of each query. Queries that jump significantly in rank may trigger a dramatic change in database performance.</li>
 <li>The % change across metrics in the zoom window vs. the larger timeframe. If the % change is not significant, the metric is faded.</li>
-<li>A bullseye appears next to the max query time if the slowest occurrence of this query was executed during the zoom window. This may indicate a single slow query triggered a problem.</li>
 </ul>
-
-<h4 id="queries-list">Queries List</h4>
-
-<p>A list of queries, broken down by their ActiveRecord model, operation, and caller (either a web endpoint or background job) is listed below the overview chart.</p>
-
-<p>By default, this list is truncated to display just the most time-consuming queries.</p>
 
 <h4 id="database-events">Database Events</h4>
 
 <p>Scout highlights significant events in database performance in the sidebar. For example, if time spent in database queries increases dramatically, you&rsquo;ll find an insight here. Clicking on an insight jumps to the time window referenced by the insight.</p>
 
-<h3 id="endpoint-database-breakdown">Endpoint Database Breakdown</h3>
+<h3 id="database-query-details">Database Query Details</h3>
 
-<p>A breakdown of time spent per-transaction appears beneath the overview chart for both web endpoints and database metrics. Database queries are broken out in this breakdown:</p>
+<p>After identifying an expensive query, you need to see where the query is called and the underlying SQL. Click on a query to reveal details:</p>
 
-<p><img src="images/db_monitoring_endpoint.png" alt="database breakdown" /></p>
+<p><a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/detail.png"><img alt="detail" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/detail.png"/></a></p>
+
+<p>You&rsquo;ll see the raw SQL and a list of individual query execution times that appeared in transaction traces. Scout collects backtraces on queries consuming more than 500 ms. If we&rsquo;ve collected a backtrace for the query, you&rsquo;ll see an icon next to the timing information. Click on one of the traces to reveal that trace in a new window:</p>
+
+<p><a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/trace.png"><img alt="trace" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/trace.png"/></a></p>
+
+<p>The source of that trace is immediately displayed.</p>
 
 <h3 id="pricing">Pricing</h3>
 
 <p>Database Monitoring is available as an addon. See your billing page for pricing information.</p>
 
+<h3 id="database-addon-installation">Database Addon Installation</h3>
+
+<p><a href="#updating-to-the-newest-version">Update</a> - or install - the <code class="prettyprint">scout_apm</code> gem in your application. There&rsquo;s no special libraries to install on your database servers.</p>
+
 <h3 id="database-monitoring-library-support">Database Monitoring Library Support</h3>
 
 <p>Scout currently monitors queries executed via ActiveRecord, which includes most relational databases (PostgreSQL, MySQL, etc).</p>
+
+<h3 id="what-does-sql-other-mean">What does SQL#other mean?</h3>
+
+<p>Some queries may be identified by a generic <code class="prettyprint">SQL#other</code> label. This indicates our agent was unable to generate a friendly label from the raw SQL query. Ensure you are running version 2.3.3 of the <code class="prettyprint">scout_apm</code> gem or higher as this release includes more advanced query labeling logic.</p>
 
 <h2 id="memory-bloat-detection">Memory Bloat Detection</h2>
 
