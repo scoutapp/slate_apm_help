@@ -261,7 +261,7 @@
       <div class="content">
         <h1 id="scout-help-docs">Scout Help Docs</h1>
 
-<p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Get started - it&rsquo;s free</a>.</p>
+<p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Get started</a>.</p>
 
 <p>Browse through the sidebar, search, <a href="mailto:support@scoutapp.com">email us</a>, or <a href="http://slack.scoutapp.com" target="_blank">join our Slack community</a>. We&rsquo;re here to help.</p>
 
@@ -281,10 +281,10 @@
   </div>
 
   <div>
-    <h3><a href="https://scoutapp.com/info/pricing" target="_blank">Signup - it&rsquo;s free</a></h3>
+    <h3><a href="https://docs.google.com/forms/d/e/1FAIpQLSfZtTYaAtbbAveQ5j2wcR5UJeDnH5KUiHc6DwnH1Qjk_OBtYA/viewform" target="_blank">Python Agent</a></h3>
     <p>
-      Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Signup</a> - our free plan
-      monitors apps both large and small.
+      Python support is coming soon. 
+      <br/><br/><a href="https://docs.google.com/forms/d/e/1FAIpQLSfZtTYaAtbbAveQ5j2wcR5UJeDnH5KUiHc6DwnH1Qjk_OBtYA/viewform" target="_blank">Signup for early access</a>.
     </p>
   </div>
 </div>
@@ -1281,7 +1281,7 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <h2 id="elixir-install">Installation</h2></p>
 
 <aside class="notice">
-  A free Scout account is required. <a href="https://apm.scoutapp.com/users/sign_up" target: '_blank'>Signup here</a>.
+  A Scout account is required. <a href="https://apm.scoutapp.com/users/sign_up" target: '_blank'>Signup here</a>.
 </aside>
 
 <p>Tailored instructions are provided within our user interface. General instructions:</p>
@@ -2245,6 +2245,14 @@ endpoint returned results, it will be under a results keys.</p>
 <p>You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.</p>
 
 <p><img src="images/time_compare_annotated.png" alt="time compare" /></p>
+
+<h2 id="digest-email">Digest Email</h2>
+
+<p>At a frequency of your choice (daily or weekly), Scout crunches the numbers on your app&rsquo;s performance (both web endpoints and background jobs). Performance is compared to the previous week, and highlights are mentioned in the email.</p>
+
+<p><img src="images/digest_screenshot.png" alt="digest" /></p>
+
+<p>The email identifies performance trends, slow outliers, and attempts to narrow down issues to a specific cause (like slow HTTP requests to another service).</p>
 
 <h2 id="devtrace">DevTrace</h2>
 
