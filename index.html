@@ -1100,6 +1100,29 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <p><img src="images/custom_devtrace.png" alt="custom devtrace" /></p>
 
+<h2 id="sneakers">Sneakers</h2>
+
+<p>Scout doesn&rsquo;t instrument <a href="https://github.com/jondot/sneakers">Sneakers</a> (a background processing framework for Ruby and RabbitMQ) automatically. To add Sneakers instrumentation:</p>
+
+<ul>
+<li><a href="https://gist.github.com/itsderek23/685c7485a3bd020b6cdd9b1d61cb847f">Download the contents of this gist</a>. Place the file inside your application&rsquo;s <code class="prettyprint">/lib</code> folder or similar.</li>
+<li>In <code class="prettyprint">config/boot.rb</code>, add: <code class="prettyprint">require File.expand_path(&#39;lib/scout_sneakers.rb&#39;, __FILE__)</code></li>
+<li>In your <code class="prettyprint">Worker</code> class, immediately following the <code class="prettyprint">work</code> method, add<br/><code class="prettyprint">include ScoutApm::BackgroundJobIntegrations::Sneakers::Instruments</code>.</li>
+</ul>
+
+<p>This treats calls to the <code class="prettyprint">work</code> method as distinct transactions, named with the worker class.</p>
+
+<p>Example usage:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="k">class</span> <span class="nc">BaseWorker</span>
+  <span class="kp">include</span> <span class="no">Sneakers</span><span class="o">::</span><span class="no">Worker</span>
+
+  <span class="k">def</span> <span class="nf">work</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+   <span class="c1"># Do work</span>
+  <span class="k">end</span>
+  <span class="c1"># This MUST be included AFTER the work method is defined.</span>
+  <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">BackgroundJobIntegrations</span><span class="o">::</span><span class="no">Sneakers</span><span class="o">::</span><span class="no">Instruments</span>
+<span class="k">end</span>
+</code></pre>
 <h2 id="docker">Docker <img src="images/docker.png" style="float:right;width: 150px" /></h2>
 
 <p>Scout runs within Docker containers without any special configuration.</p>
