@@ -758,7 +758,7 @@ tail -n1000 log/production.log | grep "Processing"
         The Git SHA that corresponds to the version of the app being deployed.
       </td>
       <td>
-        <a href="#deploy-tracking-config">See docs</a>
+        <a href="#ruby-deploy-tracking-config">See docs</a>
       </td>
       <td>No</td>
     </tr>
@@ -2106,7 +2106,7 @@ endpoint returned results, it will be under a results keys.</p>
 
 <h3 id="code-backtraces">Code Backtraces</h3>
 
-<p>You&rsquo;ll see &ldquo;CODE&rdquo; buttons next to method calls that are &gt;= 500 ms. If you&rsquo;ve enabled the GitHub integration, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.</p>
+<p>You&rsquo;ll see &ldquo;CODE&rdquo; buttons next to method calls that are &gt;= 500 ms. <a href="#github">If you&rsquo;ve enabled the GitHub integration</a>, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.</p>
 
 <p><img src="images/stream_slow_git_annotated.png" alt="stream show git" /></p>
 
@@ -2267,27 +2267,13 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p>Correlate deploys with your app&rsquo;s performance: Scout&rsquo;s GitHub-enhanced deploy tracking makes it easy to identify the Git branch or tag running now and which team members contributed to every deploy.</p>
 
-<p>Scout tracks your deploys without additional configuration if you are running Capistrano. If you aren&rsquo;t using Capistrano or deploying your app to Heroku, see our <a href="#deploy-tracking-config">deploy tracking configuration docs</a>.</p>
+<p>Scout tracks your deploys without additional configuration if you are running Capistrano. If you aren&rsquo;t using Capistrano or deploying your app to Heroku, see our <a href="#ruby-deploy-tracking-config">deploy tracking configuration docs</a>.</p>
 
 <h3 id="sorting">Sorting</h3>
 
 <p>You can sort by memory allocations throughout the UI: from the list of endpoints, to our pulldowns, to transaction traces.</p>
 
 <p><img src="images/memory_sort.png" alt="memory sort" /></p>
-
-<h2 id="git-integration">Git Integration</h2>
-
-<p>If your code is hosted at GitHub, you can see the <a href="#code-backtraces">relevant slow line-of-code within the Scout user interface</a> when viewing a transaction trace. Additionally, you&rsquo;ll also see the:</p>
-
-<ul>
-<li>author</li>
-<li>commit time</li>
-<li>deploy time</li>
-</ul>
-
-<p>Git integration must be configured on the settings page for each app. Scout integrates with GitHub via OAuth. Pick the repository name and branch name used for your application.</p>
-
-<p><img src="images/git_settings_annotated.png" alt="git settings" /></p>
 
 <h2 id="context">Context</h2>
 
@@ -2352,6 +2338,46 @@ endpoint returned results, it will be under a results keys.</p>
 <h2 id="data-retention">Data Retention</h2>
 
 <p>Scout stores 30 days of metrics and seven days of transaction traces.</p>
+
+          <h1 id="integrations">Integrations</h1>
+
+<h2 id="github">GitHub</h2>
+
+<p>Scout annotates several areas of the UI with additional data from the app&rsquo;s associated Git repository when the GitHub integration is enabled.</p>
+
+<h3 id="traces">Traces</h3>
+
+<p>When the GitHub integration is enabled, Scout displays the actual code from backtraces collected from <a href="#transaction-traces">transaction traces</a>. The code is annotated with the <code class="prettyprint">git blame</code> data (the author and commit date), making it easier to track down developers most familar with bottlenecks.</p>
+
+<p><img src="images/stream_slow_git_annotated.png" alt="stream show git" /></p>
+
+<h3 id="deploys">Deploys</h3>
+
+<p>When the GitHub integration is enabled, Scout annotates <a href="#deploy-tracing">deploys</a> with the associated Git branch or tag along. When hovering over a deploy, a <code class="prettyprint">diff</code> summary is displayed. This displays the changes between the selected deploy and the previous deploy.</p>
+
+<p><img src="images/deploy_tracking.png" alt="deploy tracking" /></p>
+
+<h3 id="configuration">Configuration</h3>
+
+<p>The GitHub integration is an <strong>app-specific</strong> integration, authenticated via OAuth. After authenticating, choose the Git repository name and branch name used for your application.</p>
+
+<p><img src="images/git_settings_annotated.png" alt="git settings" /></p>
+
+<h2 id="rollbar">Rollbar</h2>
+
+<p>When the Rollbar integration is enabled, Scout displays errors from the app&rsquo;s associated Rollbar project alongside performance data within the Scout UI.</p>
+
+<p><img src="images/rollbar_errors_screenshot.png" alt="rollbar errors" /></p>
+
+<p>When the error count is in <span style="color:#fff;background:red;padding: 2px">red</span>, a new error has appeared in the current timeframe. When the error count is in <span style="background:#ccc;padding:2px">gray</span>, older errors are continuing in this timeframe.</p>
+
+<h3 id="configuration">Configuration</h3>
+
+<p>The Rollbar configuration is an <strong>app-specific</strong> integration, configured by providing a read-only Rollbar <strong>Project Access Token</strong> (not an Account Access Token) in the app settings within Scout.</p>
+
+<p><img src="images/rollbar_access_token.png" alt="rollbar access token" /> </p>
+
+<p><img src="images/rollbar_settings.png" alt="rollbar settings" /></p>
 
           <h1 id="service-status">Service Status</h1>
 
