@@ -2556,20 +2556,13 @@ endpoint returned results, it will be under a results keys.</p>
 
 <h2 id="replacing-new-relic">Replacing New Relic</h2>
 
-<p>Scout is an attractive <a href="https://scoutapp.com/newrelic-alternative" target="_blank">alternative to New Relic</a> for modern dev teams (frequent deploys, using Git, deploying to many micro instances &amp; containers, using vendors for key infrastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.</p>
+<p>Scout is an attractive <a href="https://scoutapp.com/newrelic-alternative" target="_blank">alternative to New Relic</a> for modern dev teams. We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.</p>
 
 <p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Don&rsquo;t fret - here&rsquo;s some of the more common scenarios and our suggestions for building a monitoring stack you&rsquo;ll love:</p>
 
 <ul>
-<li><strong>Exception Monitoring</strong> - we provide metrics on the rate of exceptions but we don&rsquo;t currently provide details on exceptions. Our favorite tool for this is <a href="http://getsentry.com">Sentry</a>:
-
-<ul>
-<li>Affordable: starts @ $29/mo.</li>
-<li>Realtime exceptions: you&rsquo;ll see new exceptions coming through as-they-happen (every second).</li>
-<li>Great UI</li>
-<li>Context tracking (easy to see how an exception is impacting which users). We implemented a similar API for our slow request tracking.</li>
-</ul></li>
-<li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
+<li><strong>Exception Monitoring</strong> - Scout doesn&rsquo;t provide exception monitoring, but we do integrate with (<a href="#rollbar">Rollbar</a> and <a href="#sentry">Sentry</a>) to provide a side-by-side view of your performance metrics and errors within the Scout UI.</li>
+<li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. We&rsquo;ve <a href="http://blog.scoutapp.com/articles/2017/12/22/real-user-monitoring-with-raygun">reviewed Raygun Pulse</a>, an attractive RUM product. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
 </ul>
 
 <h3 id="our-monitoring-stack">Our Monitoring Stack</h3>
