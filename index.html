@@ -1939,128 +1939,6 @@ config :scout_apm,
   </tbody>
 </table>
 
-          <h1 id="api">API</h1>
-
-<h2 id="introduction">Introduction</h2>
-
-<p>The ScoutAPM API is currently fairly narrow in scope. It is intended to
-support 3rd party dashboards, exporting summary data from your applications.</p>
-
-<p>If you have ideas on API enhancements, please contact us at support@scoutapp.com</p>
-
-<h2 id="authorization">Authorization</h2>
-
-<h3 id="obtaining-a-token">Obtaining a token</h3>
-
-<ol>
-<li>Log into the ScoutAPM website</li>
-<li>Go to your organization&rsquo;s settings</li>
-<li>Enter a name (for your use), and obtain a token</li>
-</ol>
-
-<h3 id="sending-authorization">Sending Authorization</h3>
-
-<p>The key must be provided with every request, via one of several methods:</p>
-
-<ul>
-<li>An HTTP Header named <code class="prettyprint">X-SCOUT-API</code></li>
-<li>As part of the JSON request body, as the top level key: <code class="prettyprint">key</code></li>
-<li>A URL query string argument named <code class="prettyprint">key</code></li>
-</ul>
-
-<h3 id="response-format">Response Format</h3>
-
-<p>Every endpoint returns a JSON object. The object will at the minimum,
-have a <code class="prettyprint">&quot;header&quot;</code> field with embedded status and message fields. If the
-endpoint returned results, it will be under a results keys.</p>
-<pre class="highlight  tab-plaintext"><code>{
-  "header": {
-    "status": {
-      "code": 200,
-      "message": "OK"
-    },
-    "apiVersion": "0.1"
-  },
-  "results": { ... }
-}
-</code></pre>
-<h2 id="api-endpoints">API Endpoints</h2>
-
-<h3 id="applications">Applications</h3>
-
-<h4 id="applications-list">Applications List</h4>
-
-<p><code class="prettyprint">/api/v0/apps</code> - returns a list of applications and their ids</p>
-
-<p>Results:</p>
-<pre class="highlight  tab-plaintext"><code>"results": {
-  "apps": [
-    {
-      "name": "MyApp Staging",
-      "id": 100
-    },
-    {
-      "name": "MyApp Production",
-      "id": 101
-    }
-}
-</code></pre>
-<h4 id="application-detail">Application Detail</h4>
-
-<p><code class="prettyprint">/api/v0/apps/:id</code> - returns information about a specific application</p>
-
-<p>Results:</p>
-<pre class="highlight  tab-plaintext"><code>"results": {
-  "app": {
-    "id": 101,
-    "name": "MyApp Production"
-  }
-}
-</code></pre>
-<h3 id="metrics">Metrics</h3>
-
-<h4 id="known-metric-list">Known Metric List</h4>
-
-<p><code class="prettyprint">/api/v0/apps/:id/metrics</code> returns a list of known metric types</p>
-
-<p>Results:</p>
-<pre class="highlight  tab-plaintext"><code>"results": {
-  availableMetrics": [
-    "response_time",
-    "errors",
-    "throughput"
-  ]
-}
-</code></pre>
-<h4 id="metric-data">Metric Data</h4>
-
-<p><code class="prettyprint">/api/v0/apps/:id/metrics/:metric_type</code> - will return a time series dataset for the metric.</p>
-
-<p><strong>Parameters:</strong></p>
-
-<ul>
-<li><strong>from</strong> - start time, ISO8601 formatted</li>
-<li><strong>to</strong> - end time, ISO8601 formatted</li>
-</ul>
-
-<p>These two times must not be more than 2 weeks apart</p>
-
-<p>Results:</p>
-<pre class="highlight  tab-plaintext"><code>"results": {
-  series": {
-    "response_time": [
-      [
-        "2016-05-16T22:00:00Z",
-        90.33333333333333
-      ],
-      [
-        "2016-05-16T22:01:00Z",
-        86.87233333333333
-      ]
-    ]
-  }
-}
-</code></pre>
           <h1 id="features">Features</h1>
 
 <p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a free trial</a>.</p>
@@ -2379,6 +2257,128 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p><img src="images/rollbar_settings.png" alt="rollbar settings" /></p>
 
+          <h1 id="api">API</h1>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>The ScoutAPM API is currently fairly narrow in scope. It is intended to
+support 3rd party dashboards, exporting summary data from your applications.</p>
+
+<p>If you have ideas on API enhancements, please contact us at support@scoutapp.com</p>
+
+<h2 id="authorization">Authorization</h2>
+
+<h3 id="obtaining-a-token">Obtaining a token</h3>
+
+<ol>
+<li>Log into the ScoutAPM website</li>
+<li>Go to your organization&rsquo;s settings</li>
+<li>Enter a name (for your use), and obtain a token</li>
+</ol>
+
+<h3 id="sending-authorization">Sending Authorization</h3>
+
+<p>The key must be provided with every request, via one of several methods:</p>
+
+<ul>
+<li>An HTTP Header named <code class="prettyprint">X-SCOUT-API</code></li>
+<li>As part of the JSON request body, as the top level key: <code class="prettyprint">key</code></li>
+<li>A URL query string argument named <code class="prettyprint">key</code></li>
+</ul>
+
+<h3 id="response-format">Response Format</h3>
+
+<p>Every endpoint returns a JSON object. The object will at the minimum,
+have a <code class="prettyprint">&quot;header&quot;</code> field with embedded status and message fields. If the
+endpoint returned results, it will be under a results keys.</p>
+<pre class="highlight  tab-plaintext"><code>{
+  "header": {
+    "status": {
+      "code": 200,
+      "message": "OK"
+    },
+    "apiVersion": "0.1"
+  },
+  "results": { ... }
+}
+</code></pre>
+<h2 id="api-endpoints">API Endpoints</h2>
+
+<h3 id="applications">Applications</h3>
+
+<h4 id="applications-list">Applications List</h4>
+
+<p><code class="prettyprint">/api/v0/apps</code> - returns a list of applications and their ids</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  "apps": [
+    {
+      "name": "MyApp Staging",
+      "id": 100
+    },
+    {
+      "name": "MyApp Production",
+      "id": 101
+    }
+}
+</code></pre>
+<h4 id="application-detail">Application Detail</h4>
+
+<p><code class="prettyprint">/api/v0/apps/:id</code> - returns information about a specific application</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  "app": {
+    "id": 101,
+    "name": "MyApp Production"
+  }
+}
+</code></pre>
+<h3 id="metrics">Metrics</h3>
+
+<h4 id="known-metric-list">Known Metric List</h4>
+
+<p><code class="prettyprint">/api/v0/apps/:id/metrics</code> returns a list of known metric types</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  availableMetrics": [
+    "response_time",
+    "errors",
+    "throughput"
+  ]
+}
+</code></pre>
+<h4 id="metric-data">Metric Data</h4>
+
+<p><code class="prettyprint">/api/v0/apps/:id/metrics/:metric_type</code> - will return a time series dataset for the metric.</p>
+
+<p><strong>Parameters:</strong></p>
+
+<ul>
+<li><strong>from</strong> - start time, ISO8601 formatted</li>
+<li><strong>to</strong> - end time, ISO8601 formatted</li>
+</ul>
+
+<p>These two times must not be more than 2 weeks apart</p>
+
+<p>Results:</p>
+<pre class="highlight  tab-plaintext"><code>"results": {
+  series": {
+    "response_time": [
+      [
+        "2016-05-16T22:00:00Z",
+        90.33333333333333
+      ],
+      [
+        "2016-05-16T22:01:00Z",
+        86.87233333333333
+      ]
+    ]
+  }
+}
+</code></pre>
           <h1 id="service-status">Service Status</h1>
 
 <p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
