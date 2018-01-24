@@ -2379,6 +2379,32 @@ endpoint returned results, it will be under a results keys.</p>
   }
 }
 </code></pre>
+          <h1 id="compliance">Compliance</h1>
+
+<h2 id="hipaa">HIPAA</h2>
+
+<p>While Scout itself is not HIPAA compliant, our agent can be installed safely in HIPAA compliant environments. To ensure user data is properly de-identified:</p>
+
+<ol>
+<li>Disable sending HTTP query params if these contain sensitive data via the <code class="prettyprint">uri_reporting</code> config option.</li>
+<li>Do not add custom context (like reporting the current user in the session).</li>
+</ol>
+
+<p>Email support@scoutapp.com with any questions regarding HIPAA.</p>
+
+<h2 id="gdpr">GDPR</h2>
+
+<p>Scout will be ready for the EU General Data Protection Regulation (GDPR) before May 28, 2018, when the law goes into effect. Scout receives performance data from our customers, which we use to generate charts and reports. While our monitoring agents are primarily metric-focused, they can be configured to send personal data if the customer wishes.</p>
+
+<p>Under the GDPR, Scout is defined as a <a href="https://gdpr-info.eu/art-28-gdpr/">Data Processor</a>. Here is how we’ll support customers with GDPR readiness given our role:</p>
+
+<ul>
+<li>An updated Data Processing Agreement (DPA) that reflects the requirements of the GDPR and ensures compliant data transfer with storage outside the EU.</li>
+<li>Reviewing our technical and organizational security measures to ensure they are in compliance with the GDPR.</li>
+<li>Prompt breach notifications: In line with our current policies, we will promptly inform you of any incidents involving your users’ personal data. </li>
+<li>Clarifying our data deletion process: Customers can request that their data be deleted at anytime. Upon account closure, all performance data will be deleted within 90 days. Requests for return or deletion of data are handled on a case by case basis.</li>
+</ul>
+
           <h1 id="service-status">Service Status</h1>
 
 <p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
@@ -2448,17 +2474,6 @@ endpoint returned results, it will be under a results keys.</p>
 <li>Process memory and CPU usage</li>
 <li>Error counts</li>
 </ul>
-
-<h3 id="hipaa-compliance">HIPAA compliance</h3>
-
-<p>While Scout itself is not HIPAA compliant, our agent can be installed safely in HIPAA compliant environments. To ensure user data is properly de-identified:</p>
-
-<ol>
-<li>Disable sending HTTP query params if these contain sensitive data via the <code class="prettyprint">uri_reporting</code> config option.</li>
-<li>Do not add custom context (like reporting the current user in the session).</li>
-</ol>
-
-<p>Email support@scoutapp.com with any questions on security compliance.</p>
 
 <h3 id="git-integration-security">Git Integration</h3>
 
