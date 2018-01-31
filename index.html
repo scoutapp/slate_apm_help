@@ -464,7 +464,7 @@ tail -n1000 log/production.log | grep "Processing"
       </td>
       <td>
         <p>
-          Oops! Looks like messed up. Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapp.com">send us an email</a> with the following:
+          Oops! Looks like messed up. <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
         </p>
         <ul>
           <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
@@ -2247,7 +2247,7 @@ config :scout_apm,
 
 <p><img src="images/rollbar_errors_screenshot.png" alt="rollbar errors" /></p>
 
-<p>When the error count is in <span style="color:#fff;background:red;padding: 2px">red</span>, a new error has appeared in the current timeframe. When the error count is in <span style="background:#ccc;padding:2px">gray</span>, older errors are continuing in this timeframe.</p>
+<p>When the error count is in <span style="color:#fff;background:#f0592a;padding: 2px">orange</span>, a new error has appeared in the current timeframe. When the error count is in <span style="background:#ccc;padding:2px">gray</span>, older errors are continuing in this timeframe.</p>
 
 <h3 id="configuration">Configuration</h3>
 
