@@ -204,6 +204,8 @@
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
 
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic,800,800italic|Arimo:400,400i,700' rel='stylesheet' type='text/css'>
+
       <script>
         $(function() {
           setupLanguages([]);
@@ -267,24 +269,32 @@
 
 <div id="overview_container">
   <div>
-    <h3><a href="#ruby-agent">Ruby Agent</a></h3>
+    <h3>
+      <img src="images/elixir.png" alt="elixir" />
+      <a href="#ruby-agent">Ruby Agent</a>
+    </h3>
     <p>
       View our docs for installing, configuring, and troubleshooting the Scout Ruby agent.
     </p>
   </div>
 
   <div>
-    <h3><a href="#elixir-agent">Elixir Agent</a></h3>
+    <h3>
+      <img src="images/ruby.png" alt="ruby" />
+      <a href="#elixir-agent">Elixir Agent</a>
+    </h3>
     <p>
       View our docs for installing, configuring, and troubleshooting the Scout Elixir agent.
     </p>
   </div>
 
   <div>
-    <h3><a href="https://docs.google.com/forms/d/e/1FAIpQLSfZtTYaAtbbAveQ5j2wcR5UJeDnH5KUiHc6DwnH1Qjk_OBtYA/viewform" target="_blank">Python Agent</a></h3>
+    <h3>
+        <img src="images/python.png" alt="python" />
+        <a href="#python-agent">Python Agent</a></h3>
+    </h3>
     <p>
-      Python support is coming soon. 
-      <br/><br/><a href="https://docs.google.com/forms/d/e/1FAIpQLSfZtTYaAtbbAveQ5j2wcR5UJeDnH5KUiHc6DwnH1Qjk_OBtYA/viewform" target="_blank">Signup for early access</a>.
+      View our docs for installing, configuring, and troubleshooting the Scout Python agent.
     </p>
   </div>
 </div>
@@ -464,7 +474,7 @@ tail -n1000 log/production.log | grep "Processing"
       </td>
       <td>
         <p>
-          Oops! Looks like messed up. <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
+          Oops! Looks like messed up. Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapp.com">send us an email</a> with the following:
         </p>
         <ul>
           <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
@@ -1939,9 +1949,15 @@ config :scout_apm,
   </tbody>
 </table>
 
+          <h1 id="python-agent">Python Agent</h1>
+
+<aside class="notice">Python Monitoring is in our early access program. <a href="https://docs.google.com/forms/d/e/1FAIpQLSfZtTYaAtbbAveQ5j2wcR5UJeDnH5KUiHc6DwnH1Qjk_OBtYA/viewform" target="_blank">Signup for access</a>.</aside>
+
+<p>Scout&rsquo;s Python agent auto-instruments Django applications, SQL queries, and more.</p>
+
           <h1 id="features">Features</h1>
 
-<p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a free trial</a>.</p>
+<p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a trial</a>.</p>
 
 <h2 id="app-performance-overview">App Performance Overview</h2>
 
