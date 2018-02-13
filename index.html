@@ -868,6 +868,12 @@ tail -n1000 log/production.log | grep "Processing"
 <p>Apache&rsquo;s <strong>mod_headers</strong> module includes a <code class="prettyprint">%t</code> variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:</p>
 <pre class="highlight  tab-plaintext"><code>RequestHeader set X-Request-Start "%t"
 </code></pre>
+<h4 id="apache-request-queuing-and-file-uploads">Apache Request Queuing and File Uploads</h4>
+
+<p>If you are using Apache, you may observe a spike in queue time within Scout for actions that process large file uploads. Apache adds the <code class="prettyprint">X-Request-Start</code> header as soon as the request hits Apache. So, all of the time spent uploading a file will be reported as queue time.</p>
+
+<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request. </p>
+
 <h3 id="haproxy">HAProxy</h3>
 
 <p>HAProxy 1.5+ supports timestamped headers and can be set in the frontend or backend section. We suggest putting this in the frontend to get a more accurate number:</p>
@@ -1301,6 +1307,24 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <h3 id="ignoring-all-background-jobs">Ignoring all background jobs</h3>
 
 <p>You can ignore all background jobs by setting <code class="prettyprint">enable_background_jobs: false</code> in your configuration file. See the <a href="#ruby-configuration-options">configuration options</a>.</p>
+
+<h2 id="overhead-considerations">Overhead Considerations</h2>
+
+<p>Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions. </p>
+
+<p>There are a couple of scenarios worth mentioning where more overhead than expected may be observed. </p>
+
+<h3 id="enabling-the-detailed_middleware-option">Enabling the detailed_middleware option</h3>
+
+<p>By default, Scout aggregates all middleware timings together into a single &ldquo;Middleware&rdquo; category. Scout can provide a detailed breakdown of middleware timings by setting <code class="prettyprint">detailed_middleware: true</code> in the configuration settings.</p>
+
+<p>This is <code class="prettyprint">false</code> by default as instrumenting each piece of middleware adds additional overhead. It&rsquo;s common for Rails apps to use more than a dozen pieces of middleware. Typically, time spent in middleware is very small and isn&rsquo;t worth instrumenting. Additionally, most of these middleware pieces are maintained by third-parties and are thus more difficult to optimize.</p>
+
+<h3 id="resque-instrumentation">Resque Instrumentation</h3>
+
+<p>Since Resque works by forking a child process to run each job and exiting immediately when the job is finished, our instrumentation needs a way to aggregate the timing results and traces into a central store before reporting the information to our service. To support Resque, the Resque child process sends a simple payload to the parent which is listening via WEBRick on localhost. As long as there is one WEBRick instance listening on the configured port, then any Resque children will be able to send results back to it.</p>
+
+<p>The overhead is usually small, but it is more significant than instrumenting background job frameworks like Sidekiq and DelayedJob that do not use forking. The lighter the jobs are, more overhead is incurred in the serialization and reporting to WEBRick. In our testing, for jobs that took ~18 ms each, we found that the overhead is about ~8%. If your jobs take longer than that, on average, the overhead will be lower.</p>
 
           <h1 id="elixir-agent">Elixir Agent</h1>
 
@@ -2256,6 +2280,10 @@ config :scout_apm,
 <p>The GitHub integration is an <strong>app-specific</strong> integration, authenticated via OAuth. After authenticating, choose the Git repository name and branch name used for your application.</p>
 
 <p><img src="images/git_settings_annotated.png" alt="git settings" /></p>
+
+<h3 id="missing-some-repositories">Missing some repositories?</h3>
+
+<p>When configuring the GitHub integration, you may notice that only personal repositories are shown and repositories owned by organizations are missing. Your organization is likely leveraging trusted applications. See <a href="https://github.com/blog/1941-organization-approved-applications">GitHub&rsquo;s docs on organization-approved applications</a> for instructions approving Scout. Once Scout is listed as an approved application, the org&rsquo;s repositories will be available within Scout.</p>
 
 <h2 id="rollbar">Rollbar</h2>
 
