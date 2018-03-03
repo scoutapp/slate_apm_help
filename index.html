@@ -1304,6 +1304,26 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <pre class="highlight ruby tab-ruby"><code><span class="n">req</span> <span class="o">=</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">RequestManager</span><span class="p">.</span><span class="nf">lookup</span>
 <span class="n">req</span><span class="p">.</span><span class="nf">ignore_request!</span>
 </code></pre>
+<h3 id="sampling-web-requests">Sampling web requests</h3>
+
+<p>Use probability sampling to limit the number of web requests Scout analyzes:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="c1"># app/controllers/application_controller.rb</span>
+<span class="n">before_action</span> <span class="ss">:sample_requests_for_scout</span>
+
+<span class="k">def</span> <span class="nf">sample_requests_for_scout</span>
+  <span class="c1"># Sample rate should range from 0-1:</span>
+  <span class="c1"># * 0: captures no requests</span>
+  <span class="c1"># * 0.75: captures 75% of requests</span>
+  <span class="c1"># * 1: captures all requests</span>
+  <span class="n">sample_rate</span> <span class="o">=</span> <span class="mi">0</span><span class="o">.</span><span class="mi">75</span>
+
+  <span class="k">if</span> <span class="nb">rand</span> <span class="o">&gt;</span> <span class="n">sample_rate</span>
+    <span class="no">Rails</span><span class="p">.</span><span class="nf">logger</span><span class="p">.</span><span class="nf">debug</span><span class="p">(</span><span class="s2">"[Scout] Ignoring request: </span><span class="si">#{</span><span class="n">request</span><span class="p">.</span><span class="nf">original_url</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">RequestManager</span><span class="p">.</span><span class="nf">lookup</span>
+    <span class="n">req</span><span class="p">.</span><span class="nf">ignore_request!</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre>
 <h3 id="ignoring-all-background-jobs">Ignoring all background jobs</h3>
 
 <p>You can ignore all background jobs by setting <code class="prettyprint">enable_background_jobs: false</code> in your configuration file. See the <a href="#ruby-configuration-options">configuration options</a>.</p>
