@@ -1108,14 +1108,6 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <p>In the example above, the metric appear in traces as <code class="prettyprint">User/generate_profile_pic</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">User</code> type. To modify the type or simply, simply change the <code class="prettyprint">instrument</code> corresponding method arguments.</p>
 
-<h3 id="ruby-testing-instrumentation">Testing instrumentation</h3>
-
-<p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#devtrace">DevTrace</a> and ensuring the new metric appears as desired.</p>
-
-<p>After restarting your dev server with DevTrace enabled, refresh the browser page and view the trace output. The new metric should appear in the trace:</p>
-
-<p><img src="images/custom_devtrace.png" alt="custom devtrace" /></p>
-
 <h3 id="ruby-testing-instrumentation">Renaming transactions</h3>
 
 <p>There may be cases where you require more control over how Scout names transactions. For example, if you have a controller-action that renders both JSON and HTML formats and the rendering time varies significantly between the two, it may make sense to define a unique transaction name for each.</p>
@@ -1128,7 +1120,17 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre>
+<p>In the example above, the default name for the transaction is <code class="prettyprint">posts/index</code>, which appears as <code class="prettyprint">PostsController#index</code> in the Scout UI. Renaming the transaction to <code class="prettyprint">posts/foobar</code> identifies the transaction as <code class="prettyprint">PostsController#foobar</code> in the Scout UI.  </p>
+
 <p>Do not generate highly cardinality transaction names (ex: <code class="prettyprint">ScoutApm::Transaction.rename(&quot;posts/foobar_#{current_user.id}&quot;)</code>) as we limit the number of transactions that can be tracked. High-cardinality transaction names can quickly surpass this limit.</p>
+
+<h3 id="ruby-testing-instrumentation">Testing instrumentation</h3>
+
+<p>Improper instrumentation can break your application. It&rsquo;s important to test before deploying to production. The easiest way to validate your instrumentation is by running <a href="#devtrace">DevTrace</a> and ensuring the new metric appears as desired.</p>
+
+<p>After restarting your dev server with DevTrace enabled, refresh the browser page and view the trace output. The new metric should appear in the trace:</p>
+
+<p><img src="images/custom_devtrace.png" alt="custom devtrace" /></p>
 
 <h2 id="sneakers">Sneakers</h2>
 
