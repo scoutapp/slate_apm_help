@@ -1108,7 +1108,7 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <p>In the example above, the metric appear in traces as <code class="prettyprint">User/generate_profile_pic</code>. On timeseries charts, the time will be allocated to a <code class="prettyprint">User</code> type. To modify the type or simply, simply change the <code class="prettyprint">instrument</code> corresponding method arguments.</p>
 
-<h3 id="ruby-renaming-instrumentation">Renaming transactions</h3>
+<h3 id="ruby-renaming-transactions">Renaming transactions</h3>
 
 <p>There may be cases where you require more control over how Scout names transactions. For example, if you have a controller-action that renders both JSON and HTML formats and the rendering time varies significantly between the two, it may make sense to define a unique transaction name for each.</p>
 
