@@ -1170,7 +1170,7 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <li>The dyno name (ex: <code class="prettyprint">web.1</code>) is reported vs. the dyno hostname. Dyno hostnames are dynamically generated and don&rsquo;t have any meaningful information.</li>
 </ul>
 
-<h3 id="configuration">Configuration</h3>
+<h3 id="heroku-configuration">Configuration</h3>
 
 <p>Scout can be configured via environment variables. This means you can use <code class="prettyprint">heroku config:set</code> to configure the agent. For example, you can set the application name that appears in the Scout UI with:</p>
 <pre class="highlight shell"><code>heroku config:set <span class="nv">SCOUT_NAME</span><span class="o">=</span><span class="s1">'My Heroku App'</span>
@@ -2317,7 +2317,7 @@ config :scout_apm,
 
 <p><img src="images/deploy_tracking.png" alt="deploy tracking" /></p>
 
-<h3 id="configuration">Configuration</h3>
+<h3 id="github-configuration">Configuration</h3>
 
 <p>The GitHub integration is an <strong>app-specific</strong> integration, authenticated via OAuth. After authenticating, choose the Git repository name and branch name used for your application.</p>
 
@@ -2335,7 +2335,7 @@ config :scout_apm,
 
 <p>When the error count is in <span style="color:#fff;background:#f0592a;padding: 2px">orange</span>, a new error has appeared in the current timeframe. When the error count is in <span style="background:#ccc;padding:2px">gray</span>, older errors are continuing in this timeframe.</p>
 
-<h3 id="configuration">Configuration</h3>
+<h3 id="rollbar-configuration">Configuration</h3>
 
 <p>The Rollbar configuration is an <strong>app-specific</strong> integration, configured by providing a read-only Rollbar <strong>Project Access Token</strong> (not an Account Access Token) in the app settings within Scout.</p>
 
