@@ -2013,6 +2013,140 @@ config :scout_apm,
 
 <p>Scout&rsquo;s Python agent auto-instruments Django applications, SQL queries, and more.</p>
 
+<h2 id="python-requirements">Requirements</h2>
+
+<ul>
+<li>Python 2.7 and 3.4+</li>
+<li>Django 1.8+</li>
+</ul>
+
+<h2 id="python-install">Installation</h2>
+
+<p>Tailored instructions are provided within our user interface. General instructions for a Django 1.8+ app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout_apm</code> package:</p>
+<pre style="width:500px">
+pip install scout_apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Configure Scout in your <code>settings.py</code> file:</p>
+<pre style="width:500px">
+# settings.py
+INSTALLED_APPS = (
+  # ... other apps ...
+  'scout_apm.django',
+)
+
+# Scout settings
+SCOUT_MONITOR = True
+SCOUT_KEY     = "[AVAILABLE IN THE SCOUT UI]"
+SCOUT_NAME    = "[A FRIENDLY NAME FOR YOUR APP]"
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of providing these settings in <code>settings.py</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets the required settings via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. A configuration file isn&rsquo;t required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px"><p>Deploy.</p></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+
+<h2 id="python-troubleshooting">Troubleshooting</h2>
+
+<p>Not seeing data? Email support@scoutapp.com with:</p>
+
+<ul>
+<li>A link to your app within Scout (if applicable)</li>
+<li>Your Python version</li>
+<li>Your Django version</li>
+</ul>
+
+<p>We typically respond within a couple of hours during the business day.</p>
+
+<h2 id="python-configuration">Configuration Reference</h2>
+
+<table class="lookup">
+  <thead>
+    <tr>
+      <th>
+        Setting&nbsp;Name
+      </th>
+      <th>
+        Description
+      </th>
+      <th>
+        Default
+      </th>
+      <th>
+        Required
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>
+        SCOUT_KEY
+      </th>
+      <td>
+        The organization API key.
+      </td>
+      <td>       
+      </td>
+      <td>
+        Yes
+      </td>
+    </tr>
+    <tr>
+      <th>
+        SCOUT_NAME
+      </th>
+      <td>
+        Name of the application (ex: &lsquo;Photos App&rsquo;).
+      </td>
+      <td>       
+      </td>
+      <td>
+        Yes
+      </td>
+    </tr>
+    <tr>
+      <th>
+        SCOUT_MONITOR
+      </th>
+      <td>
+        Whether monitoring data should be reported.
+      </td>
+      <td>
+        <code>false</code>       
+      </td>
+      <td>
+        Yes
+      </td>
+    </tr>
+  </tbody>
+</table>
+
           <h1 id="features">Features</h1>
 
 <p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a trial</a>.</p>
