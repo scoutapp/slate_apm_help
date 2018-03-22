@@ -2009,7 +2009,7 @@ config :scout_apm,
 
           <h1 id="python-agent">Python Agent</h1>
 
-<aside class="notice">Python Monitoring is in our early access program. <a href="https://docs.google.com/forms/d/e/1FAIpQLSfZtTYaAtbbAveQ5j2wcR5UJeDnH5KUiHc6DwnH1Qjk_OBtYA/viewform" target="_blank">Signup for access</a>.</aside>
+<aside class="notice">Python Monitoring is in our tech preview program.</aside>
 
 <p>Scout&rsquo;s Python agent auto-instruments Django applications, SQL queries, and more. Source code and issues can be found on the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repository.</p>
 
@@ -2046,8 +2046,8 @@ pip install scout_apm
 <pre style="width:500px">
 # settings.py
 INSTALLED_APPS = (
+  'scout_apm.django', # should be listed first
   # ... other apps ...
-  'scout_apm.django',
 )
 
 # Scout settings
@@ -2083,6 +2083,23 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 </ul>
 
 <p>We typically respond within a couple of hours during the business day.</p>
+
+<h2 id="python-instrumented-libraries">Instrumented Libraries</h2>
+
+<p>Scout auto-instruments the following Python libraries:</p>
+
+<ul>
+<li>Django
+
+<ul>
+<li>Middleware</li>
+<li>Templates (compiling &amp; rendering)</li>
+<li>Template blocks</li>
+<li>SQL queries</li>
+</ul></li>
+</ul>
+
+<p>More to come - suggest others in the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repo.  </p>
 
 <h2 id="python-configuration">Configuration Reference</h2>
 
