@@ -842,6 +842,14 @@ tail -n1000 log/production.log | grep "Processing"
   </tbody>
 </table>
 
+<h2 id="ruby-server-timing">Server Timing</h2>
+
+<p>View performance metrics (time spent in ActiveRecord, Redis, etc) for each of your app&rsquo;s requests in Chrome’s Developer tools with the <a href="https://github.com/scoutapp/ruby_server_timing">server_timing</a> gem. Production-safe.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/scout-blog/ruby_server_timing.png" alt="server timing" /></p>
+
+<p>For install instructions and configuration options, see <a href="https://github.com/scoutapp/ruby_server_timing">server_timing</a> on GitHub.</p>
+
 <h2 id="request-queuing">Request Queuing</h2>
 
 <p>Scout can measure the time it takes a request to reach your Rails app from farther upstream (a load balancer or web server). This appears in Scout as &ldquo;Request Queuing&rdquo; and provides an indication of your application&rsquo;s capacity. Large request queuing time is an indication that your app needs more capacity.</p>
@@ -1410,16 +1418,8 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
     <p class="instruct">
       <span class="step">C</span>Integrate into your Phoenix app.
     </p>
-    <p class="smaller"><code>config/config.exs</code>:
-    </p>
-    <pre class="terminal">
-# config/config.exs
-<span>import_config "scout_apm.exs"</span>
 
-config :your_app, YourApp.Repo,
-  <span>loggers: [{Ecto.LogEntry, :log, []},
-            {ScoutApm.Instruments.EctoLogger, :log, []}]</span></pre>
-    <p class="smaller"><code>lib/your_app_web.ex</code>:
+    <p class="smaller">Instrument Controllers. In <code>lib/your_app_web.ex</code>:
     </p>
     <pre class="terminal"># lib/your_app_web.ex
 defmodule YourApp.Web do
@@ -1428,6 +1428,25 @@ defmodule YourApp.Web do
       use Phoenix.Controller
       <span>use ScoutApm.Instrumentation</span>
       ...</pre>
+
+    <p class="smaller">Instrument Ecto queries. In <code>config/config.exs</code>:</p>
+    <pre class="terminal">
+# config/config.exs
+<span>import_config "scout_apm.exs"</span>
+
+<span>config :your_app, YourApp.Repo,
+  loggers: [{Ecto.LogEntry, :log, []},
+            {ScoutApm.Instruments.EctoLogger, :log, []}]</span></pre>
+
+
+    <p class="smaller">Instrument Templates. In <code>config/config.exs</code>:
+    </p>
+<pre class="terminal">
+# config/config.exs
+<span>config :phoenix, :template_engines,
+  eex: ScoutApm.Instruments.EExEngine,
+  exs: ScoutApm.Instruments.ExsEngine</span>
+</pre>
 
     <p class="instruct">
       <span class="step">D</span>Restart your app.
@@ -2007,6 +2026,14 @@ config :scout_apm,
   </tbody>
 </table>
 
+<h2 id="elixir-server-timing">Server Timing</h2>
+
+<p>View performance metrics (time spent in Controller, Ecto, etc) for each of your app&rsquo;s requests in Chrome’s Developer tools with the <a href="https://github.com/scoutapp/elixir_plug_server_timing">plug_server_timing</a> package. Production-safe.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/scout-blog/elixir_server_timing.png" alt="server timing" /></p>
+
+<p>For install instructions and configuration options, see <a href="https://github.com/scoutapp/elixir_plug_server_timing">plug_server_timing</a> on GitHub.</p>
+
           <h1 id="python-agent">Python Agent</h1>
 
 <aside class="notice">Python Monitoring is in our tech preview program.</aside>
@@ -2459,14 +2486,6 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <p><img src="images/devtrace.png" alt="devtrace" /></p>
 
 <p>View our <a href="#ruby-devtrace">Ruby</a> and <a href="#elixir-devtrace">Elixir</a> instructions.</p>
-
-<h2 id="server-timing">Server Timing</h2>
-
-<p>View performance metrics (time spent in ActiveRecord, Redis, etc) for each of your app&rsquo;s requests in Chrome’s Developer tools with the <a href="https://github.com/scoutapp/ruby_server_timing">server_timing</a> gem. Production-safe.</p>
-
-<p><img src="https://s3-us-west-1.amazonaws.com/scout-blog/ruby_server_timing.png" alt="server timing" /></p>
-
-<p>Server Timing is supported by the Ruby agent. For install instructions and configuration options, see <a href="https://github.com/scoutapp/ruby_server_timing">server_timing</a> on GitHub.</p>
 
 <h2 id="chart-embeds">Chart Embeds</h2>
 
