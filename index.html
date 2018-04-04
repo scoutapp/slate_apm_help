@@ -2191,6 +2191,22 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
   </tbody>
 </table>
 
+<h3 id="python-env-vars">Environment Variables</h3>
+
+<p>You can also configure Scout APM via environment variables. <em>Environment variables override settings provided in your <code class="prettyprint">settings.py</code> file.</em></p>
+
+<p>Environment variables use the same configuration names. For example, to set the organization key via environment variables:</p>
+<pre class="highlight  tab-plaintext"><code>export SCOUT_KEY=YOURKEY
+</code></pre>
+<h2 id="python-environments">Environments</h2>
+
+<p>It typically makes sense to treat each environment (production, staging, etc) as a separate application within Scout and ignore the development and test environments. Configure a unique app name for each environment as Scout aggregates data by the app name.</p>
+
+<p>A common approach is to set a <code class="prettyprint">SCOUT_NAME</code> environment variable that includes the app environment:</p>
+<pre class="highlight  tab-plaintext"><code>export SCOUT_NAME="YOUR_APP_NAME (Staging)"
+</code></pre>
+<p>This will override the <code class="prettyprint">SCOUT_NAME</code> value provided in your <code class="prettyprint">settings.py</code> file.</p>
+
 <h2 id="python-logging">Logging</h2>
 
 <p>To log Scout agent output in your Django application, copy the following into your <code class="prettyprint">settings.py</code> file:</p>
