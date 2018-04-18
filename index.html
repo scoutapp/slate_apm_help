@@ -1809,31 +1809,35 @@ with :system as the first value and the environment variable expected as the sec
 <p>Scout’s instrumentation is divided into 2 areas:</p>
 
 <ol>
-<li><strong>Transactions</strong>: these wrap around a flow of work, like a web request or a GenServer call. The UI groups data under transactions. Use <code class="prettyprint">@transaction</code> module attributes and the <code class="prettyprint">transaction/4</code> macro.</li>
-<li><strong>Timing</strong>: these measure individual pieces of work, like an HTTP request to an outside service or an Ecto query. Use <code class="prettyprint">@timing</code> module attributes and the <code class="prettyprint">timing/4</code> macro.</li>
+<li><strong>Transactions</strong>: these wrap around a flow of work, like a web request or a GenServer call. The UI groups data under transactions. Use the <code class="prettyprint">deftransaction/2</code> macro or wrap blocks of code with the <code class="prettyprint">transaction/4</code> macro.</li>
+<li><strong>Timing</strong>: these measure individual pieces of work, like an HTTP request to an outside service or an Ecto query, and displays timing information within a transaction trace. Use the <code class="prettyprint">deftiming/2</code> macro or the <code class="prettyprint">timing/4</code> macro.</li>
 </ol>
 
 <h3 id="instrumenting-transactions">Instrumenting transactions</h3>
 
-<p>Via <code class="prettyprint">@transaction</code> module attributes:</p>
+<h4 id="deftransaction-macro-example">deftransaction Macro Example</h4>
+
+<p>Replace your function <code class="prettyprint">def</code> with <code class="prettyprint">deftransaction</code> to instrument it. You can override the name and type by setting the <code class="prettyprint">@transaction_opts</code> attribute right before the function.</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">RoomChannel</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Channel</span>
   <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Will appear under "Web" in the UI, named "YourApp.Web.RoomChannel.join".</span>
-  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">join</span><span class="p">(</span><span class="sd">"</span><span class="s2">topic:html"</span><span class="p">,</span> <span class="n">_message</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nv">@transaction_opts</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">]</span>
+  <span class="n">deftransaction</span> <span class="n">join</span><span class="p">(</span><span class="sd">"</span><span class="s2">topic:html"</span><span class="p">,</span> <span class="n">_message</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
   <span class="k">end</span>
 
   <span class="c1"># Will appear under "Background Jobs" in the UI, named "RoomChannel.ping".</span>
-  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">RoomChannel.ping"</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">handle_in</span><span class="p">(</span><span class="sd">"</span><span class="s2">ping"</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">body"</span> <span class="o">=&gt;</span> <span class="n">body</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nv">@transaction_opts</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">RoomChannel.ping"</span><span class="p">]</span>
+  <span class="n">deftransaction</span> <span class="n">handle_in</span><span class="p">(</span><span class="sd">"</span><span class="s2">ping"</span><span class="p">,</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">body"</span> <span class="o">=&gt;</span> <span class="n">body</span><span class="p">},</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">broadcast!</span> <span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">new_msg"</span><span class="p">,</span> <span class="p">%{</span><span class="ss">body:</span> <span class="n">body</span><span class="p">}</span>
     <span class="p">{</span><span class="ss">:noreply</span><span class="p">,</span> <span class="n">socket</span><span class="p">}</span>
   <span class="k">end</span>
 </code></pre>
-<p>Via <code class="prettyprint">transaction/4</code>:</p>
+<h4 id="transaction-4-example">transaction/4 Example</h4>
+
+<p>Wrap the block of code you&rsquo;d like to instrument with <code class="prettyprint">transaction/4</code>:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracking</span>
 
 <span class="k">def</span> <span class="n">do_async_work</span> <span class="k">do</span>
@@ -1849,25 +1853,29 @@ with :system as the first value and the environment variable expected as the sec
 
 <h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
 
-<p>Via <code class="prettyprint">@timing</code> module attributes:</p>
+<h4 id="deftiming-macro-example">deftiming Macro Example</h4>
+
+<p>Replace your function <code class="prettyprint">def</code> with <code class="prettyprint">deftiming</code> to instrument it. You can override the name and category by setting the <code class="prettyprint">@timing_opts</code> attribute right before the function.</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Searcher</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Time associated with this function will appear under "Hound" in timeseries charts.</span>
   <span class="c1"># The function will appear as `Hound/open_search` in transaction traces.</span>
-  <span class="nv">@timing</span><span class="p">(</span><span class="ss">category:</span> <span class="sd">"</span><span class="s2">Hound"</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">open_search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nv">@timing_opts</span> <span class="p">[</span><span class="ss">category:</span> <span class="sd">"</span><span class="s2">Hound"</span><span class="p">]</span>
+  <span class="n">deftiming</span> <span class="n">open_search</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">navigate_to</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
   <span class="k">end</span>
 
   <span class="c1"># Time associated with this function will appear under "Hound" in timeseries charts.</span>
   <span class="c1"># The function will appear as `Hound/homepage` in transaction traces.</span>
-  <span class="nv">@timing</span><span class="p">(</span><span class="ss">category:</span> <span class="sd">"</span><span class="s2">Hound"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">homepage"</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">open_homepage</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nv">@timing_opts</span> <span class="p">[</span><span class="ss">category:</span> <span class="sd">"</span><span class="s2">Hound"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">homepage"</span><span class="p">]</span>
+  <span class="n">deftiming</span> <span class="n">open_homepage</span><span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">navigate_to</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
   <span class="k">end</span>
 </code></pre>
-<p>Via <code class="prettyprint">timing/4</code>:</p>
+<h4 id="timing-4-example">timing/4 Example</h4>
+
+<p>Wrap the block of code you&rsquo;d like to instrument with <code class="prettyprint">timing/4</code>:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">PhoenixApp</span><span class="o">.</span><span class="no">PageController</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">PhoenixApp</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:controller</span>
   <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
