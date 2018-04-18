@@ -1781,16 +1781,25 @@ with :system as the first value and the environment variable expected as the sec
 
 <h3 id="httpoison">HTTPoison</h3>
 
-<p>Download this <a href="https://gist.github.com/itsderek23/50296b49df16b266e47cc04d227d4b4a" target="_blank">ScoutApm.HTTPoison module</a> into your app&rsquo;s <code class="prettyprint">/lib</code> folder, then <code class="prettyprint">alias ScoutApm.HTTPoison</code> when calling <code class="prettyprint">HTTPoison</code> functions:</p>
+<p>Download this <a href="https://gist.github.com/itsderek23/048eaf813af4a1a31a219d75221eb7b7" target="_blank">Demo.HTTPClient module</a> (you can rename to something more fitting) into your app&rsquo;s <code class="prettyprint">/lib</code> folder, then <code class="prettyprint">alias Demo.HTTPClient</code> when calling <code class="prettyprint">HTTPoison</code> functions:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Demo</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">PageController</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Demo</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:controller</span>
-  <span class="c1"># Will route function calls to `HTTPoision` through `ScoutApm.HTTPoison`, which times the execution of the HTTP call.</span>
-  <span class="n">alias</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">HTTPoison</span>
+  <span class="c1"># Will route function calls to `HTTPoision` through `Demo.HTTPClient`, which times the execution of the HTTP call.</span>
+  <span class="n">alias</span> <span class="no">Demo</span><span class="o">.</span><span class="no">HTTPClient</span>
 
   <span class="k">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_params</span><span class="p">)</span> <span class="k">do</span>
     <span class="c1"># "HTTP" will appear on timeseries charts. "HTTP/get" and the url "https://cnn.com" will appear in traces.</span>
-    <span class="no">HTTPoison</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sd">"</span><span class="s2">https://cnn.com"</span><span class="p">)</span>
-    <span class="n">render</span> <span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">index.html"</span>
+    <span class="k">case</span> <span class="no">HTTPClient</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sd">"</span><span class="s2">https://cnn.com"</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%</span><span class="no">HTTPoison</span><span class="o">.</span><span class="no">Response</span><span class="p">{}</span> <span class="o">=</span> <span class="n">response</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="c1"># do something with response</span>
+        <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">index.html"</span><span class="p">)</span>
+      <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="p">%</span><span class="no">HTTPoison</span><span class="o">.</span><span class="no">Error</span><span class="p">{}</span> <span class="o">=</span> <span class="n">error</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="c1"># do something with error</span>
+        <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">error.html"</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="no">HTTPClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="sd">"</span><span class="s2">https://cnn.com"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">"</span><span class="p">)</span>
+    <span class="no">HTTPClient</span><span class="o">.</span><span class="n">get!</span><span class="p">(</span><span class="sd">"</span><span class="s2">http://localhost:4567"</span><span class="p">)</span>
+    <span class="n">render</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">index.html"</span><span class="p">)</span>
   <span class="k">end</span>
 <span class="k">end</span>
 </code></pre>
