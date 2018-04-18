@@ -2055,7 +2055,7 @@ config :scout_apm,
 
 <aside class="notice">Python Monitoring is in our tech preview program.</aside>
 
-<p>Scout&rsquo;s Python agent auto-instruments Django applications, SQL queries, and more. Source code and issues can be found on the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repository.</p>
+<p>Scout&rsquo;s Python agent auto-instruments Django and Flask applications, SQL queries, and more. Source code and issues can be found on the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repository.</p>
 
 <h2 id="python-requirements">Requirements</h2>
 
@@ -2123,7 +2123,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <ul>
 <li>A link to your app within Scout (if applicable)</li>
 <li>Your Python version</li>
-<li>Your Django version</li>
+<li>Your Django or Flask version</li>
 </ul>
 
 <p>We typically respond within a couple of hours during the business day.</p>
@@ -2141,6 +2141,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <li>Template blocks</li>
 <li>SQL queries</li>
 </ul></li>
+<li>Flask</li>
 </ul>
 
 <p>More to come - suggest others in the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repo.  </p>
@@ -2261,6 +2262,36 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <span class="p">}</span>
 </code></pre>
 <p>If <code class="prettyprint">LOGGING</code> is already defined, merge the above into the existing Dictionary.</p>
+
+<h2 id="python-custom-context">Custom Context</h2>
+
+<p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
+
+<ul>
+<li>How many users are impacted by slow requests?</li>
+<li>How many trial customers are impacted by slow requests?</li>
+<li>How much of an impact are slow requests having on our highest paying customers?</li>
+</ul>
+
+<p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app:</p>
+<pre class="highlight python tab-python"><code><span class="c"># ScoutApm.Context.add(key,value)</span>
+<span class="n">ScoutApm</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"user_email"</span><span class="p">,</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+</code></pre>
+<h3 id="context-key-restrictions">Context Key Restrictions</h3>
+
+<p>The Context <code class="prettyprint">key</code> must be a <code class="prettyprint">String</code> with only printable characters. Custom context keys may contain alphanumeric characters, dashes, and underscores. Spaces are not allowed.</p>
+
+<p>Attempts to add invalid context will be ignored.</p>
+
+<h3 id="context-value-types">Context Value Types</h3>
+
+<p>Context values can be any json-serializable type. Examples:</p>
+
+<ul>
+<li><code class="prettyprint">&quot;1.1.1.1&quot;</code></li>
+<li><code class="prettyprint">&quot;free&quot;</code></li>
+<li><code class="prettyprint">100</code></li>
+</ul>
 
           <h1 id="features">Features</h1>
 
