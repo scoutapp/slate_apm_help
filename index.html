@@ -2344,6 +2344,25 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <p>If you don&rsquo;t enable the GitHub integration, you&rsquo;ll see a backtrace.</p>
 
+<h2 id="trace-explorer">Trace Explorer</h2>
+
+<aside class="notice">Trace Explorer is in our tech preview program. Share your feedback via <a href="https://github.com/scoutapp/roadmap/issues/33" target="_blank">this GitHub issue</a>.</aside>
+
+<p>What was the slowest request yesterday? How has the app performed for <code class="prettyprint">user@domain.com</code>? Which endpoints are generating the bulk of slow requests? Trace Explorer lets you quickly filter the transaction traces collected by Scout, giving you answers to your unique questions.</p>
+
+<p><img src="https://s3-us-west-1.amazonaws.com/scout-blog/s_vs_nr/crossfilter.gif" alt="crossfilter" /></p>
+
+<p>Trace Explorer is accessed via the &ldquo;Traces&rdquo; navigation link when viewing an app. </p>
+
+<h3 id="how-to-use-trace-explorer">How to use Trace Explorer</h3>
+
+<p>There are two main areas of Trace Explorer:</p>
+
+<ul>
+<li><strong>Dimension Histograms</strong> - the top portion of the page generates a histogram representation for a number of trace dimensions (the response time distribution, count of traces by endpoints, and a display for each piece of <a href="#context">custom context</a>). Selecting a specific area of a chart filters the transactions to just the selected data.</li>
+<li><strong>List of transaction traces</strong> - the bottom portion of the page lists the individual traces. The traces are updated to reflect those that match any filtered dimensions. You can increase the height of this pane by clicking and dragging the top portion of the pane. Clicking on a trace URI opens the transaction trace in a new browser tab.</li>
+</ul>
+
 <h2 id="scoutprof">ScoutProf</h2>
 
 <p>Every millisecond, ScoutProf captures a backtrace of what each thread in your application is currently running.  Over many backtraces, when you combine them, it tells a story of what code paths are taking up the most time in your application.</p>
