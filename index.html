@@ -2360,7 +2360,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <ul>
 <li><strong>Dimension Histograms</strong> - the top portion of the page generates a histogram representation for a number of trace dimensions (the response time distribution, count of traces by endpoints, and a display for each piece of <a href="#context">custom context</a>). Selecting a specific area of a chart filters the transactions to just the selected data.</li>
-<li><strong>List of transaction traces</strong> - the bottom portion of the page lists the individual traces. The traces are updated to reflect those that match any filtered dimensions. You can increase the height of this pane by clicking and dragging the top portion of the pane. Clicking on a trace URI opens the transaction trace in a new browser tab.</li>
+<li><strong>List of transaction traces</strong> - the bottom portion of the page lists the <a href="#transaction-traces">individual traces</a>. The traces are updated to reflect those that match any filtered dimensions. You can increase the height of this pane by clicking and dragging the top portion of the pane. Clicking on a trace URI opens the transaction trace in a new browser tab.</li>
 </ul>
 
 <h2 id="scoutprof">ScoutProf</h2>
@@ -2536,9 +2536,14 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <li>How much of an impact are slow requests having on our highest paying customers?</li>
 </ul>
 
-<p>Adding custom context is easy - learn how via <a href="#ruby-custom-context">Ruby</a> or <a href="#elixir-custom-context">Elixir</a>.</p>
+<p>Adding custom context is easy - learn how via <a href="#ruby-custom-context">Ruby</a>, <a href="#elixir-custom-context">Elixir</a>, or <a href="#python-custom-context">Python</a>.</p>
 
-<p>When viewing a transaction trace, click the &ldquo;Context&rdquo; section to see the context Scout has collected.</p>
+<p>Context information is displayed in two areas:</p>
+
+<ul>
+<li>When viewing a <a href="#transaction-traces">transaction trace</a> - click the &ldquo;Context&rdquo; section to see the context Scout has collected.</li>
+<li>When using <a href="#trace-explorer">Trace Explorer</a> - filter traces by context.</li>
+</ul>
 
 <h2 id="endpoints-performance">Endpoints Performance</h2>
 
