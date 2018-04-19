@@ -2062,11 +2062,16 @@ config :scout_apm,
 <ul>
 <li>Python 2.7 and 3.4+</li>
 <li>Django 1.10+</li>
+<li>Flask 0.10+</li>
 </ul>
 
 <h2 id="python-install">Installation</h2>
 
-<p>Tailored instructions are provided within our user interface. General instructions for a Django 1.10+ app:</p>
+<p>Tailored instructions are provided within our user interface. </p>
+
+<h3 id="django-installation">Django Installation</h3>
+
+<p>General instructions for a Django app:</p>
 
 <table class="help install install_ruby">
   <tbody>
@@ -2101,6 +2106,64 @@ SCOUT_NAME    = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of providing these settings in <code>settings.py</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px"><p>Deploy.</p></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="flask-installation">Flask Installation</h3>
+
+<p>General instructions for a Flask app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Configure Scout inside your Flask app:</p>
+
+<p>These instructions assume the app uses <code>SQLAlchemy</code>. If that isn&rsquo;t the case, remove the referencing lines.</p>
+
+<pre style="width:500px">
+from scout_apm.flask import ScoutApm
+from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
+
+# Setup a flask 'app' as normal
+
+## Attaches ScoutApm to the Flask App
+ScoutApm(app)
+
+## Instrument the SQLAlchemy handle
+instrument_sqlalchemy(db)
+
+# Scout settings
+app.config['SCOUT_MONITOR'] = True
+app.config['SCOUT_KEY']     = "[AVAILABLE IN THE SCOUT UI]"
+app.config['SCOUT_NAME']    = "A FRIENDLY NAME FOR YOUR APP"
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code>.</p>
 
 <p>
 If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
@@ -2227,6 +2290,8 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <h2 id="python-logging">Logging</h2>
 
+<h3 id="django-logging">Django Logging</h3>
+
 <p>To log Scout agent output in your Django application, copy the following into your <code class="prettyprint">settings.py</code> file:</p>
 <pre class="highlight python tab-python"><code><span class="n">LOGGING</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s">'version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -2260,6 +2325,42 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">}</span>
+</code></pre>
+<h3 id="flask-logging">Flask Logging</h3>
+
+<p>Add the following your Flask app:</p>
+<pre class="highlight python tab-python"><code><span class="n">dictConfig</span><span class="p">({</span>
+    <span class="s">'version'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">'disable_existing_loggers'</span><span class="p">:</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s">'formatters'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'stdout'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'format'</span><span class="p">:</span> <span class="s">'</span><span class="si">%(asctime)</span><span class="s">s </span><span class="si">%(levelname)</span><span class="s">s </span><span class="si">%(message)</span><span class="s">s'</span><span class="p">,</span>
+            <span class="s">'datefmt'</span><span class="p">:</span> <span class="s">'</span><span class="si">%</span><span class="s">Y-</span><span class="si">%</span><span class="s">m-</span><span class="si">%</span><span class="s">dT</span><span class="si">%</span><span class="s">H:</span><span class="si">%</span><span class="s">M:</span><span class="si">%</span><span class="s">S</span><span class="si">%</span><span class="s">z'</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s">'handlers'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'stdout'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'class'</span><span class="p">:</span> <span class="s">'logging.StreamHandler'</span><span class="p">,</span>
+            <span class="s">'formatter'</span><span class="p">:</span> <span class="s">'stdout'</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s">'scout_apm'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'level'</span><span class="p">:</span> <span class="s">'DEBUG'</span><span class="p">,</span>
+            <span class="s">'class'</span><span class="p">:</span> <span class="s">'logging.FileHandler'</span><span class="p">,</span>
+            <span class="s">'filename'</span><span class="p">:</span> <span class="s">'scout_apm_debug.log'</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+    <span class="s">'root'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'handlers'</span><span class="p">:</span> <span class="p">[</span><span class="s">'stdout'</span><span class="p">],</span>
+        <span class="s">'level'</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'LOG_LEVEL'</span><span class="p">,</span> <span class="s">'DEBUG'</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s">'loggers'</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">'scout_apm'</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">'handlers'</span><span class="p">:</span> <span class="p">[</span><span class="s">'scout_apm'</span><span class="p">],</span>
+            <span class="s">'level'</span><span class="p">:</span> <span class="s">'DEBUG'</span><span class="p">,</span>
+            <span class="s">'propagate'</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">},</span>
+<span class="p">})</span>
 </code></pre>
 <p>If <code class="prettyprint">LOGGING</code> is already defined, merge the above into the existing Dictionary.</p>
 
