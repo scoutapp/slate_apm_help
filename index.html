@@ -2064,6 +2064,7 @@ config :scout_apm,
 <li>Python 2.7 and 3.4+</li>
 <li>Django 1.10+</li>
 <li>Flask 0.10+</li>
+<li>Celery 3.1+</li>
 </ul>
 
 <h2 id="python-install">Installation</h2>
@@ -2206,9 +2207,24 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <li>SQL queries</li>
 </ul></li>
 <li>Flask</li>
+<li><a href="#celery">Celery</a></li>
 </ul>
 
 <p>More to come - suggest others in the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repo.  </p>
+
+<h2 id="celery">Celery</h2>
+
+<p>Add the following to instrument Celery workers:</p>
+
+<pre class="terminal" style="width: initial">
+<span>import scout_apm.celery</span>
+from celery import Celery
+
+app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
+<span>scout_apm.celery.install()</span>
+</pre>
+
+<p>Tasks will appear in the &ldquo;Background Jobs&rdquo; area of the Scout UI.</p>
 
 <h2 id="python-configuration">Configuration Reference</h2>
 
