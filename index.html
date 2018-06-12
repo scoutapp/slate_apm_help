@@ -1101,7 +1101,7 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <h3 id="instrumenting-blocks-of-code">Instrumenting blocks of code</h3>
 
-<p>To instrument a method call, add the following:</p>
+<p>To instrument a block of code, add the following:</p>
 <pre class="highlight ruby tab-ruby"><code>  <span class="k">class</span> <span class="nc">User</span>
     <span class="kp">include</span> <span class="no">ScoutApm</span><span class="o">::</span><span class="no">Tracer</span>
 
@@ -2381,6 +2381,51 @@ app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 </code></pre>
 <p>If <code class="prettyprint">LOGGING</code> is already defined, merge the above into the existing Dictionary.</p>
 
+<h2 id="python-custom-instrumentation">Custom Instrumentation</h2>
+
+<p>Traces that allocate significant amount of time to <code class="prettyprint">View</code>, <code class="prettyprint">Job</code>, or <code class="prettyprint">Template</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
+
+<h3 id="limits">Limits</h3>
+
+<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation_for_user_&quot;+user.email)</code>) as this can quickly exceed our rate limits. </p>
+
+<p>For high-cardinality details, use tags: <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation&quot;, tags={ &#39;user&#39;: user.email})</code>.</p>
+
+<h3 id="getting-started">Getting Started</h3>
+
+<p>Import the API module:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="c"># or to not use the whole prefix on each call:</span>
+<span class="kn">import</span> <span class="nn">instrument</span> <span class="k">from</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span>
+</code></pre><pre class="highlight python tab-python"><code><span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{},</span> <span class="n">kind</span><span class="o">=</span><span class="s">"Custom"</span><span class="p">)</span>
+</code></pre>
+<ul>
+<li><code class="prettyprint">name</code> - A semi-detailed version of what the section of code is. It should be static between different invocations of the method. Individual details like <code class="prettyprint">user id</code>, or counts or other data points can be added as tags. Names like <code class="prettyprint">retreive_from_api</code> or <code class="prettyprint">GET</code> are good names.</li>
+<li><code class="prettyprint">kind</code> - A high level area of the application. This defaults to <code class="prettyprint">Custom</code>. Your whole application should have a very low number of unique strings here. In our built-in instruments, this is things like <code class="prettyprint">Template</code> and <code class="prettyprint">SQL</code>. For custom instrumentation, it can be strings like <code class="prettyprint">MongoDB</code> or <code class="prettyprint">HTTP</code> or similar. This should not change based on input or state of the application.</li>
+<li><code class="prettyprint">tags</code> - A dictionary of key/value pairs. Key should be a string, but value can be any json-able structure. High-cardinalilty fields like <code class="prettyprint">user id</code> are permitted.</li>
+</ul>
+
+<h3 id="as-a-context-manager">As a Context Manager</h3>
+
+<p>Wrap a section of code in a unique &ldquo;span&rdquo; of work.</p>
+
+<p>The yielded object can be used to add additional tags individually.</p>
+<pre class="highlight python tab-python"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
+  <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>
+    <span class="n">instrument</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="s">"record_count"</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="c"># Work</span>
+
+  <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 2"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span> <span class="s">'filtered_record_count'</span><span class="p">:</span> <span class="mi">50</span> <span class="p">}</span> <span class="p">)</span> <span class="p">)</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>  
+    <span class="c"># Work</span>
+</code></pre>
+<h3 id="as-a-decorator">As a decorator</h3>
+
+<p>Wraps a whole function in a custom trace. This uses the same API as the ContextManager style.</p>
+<pre class="highlight python tab-python"><code><span class="nd">@scout_apm.api.instrument</span><span class="p">(</span><span class="s">"Computation"</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
+  <span class="c"># Work</span>
+</code></pre>
 <h2 id="python-custom-context">Custom Context</h2>
 
 <p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
