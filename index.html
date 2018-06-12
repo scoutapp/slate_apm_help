@@ -2403,7 +2403,7 @@ app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 <ul>
 <li><code class="prettyprint">name</code> - A semi-detailed version of what the section of code is. It should be static between different invocations of the method. Individual details like <code class="prettyprint">user id</code>, or counts or other data points can be added as tags. Names like <code class="prettyprint">retreive_from_api</code> or <code class="prettyprint">GET</code> are good names.</li>
 <li><code class="prettyprint">kind</code> - A high level area of the application. This defaults to <code class="prettyprint">Custom</code>. Your whole application should have a very low number of unique strings here. In our built-in instruments, this is things like <code class="prettyprint">Template</code> and <code class="prettyprint">SQL</code>. For custom instrumentation, it can be strings like <code class="prettyprint">MongoDB</code> or <code class="prettyprint">HTTP</code> or similar. This should not change based on input or state of the application.</li>
-<li><code class="prettyprint">tags</code> - A dictionary of key/value pairs. Key should be a string, but value can be any json-able structure. High-cardinalilty fields like <code class="prettyprint">user id</code> are permitted.</li>
+<li><code class="prettyprint">tags</code> - A dictionary of key/value pairs. Key should be a string, but value can be any json-able structure. High-cardinality fields like <code class="prettyprint">user id</code> are permitted.</li>
 </ul>
 
 <h3 id="as-a-context-manager">As a Context Manager</h3>
