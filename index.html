@@ -790,7 +790,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>You can also configure Scout APM via environment variables. <em>Environment variables override settings provided in</em> <code class="prettyprint">scout_apm.yml</code>.</p>
 
-<p>Environment variables have the same names as those in the Yaml config file, but are prefixed with <code class="prettyprint">SCOUT_</code>. For example, to set the organization key via environment variables:</p>
+<p>To configure Scout via enviroment variables, uppercase the config key and prefix it with <code class="prettyprint">SCOUT</code>. For example, to set the key via environment variables:</p>
 <pre class="highlight ruby tab-ruby"><code><span class="n">export</span> <span class="no">SCOUT_KEY</span><span class="o">=</span><span class="no">YOURKEY</span>
 </code></pre>
 <h2 id="ruby-deploy-tracking-config">Deploy Tracking Config</h2>
@@ -2463,7 +2463,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <p>You can also configure Scout APM via environment variables. <em>Environment variables override settings provided in your <code class="prettyprint">settings.py</code> file.</em></p>
 
-<p>Environment variables use the same configuration names. For example, to set the organization key via environment variables:</p>
+<p>To configure Scout via enviroment variables, uppercase the config key and prefix it with <code class="prettyprint">SCOUT</code>. For example, to set the key via environment variables:</p>
 <pre class="highlight  tab-plaintext"><code>export SCOUT_KEY=YOURKEY
 </code></pre>
 <h2 id="python-environments">Environments</h2>
