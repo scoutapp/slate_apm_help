@@ -1674,7 +1674,7 @@ with :system as the first value and the environment variable expected as the sec
 <li>Slime Templates</li>
 </ul>
 
-<p>See <a href="/#instrumenting-common-libraries">instrumenting common librariess</a> for guides on instrumenting other Elixir libraries.</p>
+<p>See <a href="/#instrumenting-common-libraries">instrumenting common libraries</a> for guides on instrumenting other Elixir libraries.</p>
 
 <h2 id="instrumenting-common-libraries">Instrumenting Common Libraries</h2>
 
@@ -1810,7 +1810,7 @@ with :system as the first value and the environment variable expected as the sec
 
 <h2 id="elixir-custom-instrumentation">Custom Instrumentation</h2>
 
-<p>You can extend Scout to record additional types of transactions (background jobs, for example) and time the execution of code that fall outside our custom instrumentation.</p>
+<p>You can extend Scout to record additional types of transactions (background jobs, for example) and time the execution of code that fall outside our auto instrumentation.</p>
 
 <p>For full details on instrumentation functions, see our <a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html" target="_blank">ScoutApm.Tracing Hex docs</a>.</p>
 
@@ -2054,8 +2054,6 @@ config :scout_apm,
 
           <h1 id="python-agent">Python Agent</h1>
 
-<aside class="notice">Python Monitoring is in our tech preview program.</aside>
-
 <p>Scout&rsquo;s Python agent auto-instruments Django and Flask applications, SQL queries, and more. Source code and issues can be found on the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repository.</p>
 
 <h2 id="python-requirements">Requirements</h2>
@@ -2202,7 +2200,7 @@ pip install scout-apm
         <p>Configure Scout in your <code>settings.py</code> file:</p>
 <pre class="terminal" style="width: initial">
 <span>import scout_apm.celery</span>
-<span>from scout_apm.core.config.config import ScoutConfig</span>
+<span>from scout_apm.core.config import ScoutConfig</span>
 from celery import Celery
 
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
@@ -2352,19 +2350,32 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <p>Scout auto-instruments the following Python libraries:</p>
 
 <ul>
-<li><a href="#django">Django</a>
+<li>Frameworks
 
 <ul>
+<li><a href="#django">Django</a></li>
 <li>Middleware</li>
 <li>Templates (compiling &amp; rendering)</li>
 <li>Template blocks</li>
 <li>SQL queries</li>
-</ul></li>
 <li><a href="#flask">Flask</a></li>
 <li><a href="#celery">Celery</a></li>
 <li><a href="#pyramid">Pyramid</a></li>
 <li><a href="#bottle">Bottle</a></li>
+</ul></li>
+<li>Libraries
+
+<ul>
+<li>PyMongo</li>
+<li>Requests</li>
+<li>UrlLib3</li>
+<li>Redis</li>
+<li>ElasticSearch</li>
+<li>Jinja2</li>
+</ul></li>
 </ul>
+
+<p>You can instrument your own code or other libraries via <a href="#python-custom-instrumentation">custom instrumentation</a>.</p>
 
 <p>More to come - suggest others in the <a href="https://github.com/scoutapp/scout_apm_python">scout_apm_python</a> GitHub repo.  </p>
 
@@ -2463,7 +2474,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <p>You can also configure Scout APM via environment variables. <em>Environment variables override settings provided in your <code class="prettyprint">settings.py</code> file.</em></p>
 
-<p>To configure Scout via enviroment variables, uppercase the config key and prefix it with <code class="prettyprint">SCOUT</code>. For example, to set the key via environment variables:</p>
+<p>To configure Scout via environment variables, uppercase the config key and prefix it with <code class="prettyprint">SCOUT</code>. For example, to set the key via environment variables:</p>
 <pre class="highlight  tab-plaintext"><code>export SCOUT_KEY=YOURKEY
 </code></pre>
 <h2 id="python-environments">Environments</h2>
@@ -2553,15 +2564,123 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <h2 id="python-custom-instrumentation">Custom Instrumentation</h2>
 
+<p>You can extend Scout to trace transactions outside our officially supported frameworks (ex: Cron jobs and micro web frameworks) and time the execution of code that fall outside our auto instrumentation.</p>
+
+<h3 id="transactions-timing">Transactions &amp; Timing</h3>
+
+<p>Scout’s instrumentation is divided into 2 areas:</p>
+
+<ol>
+<li><strong>Transactions</strong>: these wrap around a flow of work, like a web request or Cron job. The UI groups data under transactions. Use the <code class="prettyprint">@scout_apm.api.WebTransaction()</code> decorator or wrap blocks of code via the <code class="prettyprint">with scout_apm.api.WebTransaction(&#39;&#39;)</code> context manager.</li>
+<li><strong>Timing</strong>: these measure individual pieces of work, like an HTTP request to an outside service and display timing information within a transaction trace. Use the <code class="prettyprint">@scout_apm.api.instrument()</code> decorator or the <code class="prettyprint">with scout_apm.api.instrument() as instrument</code> context manager.</li>
+</ol>
+
+<h3 id="instrumenting-transactions">Instrumenting transactions</h3>
+
+<p>A transaction groups a sequence of work under in the Scout UI. These are used to generate transaction traces. For example, you may create a transaction that wraps around the entire execution of a Python script that is ran as a Cron Job.</p>
+
+<h4 id="python-transaction-limits">Limits</h4>
+
+<p>We limit the number of unique transactions that can be instrumented. Tracking too many unique transactions can impact the performance of our UI. Do not dynamically generate transaction names in your instrumentation (ie <code class="prettyprint">with scout_apm.api.WebTransaction(&#39;update_user_&quot;+user.id&#39;)</code>) as this can quickly exceed our rate limits. Use <a href="#python-custom-context">context</a> to add high-dimesionality information instead.</p>
+
+<h4 id="getting-started">Getting Started</h4>
+
+<p>Import the API module and configure Scout:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="c"># A dict containing the configuration for APM.</span>
+<span class="c"># See our Python help docs for all configuration options.</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'My App Name'</span><span class="p">,</span>
+          <span class="s">'key'</span><span class="p">:</span> <span class="s">'APM_Key'</span><span class="p">,</span>
+          <span class="s">'monitor'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+
+<span class="c"># The `install()` method must be called early on within your app code in order</span>
+<span class="c"># to install the APM agent code and instrumntation.</span>
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</code></pre>
+<h4 id="python-web-or-background">Web or Background transactions?</h4>
+
+<p>Scout distinguishes between two types of transactions:</p>
+
+<ul>
+<li><code class="prettyprint">WebTransaction</code>: For transactions that impact the user-facing experience. Time spent in these transactions will appear on your app overboard dashboard and appear in the &ldquo;Web&rdquo; area of the UI.</li>
+<li><code class="prettyprint">BackgroundTransaction</code>: For transactions that don&rsquo;t have an impact on the user-facing experience (example: cron jobs). These will be available in the &ldquo;Background Jobs&rdquo; area of the UI.</li>
+</ul>
+
+<h4 id="python-transaction-explicit">Explicit</h4>
+<pre class="highlight py tab-python"><code><span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">)</span> <span class="c"># or BackgroundTransaction.start()</span>
+<span class="c"># do some app work</span>
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</code></pre>
+<h4 id="python-transaction-context-manager">As a context manager</h4>
+<pre class="highlight py tab-python"><code><span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">):</span> <span class="c"># or BackgroundTransaction()</span>
+    <span class="c"># do some app work</span>
+</code></pre>
+<h4 id="python-transaction-decorator">As a decorator</h4>
+<pre class="highlight py tab-python"><code><span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">)</span> <span class="c"># or BackgroundTransaction()</span>
+<span class="k">def</span> <span class="nf">my_foo_action</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="c"># do some app work</span>
+</code></pre>
+<h4 id="cron-job-example">Cron Job Example</h4>
+<pre class="highlight python tab-python"><code><span class="c">#!/usr/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="c"># A dict containing the configuration for APM.</span>
+<span class="c"># See our Python help docs for all configuration options.</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'My App Name'</span><span class="p">,</span>
+          <span class="s">'key'</span><span class="p">:</span> <span class="s">'YOUR_SCOUT_KEY'</span><span class="p">,</span>
+          <span class="s">'monitor'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+
+<span class="c"># The `install()` method must be called early on within your app code in order</span>
+<span class="c"># to install the APM agent code and instrumntation.</span>
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c"># Will appear under Background jobs in the Scout UI</span>
+<span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">BackgroundTransaction</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">):</span>
+  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://httpbin.org/status/418'</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</code></pre>
+<h4 id="falcon-example">Falcon Example</h4>
+
+<p>The example below instruments a <a href="https://falconframework.org/">Falcon</a> web app:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">falcon</span>
+<span class="kn">import</span> <span class="nn">scout_apm.api</span>
+<span class="kn">from</span> <span class="nn">scout_apm.api</span> <span class="kn">import</span> <span class="n">Context</span>
+
+<span class="c"># Must call scout_apm.api.install() early to set up</span>
+<span class="c"># instrumentation and the core agent.</span>
+<span class="c"># Create a dict of configuration options for Scout</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'My App Name'</span><span class="p">,</span>
+          <span class="s">'key'</span><span class="p">:</span> <span class="s">'APM_KEY'</span><span class="p">,</span>
+          <span class="s">'monitor'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">WorkResource</span><span class="p">:</span>
+    <span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">'Work/Get'</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">'path'</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">media</span> <span class="o">=</span> <span class="n">some_work</span><span class="p">()</span>
+
+<span class="n">api</span> <span class="o">=</span> <span class="n">falcon</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
+<span class="n">api</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'/work'</span><span class="p">,</span> <span class="n">WorkResource</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">some_work</span><span class="p">():</span>
+    <span class="c"># ... Do some real work ...</span>
+    <span class="k">return</span> <span class="s">"Did some work"</span>
+</code></pre>
+<h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
+
 <p>Traces that allocate significant amount of time to <code class="prettyprint">View</code>, <code class="prettyprint">Job</code>, or <code class="prettyprint">Template</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
 
-<h3 id="limits">Limits</h3>
+<h4 id="python-span-limits">Limits</h4>
 
 <p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation_for_user_&quot;+user.email)</code>) as this can quickly exceed our rate limits. </p>
 
 <p>For high-cardinality details, use tags: <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation&quot;, tags={ &#39;user&#39;: user.email})</code>.</p>
 
-<h3 id="getting-started">Getting Started</h3>
+<h4 id="python-span-getting-started">Getting Started</h4>
 
 <p>Import the API module:</p>
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
@@ -2576,7 +2695,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <li><code class="prettyprint">tags</code> - A dictionary of key/value pairs. Key should be a string, but value can be any json-able structure. High-cardinality fields like <code class="prettyprint">user id</code> are permitted.</li>
 </ul>
 
-<h3 id="as-a-context-manager">As a Context Manager</h3>
+<h4 id="python-span-context-manager">As a context manager</h4>
 
 <p>Wrap a section of code in a unique &ldquo;span&rdquo; of work.</p>
 
@@ -2589,9 +2708,9 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
   <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 2"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span> <span class="s">'filtered_record_count'</span><span class="p">:</span> <span class="mi">50</span> <span class="p">}</span> <span class="p">)</span> <span class="p">)</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>  
     <span class="c"># Work</span>
 </code></pre>
-<h3 id="as-a-decorator">As a decorator</h3>
+<h4 id="python-span-decorator">As a decorator</h4>
 
-<p>Wraps a whole function in a custom trace. This uses the same API as the ContextManager style.</p>
+<p>Wraps a whole function, timing the execution of specified function within a transaction trace. This uses the same API as the ContextManager style.</p>
 <pre class="highlight python tab-python"><code><span class="nd">@scout_apm.api.instrument</span><span class="p">(</span><span class="s">"Computation"</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
   <span class="c"># Work</span>
