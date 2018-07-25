@@ -2200,12 +2200,12 @@ pip install scout-apm
         <p>Configure Scout in your <code>settings.py</code> file:</p>
 <pre class="terminal" style="width: initial">
 <span>import scout_apm.celery</span>
-<span>from scout_apm.core.config import ScoutConfig</span>
+<span>from scout_apm.api import Config</span>
 from celery import Celery
 
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 <span>
-ScoutConfig.set(
+Config.set(
         key = '...',
         name = 'Same as Web App Name',
         monitor = True
@@ -2491,6 +2491,20 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <h2 id="python-logging">Logging</h2>
 
+<p>Log the agent activity using the framework-specific instructions below.</p>
+
+<h3 id="log-levels">Log Levels</h3>
+
+<p>The following log levels are available:</p>
+
+<ul>
+<li>CRITICAL</li>
+<li>ERROR</li>
+<li>WARNING</li>
+<li>INFO</li>
+<li>DEBUG</li>
+</ul>
+
 <h3 id="django-logging">Django Logging</h3>
 
 <p>To log Scout agent output in your Django application, copy the following into your <code class="prettyprint">settings.py</code> file:</p>
@@ -2565,6 +2579,18 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 </code></pre>
 <p>If <code class="prettyprint">LOGGING</code> is already defined, merge the above into the existing Dictionary.</p>
 
+<h3 id="celery-logging">Celery Logging</h3>
+
+<p>Add the following to our default Celery configuration:</p>
+<pre class="highlight  tab-plaintext"><code>import logging
+logging.basicConfig(level='DEBUG')
+</code></pre>
+<h3 id="custom-instrumentation-logging">Custom Instrumentation logging</h3>
+
+<p>If you&rsquo;ve <a href="#python-custom-instrumentation">added Scout&rsquo;s instrumentation to an unsupported framework or script</a>, add the following to record the agent logs:</p>
+<pre class="highlight  tab-plaintext"><code>import logging
+logging.basicConfig(level='DEBUG')
+</code></pre>
 <h2 id="python-custom-instrumentation">Custom Instrumentation</h2>
 
 <p>You can extend Scout to trace transactions outside our officially supported frameworks (ex: Cron jobs and micro web frameworks) and time the execution of code that fall outside our auto instrumentation.</p>
