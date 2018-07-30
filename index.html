@@ -2058,12 +2058,7 @@ config :scout_apm,
 
 <h2 id="python-requirements">Requirements</h2>
 
-<ul>
-<li>Python 3.4+ (request Python 2.7 support via <a href="https://github.com/scoutapp/scout_apm_python/issues/45">this GitHub issue</a>)</li>
-<li>Django 1.10+ (request Django 1.8 and 1.9 support via <a href="https://github.com/scoutapp/scout_apm_python/issues/26">this GitHub issue</a>)</li>
-<li>Flask 0.10+</li>
-<li>Celery 3.1+</li>
-</ul>
+<p><code class="prettyprint">scout-apm</code> requires Python 3.4+ (request Python 2.7 support via <a href="https://github.com/scoutapp/scout_apm_python/issues/45">this GitHub issue</a>).</p>
 
 <h2 id="python-instrumented-libraries">Instrumented Libraries</h2>
 
@@ -2107,6 +2102,8 @@ config :scout_apm,
 
 <h2 id="django">Django</h2>
 
+<p>Scout supports Django 1.10+ (request Django 1.8 and 1.9 support via <a href="https://github.com/scoutapp/scout_apm_python/issues/26">this GitHub issue</a>).</p>
+
 <p>General instructions for a Django app:</p>
 
 <table class="help install install_ruby">
@@ -2137,7 +2134,7 @@ INSTALLED_APPS = (
 
 # Scout settings
 SCOUT_MONITOR = True
-SCOUT_KEY     = "[AVAILABLE IN THE SCOUT UI]"
+SCOUT_KEY     = "[SCOUT_KEY]"
 SCOUT_NAME    = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
@@ -2156,6 +2153,8 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 </table>
 
 <h2 id="flask">Flask</h2>
+
+<p>Scout supports Flask 0.10+.</p>
 
 <p>General instructions for a Flask app:</p>
 
@@ -2189,7 +2188,7 @@ ScoutApm(app)
 
 # Scout settings
 app.config['SCOUT_MONITOR'] = True
-app.config['SCOUT_KEY']     = "[AVAILABLE IN THE SCOUT UI]"
+app.config['SCOUT_KEY']     = "[SCOUT_KEY]"
 app.config['SCOUT_NAME']    = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
@@ -2218,6 +2217,8 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
 </code></pre>
 <h2 id="celery">Celery</h2>
+
+<p>Scout supports Celery 3.1+.</p>
 
 <p>Add the following to instrument Celery workers:</p>
 
@@ -2248,7 +2249,7 @@ from celery import Celery
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 <span>
 Config.set(
-        key = '...',
+        key = '[SCOUT_KEY]',
         name = 'Same as Web App Name',
         monitor = True
         )
@@ -2302,7 +2303,7 @@ import scout_apm.pyramid
 if __name__ == '__main__':
     with Configurator() as config:
         config.add_settings(
-            SCOUT_KEY = '...',
+            SCOUT_KEY = '[SCOUT_KEY]',
             SCOUT_MONITOR = True,
             SCOUT_NAME = 'My Pyramid App'
         )
@@ -2353,7 +2354,7 @@ from scout_apm.bottle import ScoutPlugin
 app = bottle.default_app()
 app.config.update({'scout.name': "YOUR_APP_NAME",
                    'scout.monitor': "true",
-                   'scout.key': "YOUR_KEY"})
+                   'scout.key': "[SCOUT_KEY]"})
 
 scout = ScoutPlugin()
 bottle.install(scout)
