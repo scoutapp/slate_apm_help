@@ -2058,7 +2058,12 @@ config :scout_apm,
 
 <h2 id="python-requirements">Requirements</h2>
 
-<p><code class="prettyprint">scout-apm</code> requires Python 3.4+ (request Python 2.7 support via <a href="https://github.com/scoutapp/scout_apm_python/issues/45">this GitHub issue</a>).</p>
+<p><code class="prettyprint">scout-apm</code> requires :</p>
+
+<ul>
+<li>Python 3.4+ (<a href="https://github.com/scoutapp/scout_apm_python/issues/45">request Python 2.7 support</a>).</li>
+<li>The POSIX, Unix, or OSX operating systems (<a href="https://github.com/scoutapp/scout_apm_python/issues/101">Request Windows support</a>).</li>
+</ul>
 
 <h2 id="python-instrumented-libraries">Instrumented Libraries</h2>
 
@@ -2134,7 +2139,7 @@ INSTALLED_APPS = (
 
 # Scout settings
 SCOUT_MONITOR = True
-SCOUT_KEY     = "[SCOUT_KEY]"
+SCOUT_KEY     = "SCOUT_KEY"
 SCOUT_NAME    = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
@@ -2188,7 +2193,7 @@ ScoutApm(app)
 
 # Scout settings
 app.config['SCOUT_MONITOR'] = True
-app.config['SCOUT_KEY']     = "[SCOUT_KEY]"
+app.config['SCOUT_KEY']     = "SCOUT_KEY"
 app.config['SCOUT_NAME']    = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
@@ -2249,7 +2254,7 @@ from celery import Celery
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 <span>
 Config.set(
-        key = '[SCOUT_KEY]',
+        key = 'SCOUT_KEY',
         name = 'Same as Web App Name',
         monitor = True
         )
@@ -2303,7 +2308,7 @@ import scout_apm.pyramid
 if __name__ == '__main__':
     with Configurator() as config:
         config.add_settings(
-            SCOUT_KEY = '[SCOUT_KEY]',
+            SCOUT_KEY = 'SCOUT_KEY',
             SCOUT_MONITOR = True,
             SCOUT_NAME = 'My Pyramid App'
         )
@@ -2354,7 +2359,7 @@ from scout_apm.bottle import ScoutPlugin
 app = bottle.default_app()
 app.config.update({'scout.name': "YOUR_APP_NAME",
                    'scout.monitor': "true",
-                   'scout.key': "[SCOUT_KEY]"})
+                   'scout.key': "SCOUT_KEY"})
 
 scout = ScoutPlugin()
 bottle.install(scout)
