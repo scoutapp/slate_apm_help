@@ -2802,13 +2802,18 @@ logging.basicConfig(level='DEBUG')
 
 <p>Scout can <a href="#deploy-tracking">track deploys</a>, making it easier to correlate specific deploys to changes in performance.</p>
 
-<p>Scout identifies deploys via the following:</p>
+<p>Scout identifies deploys via the following approaches:</p>
 
-<ol>
-<li>Setting the <code class="prettyprint">revision_sha</code> configuration value: <code class="prettyprint">ScoutConfig.set(revision_sha = &#39;SHA&#39;)</code>.</li>
+<ul>
+<li>Setting the <code class="prettyprint">revision_sha</code> configuration value:</li>
+</ul>
+<pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">scout_apm.api</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="n">Config</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="n">revision_sha</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">"git rev-parse HEAD"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> <span class="c"># if the app directory is a git repo</span>
+</code></pre>
+<ul>
 <li>Setting a <code class="prettyprint">SCOUT_REVISION_SHA</code> environment variable equal to the SHA of your latest release.</li>
 <li>If you are using Heroku, enable <a href="https://devcenter.heroku.com/articles/dyno-metadata">Dyno Metadata</a>. This adds a <code class="prettyprint">HEROKU_SLUG_COMMIT</code> environment variable to your dynos, which Scout then associates with deploys.</li>
-</ol>
+</ul>
 
           <h1 id="other-languages">Other languages</h1>
 
