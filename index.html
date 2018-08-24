@@ -2774,8 +2774,9 @@ logging.basicConfig(level='DEBUG')
 </ul>
 
 <p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app:</p>
-<pre class="highlight python tab-python"><code><span class="c"># ScoutApm.Context.add(key,value)</span>
-<span class="n">ScoutApm</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"user_email"</span><span class="p">,</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+<span class="c"># scout_apm.api.Context.add(key,value)</span>
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"user_email"</span><span class="p">,</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
 </code></pre>
 <h3 id="context-key-restrictions">Context Key Restrictions</h3>
 
