@@ -1140,6 +1140,13 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <p><img src="images/custom_devtrace.png" alt="custom devtrace" /></p>
 
+<h2 id="rake-rails-runner">Rake + Rails Runner</h2>
+
+<p>Scout doesn&rsquo;t have a dedicated API for instrumenting <code class="prettyprint">rake</code> tasks or transactions called via <code class="prettyprint">rails runner</code>. Instead, we suggest creating basic wrapper tasks that spawn a background job in a <a href="#ruby-instrumented-libs">framework we support</a>. These jobs are automatically monitored by Scout and are appear in the Scout UI under &ldquo;background jobs&rdquo;.</p>
+
+<p>For example, the following is a CronJob that triggers the execution of an <code class="prettyprint">IntercomSync</code> background job:</p>
+<pre class="highlight  tab-plaintext"><code>10 * * * * cd /home/deploy/your_app/current &amp;&amp; rails runner 'IntercomSync.perform_later'
+</code></pre>
 <h2 id="sneakers">Sneakers</h2>
 
 <p>Scout doesn&rsquo;t instrument <a href="https://github.com/jondot/sneakers">Sneakers</a> (a background processing framework for Ruby and RabbitMQ) automatically. To add Sneakers instrumentation:</p>
