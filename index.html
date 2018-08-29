@@ -871,6 +871,10 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p><strong>Nearly any front-end HTTP server or load balancer can be configured to add this header.</strong> Some examples are below.</p>
 
+<h3 id="ruby-heroku-request-queue">Heroku</h3>
+
+<p>Time in queue is automatically collected for apps deployed on Heroku. This measures the time from when a request hits the Heroku router and when your app begins processing the request.</p>
+
 <h3 id="apache">Apache</h3>
 
 <p>Apache&rsquo;s <strong>mod_headers</strong> module includes a <code class="prettyprint">%t</code> variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:</p>
