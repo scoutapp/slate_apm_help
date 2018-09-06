@@ -321,19 +321,7 @@
 
 <h2 id="ruby-requirements">Requirements</h2>
 
-<p>Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+ and the following app servers/background job frameworks:</p>
-
-<ul>
-<li>Phusion Passenger</li>
-<li>Puma</li>
-<li>Rainbows</li>
-<li>Thin</li>
-<li>Unicorn</li>
-<li>WEBrick</li>
-<li>Sidekiq</li>
-<li>DelayedJob</li>
-<li>Resque</li>
-</ul>
+<p>Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+. See a <a href="#ruby-instrumented-libs">list of libraries we auto-instrument</a>.</p>
 
 <p><a href="#memory-bloat-detection">Memory Bloat detection</a> and <a href="#scoutprof">ScoutProf</a> require Ruby 2.1+.</p>
 
@@ -382,6 +370,8 @@ bundle install
 <h3 id="no-data">No Data</h3>
 
 <p>Not seeing any data?</p>
+
+<aside class="notice">Using Heroku? View our <a href="https://devcenter.heroku.com/articles/scout#troubleshooting">Heroku-specific troubleshooting instructions.</a></aside>
 
 <table class="help">
   <tbody>
@@ -1242,20 +1232,44 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <p>The following libraries are currently instrumented:</p>
 
 <ul>
+<li>Datastores
+
+<ul>
 <li>ActiveRecord</li>
+<li>ElasticSearch</li>
+<li>Mongoid</li>
+<li>Moped</li>
+<li>Redis</li>
+</ul></li>
+<li>Rack frameworks
+
+<ul>
+<li>Rails</li>
+<li>Sinatra</li>
+<li>Grape</li>
+<li>Middleware</li>
+</ul></li>
+<li>Rails libraries
+
+<ul>
 <li>ActionView</li>
 <li>ActionController</li>
-<li>ElasticSearch</li>
+</ul></li>
+<li>External HTTP calls
+
+<ul>
 <li>HTTPClient</li>
-<li>InfluxDB</li>
-<li>Mongoid</li>
 <li>Net::HTTP</li>
-<li>Moped</li>
-<li>Middleware</li>
-<li>Redis</li>
+</ul></li>
+<li>Background Job Processing
+
+<ul>
 <li>Sidekiq</li>
 <li>DelayedJob</li>
 <li>Resque</li>
+<li>Sneakers</li>
+<li>Shoryuken</li>
+</ul></li>
 </ul>
 
 <p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
@@ -1643,6 +1657,20 @@ with :system as the first value and the environment variable expected as the sec
         No
       </td>
     </tr>
+    <tr>
+      <th>
+        revision_sha
+      </th>
+      <td>
+        The Git SHA associated with this release.
+      </td>
+      <td>
+        <a href="#elixir-deploy-tracking-config">See docs</a>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -1667,7 +1695,15 @@ with :system as the first value and the environment variable expected as the sec
 
 <h2 id="elixir-deploy-tracking-config">Deploy Tracking Config</h2>
 
-<p>The Elixir agent doesn&rsquo;t support deploy tracking yet. Contact <a href="support@scoutapp.com">support@scoutapp.com</a> to be notified of updates.</p>
+<p>Scout can <a href="#deploy-tracking">track deploys</a>, making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of <code class="prettyprint">scout_apm</code>. See our <a href="#elixir-upgrade">upgrade instructions</a>.</p>
+
+<p>Scout identifies deploys via the following:</p>
+
+<ol>
+<li>A <code class="prettyprint">revision_sha</code> config setting.</li>
+<li>A <code class="prettyprint">SCOUT_REVISION_SHA</code> environment variable equal to the SHA of your latest release.</li>
+<li>If you are using Heroku, enable <a href="https://devcenter.heroku.com/articles/dyno-metadata">Dyno Metadata</a>. This adds a <code class="prettyprint">HEROKU_SLUG_COMMIT</code> environment variable to your dynos, which Scout then associates with deploys.</li>
+</ol>
 
 <h2 id="elixir-instrumented-libaries">Auto-Instrumented Libraries</h2>
 
@@ -2494,7 +2530,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         The Git SHA associated with this release.
       </td>
       <td>
-             
+        <a href="#python-deploy-tracking-config">See docs</a>   
       </td>
       <td>
         No
