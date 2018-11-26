@@ -1696,6 +1696,20 @@ with :system as the first value and the environment variable expected as the sec
         No
       </td>
     </tr>
+    <tr>
+      <th>
+        ignore
+      </th>
+      <td>
+        An array of URL prefixes to ignore in the Scout Plug instrumentation.
+      </td>
+      <td>
+        <code>[]</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -1757,6 +1771,7 @@ with :system as the first value and the environment variable expected as the sec
 
 <ul>
 <li><a href="#phoenix-channels">Phoenix Channels</a></li>
+<li><a href="#plug-chunked-response-http-streaming">Plug Chunked Response</a></li>
 <li><a href="#genserver-calls">GenServer calls</a></li>
 <li><a href="#task-start">Task.start</a></li>
 <li><a href="#task-supervisor-start_child">Task.Supervisor.start_child</a></li>
@@ -1794,6 +1809,48 @@ with :system as the first value and the environment variable expected as the sec
   <span class="k">def</span> <span class="n">handle_out</span><span class="p">(</span><span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">push</span> <span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="no">FetchView</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="sd">"</span><span class="s2">index.json"</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
   <span class="k">end</span>
+</code></pre>
+<h3 id="plug-chunked-response-http-streaming">Plug Chunked Response (HTTP Streaming)</h3>
+
+<p>In a Plug application, a chunked response needs to be instrumented directly, rather than relying on
+the default Scout instrumentation Plug. The key part is to <code class="prettyprint">start_layer</code> beforehand, and then call
+<code class="prettyprint">before_send</code> after the chunked response is complete.</p>
+<pre class="highlight  tab-plaintext"><code>def chunked(conn, _params) do
+  # The "Controller" argument is required, and should not be changed. The second argument is the
+  # name this endpoint will appear as in the Scout UI. The `action_name` function determines this
+  # automatically.
+  ScoutApm.TrackedRequest.start_layer("Controller", ScoutApm.Plugs.ControllerTimer.action_name(conn))
+
+  conn =
+    conn
+    |&gt; put_resp_content_type("text/plain")
+    |&gt; send_chunked(200)
+
+  {:ok, conn} =
+    Repo.transaction(fn -&gt;
+      Example.build_chunked_query(...)
+      |&gt; Enum.reduce_while(conn, fn data, conn -&gt;
+        case chunk(conn, data) do
+          {:ok, conn} -&gt;
+            {:cont, conn}
+
+          {:error, :closed} -&gt;
+            {:halt, conn}
+        end
+      end)
+    end)
+
+  ScoutApm.Plugs.ControllerTimer.before_send(conn)
+
+  conn
+end
+</code></pre>
+<p>Then have the default instrumentation ignore the endpoint&rsquo;s URL prefix (since it is manually instrumented now).
+See the <a href="#ignore-1">ignore configuration</a> for more details.</p>
+<pre class="highlight  tab-plaintext"><code>config :scout_apm,
+  name: "My Scout App Name",
+  key: "My Scout Key",
+  ignore: ["/chunked"]
 </code></pre>
 <h3 id="genserver-calls">GenServer calls</h3>
 
