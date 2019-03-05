@@ -3002,9 +3002,64 @@ logging.basicConfig(level='DEBUG')
 
 <p>If you don&rsquo;t enable the GitHub integration, you&rsquo;ll see a backtrace.</p>
 
-<h2 id="trace-explorer">Trace Explorer</h2>
+<h2 id="timeline-transaction-trace">Timeline Transaction Trace</h2>
 
-<aside class="notice">Trace Explorer is in our tech preview program. Share your feedback via <a href="https://github.com/scoutapp/roadmap/issues/33" target="_blank">this GitHub issue</a>.</aside>
+<aside class="notice">The Timeline view of a transaction trace is in BETA. Share your feedback via <a href="https://github.com/scoutapp/roadmap/issues/33" target="_blank">this GitHub issue</a>.</aside>
+
+<p><img src="images/trace_timeline.png" alt="trace timeline" /></p>
+
+<p>Scout now provides more details on the execution order of your code by presenting traces in a timeline format in addtion to the existing summary view. </p>
+
+<p>This is helpful for situations like:</p>
+
+<ul>
+<li>Understanding the distribution of <code class="prettyprint">Controller</code> time across a request. Is there a lot of time spent in your custom code at the beginning of a request? Is it spread out? Is it at the end of a request?</li>
+<li>Understanding the timing of distinct SQL queries. Is one instance of many nearly identical queries slow or all of them?</li>
+<li>Getting the complete picture of parent method calls and exclusive versus total call time in each method. How many SQL calls are being triggered by view partial?</li>
+</ul>
+
+<h3 id="upgrade-instructions">Upgrade instructions</h3>
+
+<ol>
+<li>Modify your <code class="prettyprint">Gemfile</code> entry for <code class="prettyprint">scout_apm</code>, changing it to:
+<code class="prettyprint">
+gem &#39;scout_apm&#39;, git: &#39;https://github.com/scoutapp/scout_apm_ruby.git&#39;, branch: &#39;detailed-traces&#39;
+</code></li>
+<li><code class="prettyprint">bundle update scout_apm</code></li>
+<li>Deploy.</li>
+</ol>
+
+<h3 id="toggling-between-summary-and-timeline-traces">Toggling between summary and timeline traces</h3>
+
+<p>Once the branch is deployed, Scout will record traces in both the existing summary format and the new timeline format. When looking at a list of traces, traces with the timeline format available are labeled with a &ldquo;v2&rdquo; indicator. You can toggle between the summary and timeline format when viewing a trace:</p>
+
+<p><img src="https://user-images.githubusercontent.com/7880/52580818-60b95f00-2de6-11e9-870d-668b2afe194c.png" alt="image" /></p>
+
+<h3 id="beta-limitations">Beta limitations</h3>
+
+<ul>
+<li>Ruby-only</li>
+<li>No ScoutProf support</li>
+<li>No links to backtraces on the Beta view</li>
+<li>No support for background jobs</li>
+</ul>
+
+<p>Please report issues to support@scoutapp.com.</p>
+
+<h3 id="downgrade-instructions">Downgrade Instructions</h3>
+
+<ol>
+<li>Revert your <code class="prettyprint">Gemfile</code> entry for <code class="prettyprint">scout_apm</code>:</li>
+</ol>
+<pre class="highlight  tab-plaintext"><code>- gem 'scout_apm', git: 'https://github.com/scoutapp/scout_apm_ruby.git', branch: 'scoutprof-detailed-traces'
++ gem 'scout_apm'
+</code></pre>
+<ol>
+<li><code class="prettyprint">bundle update scout_apm</code></li>
+<li>Deploy.</li>
+</ol>
+
+<h2 id="trace-explorer">Trace Explorer</h2>
 
 <p>What was the slowest request yesterday? How has the app performed for <code class="prettyprint">user@domain.com</code>? Which endpoints are generating the bulk of slow requests? Trace Explorer lets you quickly filter the transaction traces collected by Scout, giving you answers to your unique questions.</p>
 
