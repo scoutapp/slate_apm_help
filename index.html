@@ -250,7 +250,7 @@
       </span>
     </a>
     <div class="tocify-wrapper">
-      <a href="https://scoutapp.com" target="_blank"><img src="images/logo.png" id="logo" alt="Logo" /></a>
+      <a href="https://scoutapm.com" target="_blank"><img src="images/logo.png" id="logo" alt="Logo" /></a>
         <div class="search">
           <input type="text" class="search" id="input-search" placeholder="Search">
         </div>
@@ -263,9 +263,9 @@
       <div class="content">
         <h1 id="scout-help-docs">Scout Help Docs</h1>
 
-<p>Welcome to the help site for <strong><a href="https://scoutapp.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Get started</a>.</p>
+<p>Welcome to the help site for <strong><a href="https://scoutapm.com">Scout Application Monitoring</a></strong>. Don&rsquo;t have an account? <a href="https://scoutapm.com/info/pricing" target="_blank">Get started</a>.</p>
 
-<p>Browse through the sidebar, search, <a href="mailto:support@scoutapp.com">email us</a>, or <a href="http://slack.scoutapp.com" target="_blank">join our Slack community</a>. We&rsquo;re here to help.</p>
+<p>Browse through the sidebar, search, <a href="mailto:support@scoutapm.com">email us</a>, or <a href="http://slack.scoutapm.com" target="_blank">join our Slack community</a>. We&rsquo;re here to help.</p>
 
 <div id="overview_container">
   <div>
@@ -464,7 +464,7 @@ tail -n1000 log/production.log | grep "Processing"
       </td>
       <td>
         <p>
-          Oops! Looks like messed up. Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapp.com">send us an email</a> with the following:
+          Oops! Looks like messed up. Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapm.com">send us an email</a> with the following:
         </p>
         <ul>
           <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
@@ -668,7 +668,7 @@ tail -n1000 log/production.log | grep "Processing"
         The protocol + domain where the agent should report.
       </td>
       <td>
-        <code>https://apm.scoutapp.com</code>
+        <code>https://scoutapm.com</code>
       </td>
       <td>
         No
@@ -968,7 +968,7 @@ to install instrumentation for those libraries.</p>
 <span class="k">end</span>
 </code></pre>
 <p>If you run into any issues, or want advice on naming or wrapping endpoints, contact us at
-support@scoutapp.com for additional help.</p>
+support@scoutapm.com for additional help.</p>
 
 <h2 id="sinatra">Sinatra</h2>
 
@@ -1415,7 +1415,7 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <h2 id="elixir-install">Installation</h2></p>
 
 <aside class="notice">
-  A Scout account is required. <a href="https://apm.scoutapp.com/users/sign_up" target: '_blank'>Signup here</a>.
+  A Scout account is required. <a href="https://scoutapm.com/users/sign_up" target: '_blank'>Signup here</a>.
 </aside>
 
 <p>Tailored instructions are provided within our user interface. General instructions for a Phoenix 1.3+ app:</p>
@@ -1556,7 +1556,7 @@ defmodule MyApp.Repo do
          <ul>
             <li>Increase the log level of <code>scout_apm</code> by setting <code>log_level: "debug"</code> in your <code>config/scout_apm.exs</code> file and restart your app.</li>
             <li>
-              Wait five minutes, then email <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> 
+              Wait five minutes, then email <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> 
               your log output and the application&rsquo;s <code>mix.lock</code> file.</li>
           </ul>
 
@@ -1662,7 +1662,7 @@ with :system as the first value and the environment variable expected as the sec
         The protocol + domain where the agent should report.
       </td>
       <td>
-        <code>https://apm.scoutapp.com</code>
+        <code>https://scoutapm.com</code>
       </td>
       <td>
         No
@@ -1764,7 +1764,7 @@ with :system as the first value and the environment variable expected as the sec
 
 <h2 id="instrumenting-common-libraries">Instrumenting Common Libraries</h2>
 
-<p>We&rsquo;ve collected best practices for instrumenting common transactions and timing functions below. If you have a suggestion, <a href="mailto:support@scoutapp.com">please share it</a>. See our <a href="#elixir-custom-instrumentation">custom instrumentation quickstart</a> for more details on adding instrumentation.</p>
+<p>We&rsquo;ve collected best practices for instrumenting common transactions and timing functions below. If you have a suggestion, <a href="mailto:support@scoutapm.com">please share it</a>. See our <a href="#elixir-custom-instrumentation">custom instrumentation quickstart</a> for more details on adding instrumentation.</p>
 
 <ul>
 <li>Transactions
@@ -2190,7 +2190,7 @@ config :scout_apm,
 <p><code class="prettyprint">scout-apm</code> requires :</p>
 
 <ul>
-<li>Python 3.4+ (<a href="https://github.com/scoutapp/scout_apm_python/issues/45">request Python 2.7 support</a>).</li>
+<li>Python 2.7+</li>
 <li>The POSIX, Unix, or OSX operating systems (<a href="https://github.com/scoutapp/scout_apm_python/issues/101">Request Windows support</a>).</li>
 </ul>
 
@@ -2236,7 +2236,7 @@ config :scout_apm,
 
 <h2 id="django">Django</h2>
 
-<p>Scout supports Django 1.10+ (request Django 1.8 and 1.9 support via <a href="https://github.com/scoutapp/scout_apm_python/issues/26">this GitHub issue</a>).</p>
+<p>Scout supports Django 1.8+.</p>
 
 <p>General instructions for a Django app:</p>
 
@@ -2520,7 +2520,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 </code></pre>
 <h2 id="python-troubleshooting">Troubleshooting</h2>
 
-<p>Not seeing data? Email support@scoutapp.com with:</p>
+<p>Not seeing data? Email support@scoutapm.com with:</p>
 
 <ul>
 <li>A link to your app within Scout (if applicable)</li>
@@ -2953,7 +2953,7 @@ logging.basicConfig(level='DEBUG')
 
           <h1 id="features">Features</h1>
 
-<p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://apm.scoutapp.com/users/sign_up">Signup for a trial</a>.</p>
+<p>Scout is Application Monitoring built for modern development teams. It&rsquo;s built to provide the fastest path to a slow line-of-code. <a href="https://scoutapm.com/users/sign_up">Signup for a trial</a>.</p>
 
 <h2 id="app-performance-overview">App Performance Overview</h2>
 
@@ -3044,7 +3044,7 @@ gem &#39;scout_apm&#39;, git: &#39;https://github.com/scoutapp/scout_apm_ruby.gi
 <li>No support for background jobs</li>
 </ul>
 
-<p>Please report issues to support@scoutapp.com.</p>
+<p>Please report issues to support@scoutapm.com.</p>
 
 <h3 id="downgrade-instructions">Downgrade Instructions</h3>
 
@@ -3373,7 +3373,7 @@ gem &#39;scout_apm&#39;, git: &#39;https://github.com/scoutapp/scout_apm_ruby.gi
 <p>The ScoutAPM API is currently fairly narrow in scope. It is intended to
 support 3rd party dashboards, exporting summary data from your applications.</p>
 
-<p>If you have ideas on API enhancements, please contact us at support@scoutapp.com</p>
+<p>If you have ideas on API enhancements, please contact us at support@scoutapm.com</p>
 
 <h2 id="authorization">Authorization</h2>
 
@@ -3499,7 +3499,7 @@ endpoint returned results, it will be under a results keys.</p>
 <li>Do not add custom context (like reporting the current user in the session).</li>
 </ol>
 
-<p>Email support@scoutapp.com with any questions regarding HIPAA.</p>
+<p>Email support@scoutapm.com with any questions regarding HIPAA.</p>
 
 <h2 id="gdpr">GDPR</h2>
 
@@ -3518,13 +3518,13 @@ endpoint returned results, it will be under a results keys.</p>
 <p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
 
 <ul>
-<li><a href="http://status.scoutapp.com">Check out status site</a>. You can subscribe to service incidents.</li>
-<li><a href="mailto:support@scoutapp.com">Email us</a></li>
+<li><a href="http://status.scoutapm.com">Check out status site</a>. You can subscribe to service incidents.</li>
+<li><a href="mailto:support@scoutapm.com">Email us</a></li>
 </ul>
 
 <h1 id="contacting-support">Contacting Support</h1>
 
-<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
+<p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> any issues. We typically respond in a couple of hours during the business day.</p>
 
 <h1 id="reference">Reference</h1>
 
@@ -3546,7 +3546,7 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p><img src="images/overhead.png" alt="overhead" /></p>
 
-<p>We&rsquo;ve <a href="http://blog.scoutapp.com/articles/2016/02/07/overhead-benchmarks-new-relic-vs-scout">open-sourced our benchmarks</a> so you can test on our own. If your results differ, <a href="mailto:support@scoutapp.com">reach out to us at support@scoutapp.com</a>.</p>
+<p>We&rsquo;ve <a href="http://blog.scoutapm.com/articles/2016/02/07/overhead-benchmarks-new-relic-vs-scout">open-sourced our benchmarks</a> so you can test on our own. If your results differ, <a href="mailto:support@scoutapm.com">reach out to us at support@scoutapm.com</a>.</p>
 
 <h3 id="call-aggregation">Call Aggregation</h3>
 
@@ -3680,26 +3680,26 @@ endpoint returned results, it will be under a results keys.</p>
 
 <h4 id="per-request">Per-Request</h4>
 
-<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. Contact <a href="mailto:support@scoutapp.com">support@scoutapp.com</a> for pricing options.</p>
+<p>If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. Contact <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> for pricing options.</p>
 
 <h2 id="replacing-new-relic">Replacing New Relic</h2>
 
-<p>Scout is an attractive <a href="https://scoutapp.com/newrelic-alternative" target="_blank">alternative to New Relic</a> for modern dev teams. We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.</p>
+<p>Scout is an attractive <a href="https://scoutapm.com/newrelic-alternative" target="_blank">alternative to New Relic</a> for modern dev teams. We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.</p>
 
 <p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Don&rsquo;t fret - here&rsquo;s some of the more common scenarios and our suggestions for building a monitoring stack you&rsquo;ll love:</p>
 
 <ul>
 <li><strong>Exception Monitoring</strong> - Scout doesn&rsquo;t provide exception monitoring, but we do integrate with (<a href="#rollbar">Rollbar</a> and <a href="#sentry">Sentry</a>) to provide a side-by-side view of your performance metrics and errors within the Scout UI.</li>
-<li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. We&rsquo;ve <a href="http://blog.scoutapp.com/articles/2017/12/22/real-user-monitoring-with-raygun">reviewed Raygun Pulse</a>, an attractive RUM product. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
+<li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. We&rsquo;ve <a href="http://blog.scoutapm.com/articles/2017/12/22/real-user-monitoring-with-raygun">reviewed Raygun Pulse</a>, an attractive RUM product. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
 </ul>
 
 <h3 id="our-monitoring-stack">Our Monitoring Stack</h3>
 
-<p>Curious about what a company that lives-and-breathes monitoring (us!) uses to monitor our apps? <a href="http://blog.scoutapp.com/articles/2015/12/02/rails-monitoring-stack-2016">We shared our complete monitoring stack on our blog</a>.</p>
+<p>Curious about what a company that lives-and-breathes monitoring (us!) uses to monitor our apps? <a href="http://blog.scoutapm.com/articles/2015/12/02/rails-monitoring-stack-2016">We shared our complete monitoring stack on our blog</a>.</p>
 
 <h3 id="talk-to-us-about-your-monitoring-stack">Talk to us about your monitoring stack</h3>
 
-<p>Don&rsquo;t hesitate to <a href="mailto:support@scoutapp.com">email us</a> if you need to talk through your monitoring stack. Monitoring is something we know and love.</p>
+<p>Don&rsquo;t hesitate to <a href="mailto:support@scoutapm.com">email us</a> if you need to talk through your monitoring stack. Monitoring is something we know and love.</p>
 
       </div>
       <div class="dark-box">
@@ -3716,7 +3716,7 @@ endpoint returned results, it will be under a results keys.</p>
     anchors.add('.content > h2, .content > h3, .content > h4, .lookup th');
 
     $.ajax({
-      url: "http://apm.scoutapp.com/latest_gem_version",
+      url: "http://scoutapm.com/latest_gem_version",
       dataType: "jsonp"
     }).success(function(response){
       $("#latest-gem-version").html(response.version)
