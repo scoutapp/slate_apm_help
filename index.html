@@ -464,7 +464,7 @@ tail -n1000 log/production.log | grep "Processing"
       </td>
       <td>
         <p>
-          Oops! Still not seeing any data? Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapm.com">send us an email</a> with the following:
+          Oops! Looks like messed up. Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapm.com">send us an email</a> with the following:
         </p>
         <ul>
           <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
@@ -1474,24 +1474,19 @@ defmodule YourApp.Web do
             {ScoutApm.Instruments.EctoLogger, :log, []}]</span></pre>
 
 
-    <p class="smaller">Instrument <strong>Ecto 3</strong>. In <code>lib/my_app/application.ex</code>:</p>
+    <p class="smaller">Instrument <strong>Ecto 3</strong>. In <code>lib/my_app/repo.ex</code>:</p>
 <pre class="terminal">
-# lib/my_app/application.ex
-defmodule MyApp.Application do
-  use Application
-
-  def start(_type, _args) do
-    import Supervisor.Spec
-    children = [
-        # ...
-    ]
+# lib/my_app/repo.ex
+defmodule MyApp.Repo do
+  use Ecto.Repo,
+    otp_app: :my_app,
+    adapter: Ecto.Adapters.Postgres
 <span>
-    :ok = ScoutApm.Instruments.EctoTelemetry.attach(MyApp.Repo)
-</span>
-    # ...
-    Supervisor.start_link(children, opts)
-  end
-end
+    def init(_, opts) do
+      :ok = ScoutApm.Instruments.EctoTelemetry.attach(__MODULE__)
+      {:ok, opts}
+    end
+</span>end
 </pre>
 
     <p class="smaller">Instrument Templates. In <code>config/config.exs</code>:
@@ -3370,91 +3365,6 @@ gem &#39;scout_apm&#39;, git: &#39;https://github.com/scoutapp/scout_apm_ruby.gi
 <p><img src="images/rollbar_access_token.png" alt="rollbar access token" /> </p>
 
 <p><img src="images/rollbar_settings.png" alt="rollbar settings" /></p>
-
-<h2 id="slack">Slack</h2>
-
-<p>To integrate Slack with Scout&rsquo;s Alert Notification system, you can utilize the Webhook feature on the <em>Application &gt; Notification Channels</em> page. In order for Scout and Slack to be able to work together, you need to use a third-party service called <a href="https://zapier.com/">Zapier</a>. Zapier is a service which allows you to connect different web services together to make custom work-flows. As well as Slack, a similar method to the one described below can be used to integrate with many different services. You can read more on our GitHub pages about how to integrate with <a href="https://github.com/scoutapp/roadmap/issues/15">PagerDuty</a>, <a href="https://github.com/scoutapp/roadmap/issues/3">VictorOps</a> and <a href="https://github.com/scoutapp/roadmap/issues/75">xMatters</a>.</p>
-
-<h3 id="zapier-configuration">Zapier Configuration</h3>
-
-<p>First of all you will need to create an account with <a href="https://zapier.com/">Zapier</a>, and once you have done this, you can go ahead and create a <em>Zap</em>, by clicking on the Make a Zap! button on the top right-hand side of the screen, as shown in the image below.</p>
-
-<p><img src="images/zapier_alerts/create_new_zap.png" alt="Creating a new Zap" /></p>
-
-<p>You need to create a <em>Trigger</em> (for Scout) and an <em>Action</em> (for Slack) in order to make the two systems able to communicate. First of all, create the trigger by selecting <em>Webhooks by Zapier</em> as the App you want to work with.</p>
-
-<p><img src="images/zapier_alerts/create_scout_trigger.png" alt="Create a Scout trigger" /></p>
-
-<p>Next you will need to select the type of trigger that you want, select <em>Catch Hook</em>. Next you will be given a URL, which is the Webhook that we will use to link to in Scout. Copy this URL and then open up Scout.</p>
-
-<p><img src="images/zapier_alerts/copy_webhook_url.png" alt="Copy the Webhook URL" /></p>
-
-<h3 id="scout-configuration">Scout Configuration</h3>
-
-<p>In Scout, navigate to <em>Application &gt; Notification Channels</em> and create a new Webhook, like the picture below, copying in the Zapier URL.</p>
-
-<p><img src="images/zapier_alerts/create_notification_channel.png" alt="Create a Notification Channel" /></p>
-
-<p>Next you will need to add or edit a Notification Group to include this new channel.</p>
-
-<p><img src="images/zapier_alerts/create_notification_group.png" alt="Create/Edit Notification Group" /></p>
-
-<h3 id="create-an-alert">Create an Alert</h3>
-
-<p>At this point if you try to carry on creating the Zap in Zapier, it will try to pull a sample Alert from Scout using the Webhook that we set up. The reason it does this is that it requires sample data from Scout in order to understand the format of the trigger, and what fields are available from the Scout. However, at this point there are not going to be any Alerts it can use because this Webhook has only just been set up. So here you have two options:</p>
-
-<ul>
-<li>Create a quick Alert in Scout to generate this sample data.</li>
-<li>Click <em>Skip This Step</em> and then <em>Continue Without Samples</em>.</li>
-</ul>
-
-<p>We <strong>strongly recommend</strong> the first option, because later on when you are specifying the message that you are going to send to Slack, if you do not have sample data, you will not be able to use data that came from Scout. </p>
-
-<p><img src="images/zapier_alerts/pick_sample_alert_1.png" alt="Pick a sample Alert" /></p>
-
-<p>To create a quick Alert, open up Scout, go to <em>Alert &gt; Alert Conditions</em> and create a simple condition that will alert, and choose the Slack Notification Group we set up earlier.</p>
-
-<p><img src="images/zapier_alerts/create_alert_condition.png" alt="Create Alert Condition" /></p>
-
-<h3 id="choose-the-alert-in-zapier">Choose the Alert in Zapier</h3>
-
-<p>After the Alert has occurred in Scout, go back to Zapier and click the <em>Ok, I did this</em> button and it will connect with Scout and look for an Alert with this matching Webhook. Choose this as the sample you want to use and click <em>Continue</em>.</p>
-
-<p><img src="images/zapier_alerts/pick_sample_alert_2.png" alt="Pick a sample Alert" /></p>
-
-<h3 id="create-a-slack-action">Create a Slack Action</h3>
-
-<p>Next you need to add an Action step to the work-flow, this is the part were we integrate Slack. Click <em>Add a Step</em> on the left-hand side of the page.</p>
-
-<p><img src="images/zapier_alerts/add_step.png" alt="Add a Step" /></p>
-
-<p>Next click the <em>Action/Search</em> option, and you will be given the option to choose an app to connect.</p>
-
-<p><img src="images/zapier_alerts/add_action.png" alt="Add an Action/Search" /></p>
-
-<p>Choose Slack, and then a new Action will be created on the left-hand side of the screen.</p>
-
-<p><img src="images/zapier_alerts/choose_an_app.png" alt="Choose an App" /></p>
-
-<p>There are many different types of Slack Action that you can choose to perform, but let&rsquo;s choose <em>Send Channel Message</em>.</p>
-
-<p><img src="images/zapier_alerts/select_slack_action.png" alt="Select a Slack Action" /></p>
-
-<p>Next you can configure many aspects of the message that will be sent, such as which channel to send the message to and what particular data comes from the Scout Alert (shown in green). It is only possible to pull this data from Scout here if you created an Alert earlier like we advised.</p>
-
-<p><img src="images/zapier_alerts/configure_message.png" alt="Configure the Message" /></p>
-
-<p>Then you can send a test message to Slack to preview how it will look.</p>
-
-<p><img src="images/zapier_alerts/test_slack.png" alt="Test Slack" /></p>
-
-<p>Then all that&rsquo;s left to do is to give your Zap a descriptive name and enable it.</p>
-
-<p><img src="images/zapier_alerts/name_zap.png" alt="Give your zap a name" /></p>
-
-<p>Now everything is set up so that whenever an Alert occurs in Scout which is linked to this Notification Channel, you will see a message in Slack.</p>
-
-<p><img src="images/zapier_alerts/end_result.png" alt="The end result" /></p>
 
           <h1 id="api">API</h1>
 
