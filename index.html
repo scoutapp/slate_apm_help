@@ -445,7 +445,7 @@ tail -n1000 log/production.log | grep "Processing"
         <p>
           Using Unicorn?
         </p>
-        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="http://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
+        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="https://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
         </p>
       </td>
     </tr>
@@ -769,6 +769,16 @@ tail -n1000 log/production.log | grep "Processing"
       <th>collect_remote_ip</th>
       <td>
         Automatically capture end user IP addresses as part of each trace&rsquo;s context.
+      </td>
+       <td>
+         <code>true</code>
+       </td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <th>timeline_traces</th>
+      <td>
+        Send traces in both the summary and <a href="#timeline-transaction-trace">timeline</a> formats.
       </td>
        <td>
          <code>true</code>
@@ -2229,7 +2239,7 @@ config :scout_apm,
 <li>Jinja2</li>
 </ul>
 
-<p>You can instrument your own code or other libraries via <a href="#python-custom-instrumentation">custom instrumentation</a>. You can suggest additonal libraries you&rsquo;d like Scout to instrument <a href="https://github.com/scoutapp/scout_apm_python/issues">on GitHub</a>.  </p>
+<p>You can instrument your own code or other libraries via <a href="#python-custom-instrumentation">custom instrumentation</a>. You can suggest additional libraries you&rsquo;d like Scout to instrument <a href="https://github.com/scoutapp/scout_apm_python/issues">on GitHub</a>.</p>
 
 <h2 id="django">Django</h2>
 
@@ -2258,15 +2268,15 @@ pip install scout-apm
         <p>Configure Scout in your <code>settings.py</code> file:</p>
 <pre style="width:500px">
 # settings.py
-INSTALLED_APPS = (
-  'scout_apm.django', # should be listed first
-  # ... other apps ...
-)
+INSTALLED_APPS = [
+    "scout_apm.django",  # should be listed first
+    # ... other apps ...
+]
 
 # Scout settings
 SCOUT_MONITOR = True
-SCOUT_KEY     = "SCOUT_KEY"
-SCOUT_NAME    = "A FRIENDLY NAME FOR YOUR APP"
+SCOUT_KEY = "[AVAILABLE IN THE SCOUT UI]"
+SCOUT_NAME = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of providing these settings in <code>settings.py</code>.</p>
@@ -2314,13 +2324,13 @@ from scout_apm.flask import ScoutApm
 
 # Setup a flask 'app' as normal
 
-# Attaches ScoutApm to the Flask App
+# Attach ScoutApm to the Flask App
 ScoutApm(app)
 
 # Scout settings
-app.config['SCOUT_MONITOR'] = True
-app.config['SCOUT_KEY']     = "SCOUT_KEY"
-app.config['SCOUT_NAME']    = "A FRIENDLY NAME FOR YOUR APP"
+app.config["SCOUT_MONITOR"] = True
+app.config["SCOUT_KEY"] = "[AVAILABLE IN THE SCOUT UI]"
+app.config["SCOUT_NAME"] = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the calls to <code>app.config</code>.</p>
@@ -2341,7 +2351,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <h2 id="flask-sqlalchemy">Flask SQLAlchemy</h2>
 
-<p>Instrument <a href="http://flask-sqlalchemy.pocoo.org/"><code class="prettyprint">flask-sqlalchemy</code></a> queries:</p>
+<p>Instrument <a href="https://flask-sqlalchemy.palletsprojects.com/"><code class="prettyprint">flask-sqlalchemy</code></a> queries:</p>
 <pre class="highlight py tab-python"><code><span class="kn">from</span> <span class="nn">scout_apm.flask.sqlalchemy</span> <span class="kn">import</span> <span class="n">instrument_sqlalchemy</span>
 
 <span class="c"># Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)</span>
@@ -2380,10 +2390,10 @@ from celery import Celery
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 <span>
 Config.set(
-        key = 'SCOUT_KEY',
-        name = 'Same as Web App Name',
-        monitor = True
-        )
+    key="SCOUT_KEY",
+    name="Same as Web App Name",
+    monitor=True,
+)
 </span>
 <span>scout_apm.celery.install()</span>
 </pre>
@@ -2431,14 +2441,16 @@ pip install scout-apm
 <pre style="width:initial">
 import scout_apm.pyramid
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     with Configurator() as config:
         config.add_settings(
-            SCOUT_KEY = 'SCOUT_KEY',
-            SCOUT_MONITOR = True,
-            SCOUT_NAME = 'My Pyramid App'
+            SCOUT_KEY="...",
+            SCOUT_MONITOR=True,
+            SCOUT_NAME="My Pyramid App"
         )
-        config.include('scout_apm.pyramid')
+        config.include("scout_apm.pyramid")
+
+        # Rest of your config...
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>config.add_settings</code>.</p>
@@ -2483,9 +2495,11 @@ pip install scout-apm
 from scout_apm.bottle import ScoutPlugin
 
 app = bottle.default_app()
-app.config.update({'scout.name': "YOUR_APP_NAME",
-                   'scout.monitor': "true",
-                   'scout.key': "SCOUT_KEY"})
+app.config.update({
+    "scout.name": "YOUR_APP_NAME",
+    "scout.key": "YOUR_KEY",
+    "scout.monitor": "true",
+})
 
 scout = ScoutPlugin()
 bottle.install(scout)
@@ -2522,7 +2536,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <ul>
 <li>A link to your app within Scout (if applicable)</li>
 <li>Your Python version</li>
-<li>The name of the framework and version you are trying to instrument (ie - Flask 0.10).</li>
+<li>The name of the framework and version you are trying to instrument (i.e. - Flask 0.10).</li>
 </ul>
 
 <p>We typically respond within a couple of hours during the business day.</p>
@@ -2755,7 +2769,7 @@ logging.basicConfig(level='DEBUG')
 
 <h4 id="python-transaction-limits">Limits</h4>
 
-<p>We limit the number of unique transactions that can be instrumented. Tracking too many unique transactions can impact the performance of our UI. Do not dynamically generate transaction names in your instrumentation (ie <code class="prettyprint">with scout_apm.api.WebTransaction(&#39;update_user_&quot;+user.id&#39;)</code>) as this can quickly exceed our rate limits. Use <a href="#python-custom-context">context</a> to add high-dimesionality information instead.</p>
+<p>We limit the number of unique transactions that can be instrumented. Tracking too many unique transactions can impact the performance of our UI. Do not dynamically generate transaction names in your instrumentation (ie <code class="prettyprint">with scout_apm.api.WebTransaction(&#39;update_user_&quot;+user.id&#39;)</code>) as this can quickly exceed our rate limits. Use <a href="#python-custom-context">context</a> to add high-dimensionality information instead.</p>
 
 <h4 id="getting-started">Getting Started</h4>
 
@@ -2764,12 +2778,14 @@ logging.basicConfig(level='DEBUG')
 
 <span class="c"># A dict containing the configuration for APM.</span>
 <span class="c"># See our Python help docs for all configuration options.</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'My App Name'</span><span class="p">,</span>
-          <span class="s">'key'</span><span class="p">:</span> <span class="s">'APM_Key'</span><span class="p">,</span>
-          <span class="s">'monitor'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"name"</span><span class="p">:</span> <span class="s">"My App Name"</span><span class="p">,</span>
+    <span class="s">"key"</span><span class="p">:</span> <span class="s">"APM_Key"</span><span class="p">,</span>
+    <span class="s">"monitor"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
 
 <span class="c"># The `install()` method must be called early on within your app code in order</span>
-<span class="c"># to install the APM agent code and instrumntation.</span>
+<span class="c"># to install the APM agent code and instrumentation.</span>
 <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 </code></pre>
 <h4 id="python-web-or-background">Web or Background transactions?</h4>
@@ -2782,16 +2798,16 @@ logging.basicConfig(level='DEBUG')
 </ul>
 
 <h4 id="python-transaction-explicit">Explicit</h4>
-<pre class="highlight py tab-python"><code><span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">)</span> <span class="c"># or BackgroundTransaction.start()</span>
+<pre class="highlight py tab-python"><code><span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">)</span>  <span class="c"># or BackgroundTransaction.start()</span>
 <span class="c"># do some app work</span>
 <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
 </code></pre>
 <h4 id="python-transaction-context-manager">As a context manager</h4>
-<pre class="highlight py tab-python"><code><span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">):</span> <span class="c"># or BackgroundTransaction()</span>
+<pre class="highlight py tab-python"><code><span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">WebTransaction</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">):</span>  <span class="c"># or BackgroundTransaction()</span>
     <span class="c"># do some app work</span>
 </code></pre>
 <h4 id="python-transaction-decorator">As a decorator</h4>
-<pre class="highlight py tab-python"><code><span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">)</span> <span class="c"># or BackgroundTransaction()</span>
+<pre class="highlight py tab-python"><code><span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">)</span>  <span class="c"># or BackgroundTransaction()</span>
 <span class="k">def</span> <span class="nf">my_foo_action</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="c"># do some app work</span>
 </code></pre>
@@ -2803,18 +2819,20 @@ logging.basicConfig(level='DEBUG')
 
 <span class="c"># A dict containing the configuration for APM.</span>
 <span class="c"># See our Python help docs for all configuration options.</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'My App Name'</span><span class="p">,</span>
-          <span class="s">'key'</span><span class="p">:</span> <span class="s">'YOUR_SCOUT_KEY'</span><span class="p">,</span>
-          <span class="s">'monitor'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"name"</span><span class="p">:</span> <span class="s">"My App Name"</span><span class="p">,</span>
+    <span class="s">"key"</span><span class="p">:</span> <span class="s">"YOUR_SCOUT_KEY"</span><span class="p">,</span>
+    <span class="s">"monitor"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
 
 <span class="c"># The `install()` method must be called early on within your app code in order</span>
-<span class="c"># to install the APM agent code and instrumntation.</span>
+<span class="c"># to install the APM agent code and instrumentation.</span>
 <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
 <span class="c"># Will appear under Background jobs in the Scout UI</span>
-<span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">BackgroundTransaction</span><span class="p">(</span><span class="s">'Foo'</span><span class="p">):</span>
-  <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'http://httpbin.org/status/418'</span><span class="p">)</span>
-  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">BackgroundTransaction</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/418"</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </code></pre>
 <h4 id="falcon-example">Falcon Example</h4>
 
@@ -2826,19 +2844,24 @@ logging.basicConfig(level='DEBUG')
 <span class="c"># Must call scout_apm.api.install() early to set up</span>
 <span class="c"># instrumentation and the core agent.</span>
 <span class="c"># Create a dict of configuration options for Scout</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s">'name'</span><span class="p">:</span> <span class="s">'My App Name'</span><span class="p">,</span>
-          <span class="s">'key'</span><span class="p">:</span> <span class="s">'APM_KEY'</span><span class="p">,</span>
-          <span class="s">'monitor'</span><span class="p">:</span> <span class="bp">True</span><span class="p">}</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"name"</span><span class="p">:</span> <span class="s">"My App Name"</span><span class="p">,</span>
+    <span class="s">"key"</span><span class="p">:</span> <span class="s">"APM_KEY"</span><span class="p">,</span>
+    <span class="s">"monitor"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
+<span class="p">}</span>
 <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
 
+
 <span class="k">class</span> <span class="nc">WorkResource</span><span class="p">:</span>
-    <span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">'Work/Get'</span><span class="p">)</span>
+    <span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">"Work/Get"</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
-        <span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">'path'</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"path"</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">media</span> <span class="o">=</span> <span class="n">some_work</span><span class="p">()</span>
+
 
 <span class="n">api</span> <span class="o">=</span> <span class="n">falcon</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'/work'</span><span class="p">,</span> <span class="n">WorkResource</span><span class="p">())</span>
+
 
 <span class="k">def</span> <span class="nf">some_work</span><span class="p">():</span>
     <span class="c"># ... Do some real work ...</span>
@@ -2860,7 +2883,7 @@ logging.basicConfig(level='DEBUG')
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
 
 <span class="c"># or to not use the whole prefix on each call:</span>
-<span class="kn">import</span> <span class="nn">instrument</span> <span class="k">from</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span>
+<span class="kn">from</span> <span class="nn">scout_apm.api</span> <span class="kn">import</span> <span class="n">instrument</span>
 </code></pre><pre class="highlight python tab-python"><code><span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{},</span> <span class="n">kind</span><span class="o">=</span><span class="s">"Custom"</span><span class="p">)</span>
 </code></pre>
 <ul>
@@ -2875,19 +2898,19 @@ logging.basicConfig(level='DEBUG')
 
 <p>The yielded object can be used to add additional tags individually.</p>
 <pre class="highlight python tab-python"><code><span class="k">def</span> <span class="nf">foo</span><span class="p">():</span>
-  <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>
-    <span class="n">instrument</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="s">"record_count"</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-    <span class="c"># Work</span>
+    <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 1"</span><span class="p">)</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>
+        <span class="n">instrument</span><span class="o">.</span><span class="n">tag</span><span class="p">(</span><span class="s">"record_count"</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="c"># Work</span>
 
-  <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 2"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span> <span class="s">'filtered_record_count'</span><span class="p">:</span> <span class="mi">50</span> <span class="p">}</span> <span class="p">)</span> <span class="p">)</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>  
-    <span class="c"># Work</span>
+    <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">instrument</span><span class="p">(</span><span class="s">"Computation 2"</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span><span class="s">"filtered_record_count"</span><span class="p">:</span> <span class="mi">50</span><span class="p">})</span> <span class="k">as</span> <span class="n">instrument</span><span class="p">:</span>
+        <span class="c"># Work</span>
 </code></pre>
 <h4 id="python-span-decorator">As a decorator</h4>
 
 <p>Wraps a whole function, timing the execution of specified function within a transaction trace. This uses the same API as the ContextManager style.</p>
 <pre class="highlight python tab-python"><code><span class="nd">@scout_apm.api.instrument</span><span class="p">(</span><span class="s">"Computation"</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
-  <span class="c"># Work</span>
+    <span class="c"># Work</span>
 </code></pre>
 <h2 id="python-custom-context">Custom Context</h2>
 
@@ -2901,8 +2924,8 @@ logging.basicConfig(level='DEBUG')
 
 <p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app:</p>
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
-<span class="c"># scout_apm.api.Context.add(key,value)</span>
-<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"user_email"</span><span class="p">,</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
+<span class="c"># scout_apm.api.Context.add(key, value)</span>
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"user_email"</span><span class="p">,</span> <span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="p">)</span>
 </code></pre>
 <h3 id="context-key-restrictions">Context Key Restrictions</h3>
 
@@ -2921,7 +2944,7 @@ logging.basicConfig(level='DEBUG')
 </ul>
 
 <h2 id="python-upgrade">Updating to the Newest Version</h2>
-<pre class="highlight python tab-python"><code><span class="n">pip</span> <span class="n">install</span> <span class="n">scout</span><span class="o">-</span><span class="n">apm</span> <span class="o">--</span><span class="n">upgrade</span>
+<pre class="highlight sh tab-shell"><code>pip install scout-apm --upgrade
 </code></pre>
 <p>The package changelog is <a href="https://github.com/scoutapp/scout_apm_python/blob/master/CHANGELOG.md">available here</a>.  </p>
 
@@ -2935,7 +2958,7 @@ logging.basicConfig(level='DEBUG')
 <li>Setting the <code class="prettyprint">revision_sha</code> configuration value:</li>
 </ul>
 <pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">scout_apm.api</span> <span class="kn">import</span> <span class="n">Config</span>
-<span class="n">Config</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="n">revision_sha</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">"git rev-parse HEAD"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span> <span class="c"># if the app directory is a git repo</span>
+<span class="n">Config</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="n">revision_sha</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">popen</span><span class="p">(</span><span class="s">"git rev-parse HEAD"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>  <span class="c"># if the app directory is a git repo</span>
 </code></pre>
 <ul>
 <li>Setting a <code class="prettyprint">SCOUT_REVISION_SHA</code> environment variable equal to the SHA of your latest release.</li>
@@ -3001,8 +3024,6 @@ logging.basicConfig(level='DEBUG')
 
 <h2 id="timeline-transaction-trace">Timeline Transaction Trace</h2>
 
-<aside class="notice">The Timeline view of a transaction trace is in BETA. Share your feedback via <a href="https://github.com/scoutapp/roadmap/issues/33" target="_blank">this GitHub issue</a>.</aside>
-
 <p><img src="images/trace_timeline.png" alt="trace timeline" /></p>
 
 <p>Scout now provides more details on the execution order of your code by presenting traces in a timeline format in addtion to the existing summary view. </p>
@@ -3015,16 +3036,9 @@ logging.basicConfig(level='DEBUG')
 <li>Getting the complete picture of parent method calls and exclusive versus total call time in each method. How many SQL calls are being triggered by view partial?</li>
 </ul>
 
-<h3 id="upgrade-instructions">Upgrade instructions</h3>
+<h3 id="timeline-trace-upgrade-instructions">Timeline Trace Upgrade instructions</h3>
 
-<ol>
-<li>Modify your <code class="prettyprint">Gemfile</code> entry for <code class="prettyprint">scout_apm</code>, changing it to:
-<code class="prettyprint">
-gem &#39;scout_apm&#39;, git: &#39;https://github.com/scoutapp/scout_apm_ruby.git&#39;, branch: &#39;detailed-traces&#39;
-</code></li>
-<li><code class="prettyprint">bundle update scout_apm</code></li>
-<li>Deploy.</li>
-</ol>
+<p><a href="#updating-to-the-newest-version">Follow our Ruby agent upgrade instructions</a> to update to the latest agent, which supports sending the timeline trace format.</p>
 
 <h3 id="toggling-between-summary-and-timeline-traces">Toggling between summary and timeline traces</h3>
 
@@ -3032,29 +3046,16 @@ gem &#39;scout_apm&#39;, git: &#39;https://github.com/scoutapp/scout_apm_ruby.gi
 
 <p><img src="https://user-images.githubusercontent.com/7880/52580818-60b95f00-2de6-11e9-870d-668b2afe194c.png" alt="image" /></p>
 
-<h3 id="beta-limitations">Beta limitations</h3>
+<h3 id="current-limitations">Current limitations</h3>
 
 <ul>
 <li>Ruby-only</li>
 <li>No ScoutProf support</li>
-<li>No links to backtraces on the Beta view</li>
 <li>No support for background jobs</li>
+<li>No DevTrace support</li>
 </ul>
 
 <p>Please report issues to support@scoutapm.com.</p>
-
-<h3 id="downgrade-instructions">Downgrade Instructions</h3>
-
-<ol>
-<li>Revert your <code class="prettyprint">Gemfile</code> entry for <code class="prettyprint">scout_apm</code>:</li>
-</ol>
-<pre class="highlight  tab-plaintext"><code>- gem 'scout_apm', git: 'https://github.com/scoutapp/scout_apm_ruby.git', branch: 'scoutprof-detailed-traces'
-+ gem 'scout_apm'
-</code></pre>
-<ol>
-<li><code class="prettyprint">bundle update scout_apm</code></li>
-<li>Deploy.</li>
-</ol>
 
 <h2 id="trace-explorer">Trace Explorer</h2>
 
@@ -3600,7 +3601,7 @@ endpoint returned results, it will be under a results keys.</p>
 <p>We&rsquo;re transparent about our uptime and service issues. If you appear to be experiencing issues with our service:</p>
 
 <ul>
-<li><a href="http://status.scoutapm.com">Check out status site</a>. You can subscribe to service incidents.</li>
+<li><a href="https://status.scoutapm.com">Check out status site</a>. You can subscribe to service incidents.</li>
 <li><a href="mailto:support@scoutapm.com">Email us</a></li>
 </ul>
 
@@ -3773,8 +3774,8 @@ endpoint returned results, it will be under a results keys.</p>
 <p>In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don&rsquo;t provide. Don&rsquo;t fret - here&rsquo;s some of the more common scenarios and our suggestions for building a monitoring stack you&rsquo;ll love:</p>
 
 <ul>
-<li><strong>Exception Monitoring</strong> - Scout doesn&rsquo;t provide exception monitoring, but we do integrate with (<a href="#rollbar">Rollbar</a> and <a href="#sentry">Sentry</a>) to provide a side-by-side view of your performance metrics and errors within the Scout UI.</li>
-<li><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. We&rsquo;ve <a href="https://scoutapm.com/blog/real-user-monitoring-with-raygun">reviewed Raygun Pulse</a>, an attractive RUM product. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</li>
+<li><p><strong>Exception Monitoring</strong> - Scout doesn&rsquo;t provide exception monitoring, but we do integrate with (<a href="#rollbar">Rollbar</a> and <a href="#sentry">Sentry</a>) to provide a side-by-side view of your performance metrics and errors within the Scout UI.</p></li>
+<li><p><strong>Browser Monitoring (Real User Monitoring)</strong> - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. We&rsquo;ve <a href="https://scoutapm.com/blog/real-user-monitoring-with-raygun">reviewed Raygun Pulse</a>, an attractive RUM product. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.</p></li>
 </ul>
 
 <h3 id="our-monitoring-stack">Our Monitoring Stack</h3>
@@ -3800,7 +3801,7 @@ endpoint returned results, it will be under a results keys.</p>
     anchors.add('.content > h2, .content > h3, .content > h4, .lookup th');
 
     $.ajax({
-      url: "http://scoutapm.com/latest_gem_version",
+      url: "https://scoutapm.com/latest_gem_version",
       dataType: "jsonp"
     }).success(function(response){
       $("#latest-gem-version").html(response.version)
