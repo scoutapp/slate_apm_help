@@ -3014,15 +3014,9 @@ logging.basicConfig(level='DEBUG')
 
 <h2 id="transaction-traces">Transaction Traces</h2>
 
-<p>Scout collects detailed transactions across your endpoints automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. </p>
+<p>Scout collects detailed transactions across your web endpoints and background jobs automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. </p>
 
-<p><img src="images/transaction_traces.png" alt="transaction traces" /></p>
-
-<h3 id="call-breakdown">Call Breakdown</h3>
-
-<p>Method calls are aggregated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).</p>
-
-<p><img src="images/stream_show_call_breakdown.png" alt="stream show breakdown" /></p>
+<p><img src="images/trace_timeline.png" alt="transaction traces" /></p>
 
 <h3 id="sql-queries">SQL Queries</h3>
 
@@ -3030,7 +3024,7 @@ logging.basicConfig(level='DEBUG')
 
 <p><img src="images/stream_show_sql_annotated.png" alt="stream show sql" /></p>
 
-<h4 id="dont-an-sql-query-next-to-an-sql-call">Don&rsquo;t an SQL query next to an SQL call?</h4>
+<h4 id="dont-see-an-sql-button-next-to-a-database-query">Don&rsquo;t see an SQL button next to a database query?</h4>
 
 <p>Scout collects a sanitized version of SQL queries and displays these in transaction traces. To limit agent overhead sanitizing queries, we do not collect query statements with more than 16k characters.</p>
 
@@ -3044,31 +3038,40 @@ logging.basicConfig(level='DEBUG')
 
 <p>If you don&rsquo;t enable the GitHub integration, you&rsquo;ll see a backtrace.</p>
 
-<h2 id="timeline-transaction-trace">Timeline Transaction Trace</h2>
+<h3 id="trace-views">Trace Views</h3>
 
-<p><img src="images/trace_timeline.png" alt="trace timeline" /></p>
-
-<p>Scout now provides more details on the execution order of your code by presenting traces in a timeline format in addtion to the existing summary view. </p>
-
-<p>This is helpful for situations like:</p>
+<p>There are two displays for showing the details of a transaction trace:</p>
 
 <ul>
-<li>Understanding the distribution of <code class="prettyprint">Controller</code> time across a request. Is there a lot of time spent in your custom code at the beginning of a request? Is it spread out? Is it at the end of a request?</li>
-<li>Understanding the timing of distinct SQL queries. Is one instance of many nearly identical queries slow or all of them?</li>
-<li>Getting the complete picture of parent method calls and exclusive versus total call time in each method. How many SQL calls are being triggered by view partial?</li>
+<li><strong>Summary View</strong> - Method calls are aggregated together and ordered from most to least expensive.</li>
+<li><strong>Timeline View</strong> - Shows the execution order of calls as they occur during the transaction.</li>
 </ul>
 
-<h3 id="timeline-trace-upgrade-instructions">Timeline Trace Upgrade instructions</h3>
+<h4 id="summary-view">Summary View</h4>
 
-<p><a href="#updating-to-the-newest-version">Follow our Ruby agent upgrade instructions</a> to update to the latest agent, which supports sending the timeline trace format.</p>
+<p>Method calls are aggregated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).</p>
 
-<h3 id="toggling-between-summary-and-timeline-traces">Toggling between summary and timeline traces</h3>
+<p><img src="images/stream_show_call_breakdown.png" alt="stream show breakdown" /></p>
 
-<p>Once the branch is deployed, Scout will record traces in both the existing summary format and the new timeline format. When looking at a list of traces, traces with the timeline format available are labeled with a &ldquo;v2&rdquo; indicator. You can toggle between the summary and timeline format when viewing a trace:</p>
+<h4 id="timeline-view">Timeline View</h4>
 
-<p><img src="https://user-images.githubusercontent.com/7880/52580818-60b95f00-2de6-11e9-870d-668b2afe194c.png" alt="image" /></p>
+<p>See the execution order of your code. </p>
 
-<h3 id="current-limitations">Current limitations</h3>
+<p><img src="images/trace_timeline_annotated.png" alt="trace timeline" /></p>
+
+<p>The timeline view is especially helpful for:</p>
+
+<ul>
+<li>understanding the distribution of <code class="prettyprint">Controller</code> time across a request. Is there a lot of time spent in your custom code at the beginning of a request? Is it spread out? Is it at the end of a request?</li>
+<li>understanding the timing of distinct SQL queries. Is one instance of many nearly identical queries slow or all of them?</li>
+<li>getting the complete picture of parent and children method calls. How many SQL calls are being triggered by the same view partial?</li>
+</ul>
+
+<h5 id="upgrading-to-the-timeline-view">Upgrading to the timeline view</h5>
+
+<p>If you see a message in the UI prompting you to upgrade, <a href="#updating-to-the-newest-version">follow our Ruby agent upgrade instructions</a> to update to the latest agent, which supports sending the timeline trace format.</p>
+
+<h5 id="timeline-view-limitations">Timeline view limitations</h5>
 
 <ul>
 <li>Ruby-only</li>
@@ -3076,8 +3079,6 @@ logging.basicConfig(level='DEBUG')
 <li>No support for background jobs</li>
 <li>No DevTrace support</li>
 </ul>
-
-<p>Please report issues to support@scoutapm.com.</p>
 
 <h2 id="trace-explorer">Trace Explorer</h2>
 
