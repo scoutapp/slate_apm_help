@@ -2218,6 +2218,7 @@ config :scout_apm,
 <li>Template blocks</li>
 <li>SQL queries</li>
 </ul></li>
+<li><a href="#falcon">Falcon</a></li>
 <li><a href="#flask">Flask</a></li>
 <li><a href="#flask-sqlalchemy">Flask SQLAlchemy</a></li>
 <li><a href="#celery">Celery</a></li>
@@ -2280,6 +2281,60 @@ SCOUT_NAME = "A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of providing these settings in <code>settings.py</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px"><p>Deploy.</p></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="falcon">Falcon</h2>
+
+<p>Scout supports Falcon 2.0+.</p>
+
+<p>General instructions for a Falcon app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Configure Scout inside your Flask app:</p>
+
+<pre style="width:initial">
+import falcon
+from scout_apm.falcon import ScoutMiddleware
+
+scout_middleware = ScoutMiddleware(config={
+    "key": "[AVAILABLE IN THE SCOUT UI]",
+    "monitor": True,
+    "name": "A FRIENDLY NAME FOR YOUR APP",
+})
+api = falcon.API(middleware=[ScoutMiddleware()])
+# Required for accessing extra per-request information
+scout_middleware.set_api(api)
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the calls to <code>app.config</code>.</p>
 
 <p>
 If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
@@ -2498,7 +2553,7 @@ app = bottle.default_app()
 app.config.update({
     "scout.name": "YOUR_APP_NAME",
     "scout.key": "YOUR_KEY",
-    "scout.monitor": "true",
+    "scout.monitor": True,
 })
 
 scout = ScoutPlugin()
@@ -2833,39 +2888,6 @@ logging.basicConfig(level='DEBUG')
 <span class="k">with</span> <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">BackgroundTransaction</span><span class="p">(</span><span class="s">"Foo"</span><span class="p">):</span>
     <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/418"</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-</code></pre>
-<h4 id="falcon-example">Falcon Example</h4>
-
-<p>The example below instruments a <a href="https://falconframework.org/">Falcon</a> web app:</p>
-<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">falcon</span>
-<span class="kn">import</span> <span class="nn">scout_apm.api</span>
-<span class="kn">from</span> <span class="nn">scout_apm.api</span> <span class="kn">import</span> <span class="n">Context</span>
-
-<span class="c"># Must call scout_apm.api.install() early to set up</span>
-<span class="c"># instrumentation and the core agent.</span>
-<span class="c"># Create a dict of configuration options for Scout</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">"name"</span><span class="p">:</span> <span class="s">"My App Name"</span><span class="p">,</span>
-    <span class="s">"key"</span><span class="p">:</span> <span class="s">"APM_KEY"</span><span class="p">,</span>
-    <span class="s">"monitor"</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">install</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-
-
-<span class="k">class</span> <span class="nc">WorkResource</span><span class="p">:</span>
-    <span class="nd">@scout_apm.api.WebTransaction</span><span class="p">(</span><span class="s">"Work/Get"</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
-        <span class="n">Context</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">"path"</span><span class="p">,</span> <span class="n">req</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-        <span class="n">resp</span><span class="o">.</span><span class="n">media</span> <span class="o">=</span> <span class="n">some_work</span><span class="p">()</span>
-
-
-<span class="n">api</span> <span class="o">=</span> <span class="n">falcon</span><span class="o">.</span><span class="n">API</span><span class="p">()</span>
-<span class="n">api</span><span class="o">.</span><span class="n">add_route</span><span class="p">(</span><span class="s">'/work'</span><span class="p">,</span> <span class="n">WorkResource</span><span class="p">())</span>
-
-
-<span class="k">def</span> <span class="nf">some_work</span><span class="p">():</span>
-    <span class="c"># ... Do some real work ...</span>
-    <span class="k">return</span> <span class="s">"Did some work"</span>
 </code></pre>
 <h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
 
