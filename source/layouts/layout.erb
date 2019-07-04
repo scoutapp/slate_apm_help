@@ -14,6 +14,15 @@ License for the specific language governing permissions and limitations
 under the License.
 %>
 <% language_tabs = current_page.data.language_tabs || [] %>
+<% page_content = yield %>
+<%
+  if current_page.data.includes
+    current_page.data.includes.each do |include|
+      page_content += partial("includes/#{include}")
+    end
+  end
+%>
+
 <!doctype html>
 <html>
   <head>
@@ -29,7 +38,6 @@ under the License.
     <%= stylesheet_link_tag :screen_overrides, media: :screen %>
     <%= stylesheet_link_tag :print, media: :print %>
     <%= stylesheet_link_tag :scout %>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <% if current_page.data.search %>
       <%= javascript_include_tag  "all" %>
     <% else %>
@@ -39,14 +47,6 @@ under the License.
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic,800,800italic|Arimo:400,400i,700' rel='stylesheet' type='text/css'>
-
-    <% if language_tabs %>
-      <script>
-        $(function() {
-          setupLanguages(<%= language_tabs.map{ |lang| lang.is_a?(Hash) ? lang.keys.first : lang }.to_json %>);
-        });
-      </script>
-    <% end %>
 
     <!-- Segment.io -->
     <script>
@@ -70,14 +70,13 @@ under the License.
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W82W6H5"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-
     <a href="#" id="nav-button">
       <span>
         NAV
         <%= image_tag('navbar.png') %>
       </span>
     </a>
-    <div class="tocify-wrapper">
+    <div class="toc-wrapper">
       <%= link_to image_tag( "logo.png", id: 'logo'), "https://scoutapm.com", target: '_blank' %>
       <% if language_tabs.any? %>
         <div class="lang-selector">
@@ -96,8 +95,22 @@ under the License.
         </div>
         <ul class="search-results"></ul>
       <% end %>
-      <div id="toc">
-      </div>
+      <ul id="toc" class="toc-list-h1">
+        <% toc_data(page_content).each do |h1| %>
+          <li>
+            <a href="#<%= h1[:id] %>" class="toc-h1 toc-link" data-title="<%= h1[:title] %>"><%= h1[:content] %></a>
+            <% if h1[:children].length > 0 %>
+              <ul class="toc-list-h2">
+                <% h1[:children].each do |h2| %>
+                  <li>
+                    <a href="#<%= h2[:id] %>" class="toc-h2 toc-link" data-title="<%= h2[:title] %>"><%= h2[:content] %></a>
+                  </li>
+                <% end %>
+              </ul>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
       <% if current_page.data.toc_footers %>
         <ul class="toc-footer">
           <% current_page.data.toc_footers.each do |footer| %>
@@ -109,10 +122,7 @@ under the License.
     <div class="page-wrapper">
       <div class="dark-box"></div>
       <div class="content">
-        <%= yield %>
-        <% current_page.data.includes && current_page.data.includes.each do |include| %>
-          <%= partial "includes/#{include}" %>
-        <% end %>
+        <%= page_content %>
       </div>
       <div class="dark-box">
         <% if language_tabs.any? %>
@@ -130,7 +140,7 @@ under the License.
     </div>
   </body>
   <script>
-    /* From AnchorJS docs: Don't add anchors on later events, like $(document).ready() or window.onload as some browsers will attempt to jump to your ID before AnchorJS can add it to the page. 
+    /* From AnchorJS docs: Don't add anchors on later events, like $(document).ready() or window.onload as some browsers will attempt to jump to your ID before AnchorJS can add it to the page.
     */
     /**
      * AnchorJS v3.2.0 options and selector
