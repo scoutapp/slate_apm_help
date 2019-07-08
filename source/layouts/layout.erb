@@ -38,6 +38,8 @@ under the License.
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
 
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic,800,800italic|Arimo:400,400i,700' rel='stylesheet' type='text/css'>
+
     <% if language_tabs %>
       <script>
         $(function() {
@@ -54,29 +56,21 @@ under the License.
       }}();
     </script>
 
-    <!-- Google Analytics -->
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-      // This sends traffic to the help-specific GA account. Segment is responsible for sending
-      // data to the Scout overall property.
-      ga('create', 'UA-3212349-13', 'auto', 'help_tracker');
-      ga('help_tracker.send', 'pageview');
-
-      //This does hash-click tracking (inspired by http://stackoverflow.com/a/4813223)
-      $(document).ready(function() {
-        $('.tocify-item a').on('click', function(){
-          ga('help_tracker.send', 'pageview', {'page': location.pathname + location.search  + location.hash});
-          analytics.page({'path': location.pathname + location.search  + location.hash});
-        });
-      });
-    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-W82W6H5');</script>
+    <!-- End Google Tag Manager -->
   </head>
 
   <body class="<%= page_classes %>" data-languages="<%=h language_tabs.map{ |lang| lang.is_a?(Hash) ? lang.keys.first : lang }.to_json %>">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W82W6H5"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -84,7 +78,7 @@ under the License.
       </span>
     </a>
     <div class="tocify-wrapper">
-      <%= link_to image_tag( "logo.png", id: 'logo'), "https://scoutapp.com", target: '_blank' %>
+      <%= link_to image_tag( "logo.png", id: 'logo'), "https://scoutapm.com", target: '_blank' %>
       <% if language_tabs.any? %>
         <div class="lang-selector">
           <% language_tabs.each do |lang| %>
@@ -145,7 +139,7 @@ under the License.
     anchors.add('.content > h2, .content > h3, .content > h4, .lookup th');
 
     $.ajax({
-      url: "http://apm.scoutapp.com/latest_gem_version",
+      url: "https://scoutapm.com/latest_gem_version",
       dataType: "jsonp"
     }).success(function(response){
       $("#latest-gem-version").html(response.version)

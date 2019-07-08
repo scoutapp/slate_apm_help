@@ -48,7 +48,7 @@ $darkgreen: #64953f;
 
 .content > h6, html, body {
 	font-size: 15px;
-  font-family: 'Roboto Slab', sans-serif;
+  font-family: 'Arimo', sans-serif; /* Arimo is a google font */
   font-weight: 300;
 }
 
@@ -124,8 +124,12 @@ $darkgreen: #64953f;
   line-height: 45px;
 }
 
-.content > code {
+.content code {
   white-space: nowrap;
+}
+
+.content pre code {
+  white-space: inherit;
 }
 
 /*** lookup table ***/

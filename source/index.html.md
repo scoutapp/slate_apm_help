@@ -4,8 +4,12 @@ title: Help Docs ~ Scout APM
 includes:
   - ruby
   - elixir
-  - api
+  - python
+  - core_agent
   - features
+  - integrations
+  - api
+  - compliance
   - reference
 
 search: true
@@ -13,31 +17,39 @@ search: true
 
 # Scout Help Docs
 
-Welcome to the help site for __[Scout Application Monitoring](https://scoutapp.com)__. Don't have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Get started - it's free</a>.
+Welcome to the help site for __[Scout Application Monitoring](https://scoutapm.com)__. Don't have an account? <a href="https://scoutapm.com/info/pricing" target="_blank">Get started</a>.
 
-Browse through the sidebar, search, [email us](mailto:support@scoutapp.com), or <a href="http://slack.scoutapp.com" target="_blank">join our Slack community</a>. We're here to help.
+Browse through the sidebar, search, [email us](mailto:support@scoutapm.com), or <a href="http://slack.scoutapm.com" target="_blank">join our Slack community</a>. We're here to help.
 
 
 <div id="overview_container">
   <div>
-    <h3><a href="#ruby-agent">Ruby Agent</a></h3>
+    <h3>
+      <img src="images/ruby.png" alt="ruby" />
+      <a href="#ruby-agent">Ruby Agent</a>
+    </h3>
     <p>
       View our docs for installing, configuring, and troubleshooting the Scout Ruby agent.
     </p>
   </div>
 
   <div>
-    <h3><a href="#elixir-agent">Elixir Agent</a></h3>
+    <h3>
+      <img src="images/elixir.png" alt="elixir" />
+      <a href="#elixir-agent">Elixir Agent</a>
+    </h3>
     <p>
       View our docs for installing, configuring, and troubleshooting the Scout Elixir agent.
     </p>
   </div>
 
   <div>
-    <h3><a href="https://scoutapp.com/info/pricing" target="_blank">Signup - it's free</a></h3>
+    <h3>
+        <img src="images/python.png" alt="python" />
+        <a href="#python-agent">Python Agent</a></h3>
+    </h3>
     <p>
-      Don't have an account? <a href="https://scoutapp.com/info/pricing" target="_blank">Signup</a> - our free plan
-      monitors apps both large and small.
+      View our docs for installing, configuring, and troubleshooting the Scout Python agent.
     </p>
   </div>
 </div>
@@ -51,7 +63,7 @@ Here's an overview of the key functionality in our application monitoring servic
 
 ### Agents
 
-We support Ruby on Rails apps and have beta support for Elixir.
+We support Ruby on Rails, Elixir, and Python apps.
 
 Our agent is designed to run in production environments and has low overhead. Every minute, the agent transmits metrics to our service over SSL. 
 

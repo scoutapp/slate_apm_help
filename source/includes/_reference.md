@@ -2,12 +2,14 @@
 
 We're transparent about our uptime and service issues. If you appear to be experiencing issues with our service:
 
-* [Check out status site](http://status.scoutapp.com). You can subscribe to service incidents.
-* [Email us](mailto:support@scoutapp.com)
+* [Check out status site](https://status.scoutapm.com). You can subscribe to service incidents.
+* [Email us](mailto:support@scoutapm.com)
 
 # Contacting Support
 
-Don't hesitate to contact us at [support@scoutapp.com](mailto:support@scoutapp.com) any issues. We typically respond in a couple of hours during the business day.
+Don't hesitate to contact us at [support@scoutapm.com](mailto:support@scoutapm.com) with any issues. We typically respond in a couple of hours during the business day.
+
+Or, join us on [Slack](http://slack.scoutapm.com/). We are often, but not always, in Slack. 
 
 # Reference
 
@@ -27,7 +29,7 @@ Our most recent benchmarks (_lower is better_):
 
 ![overhead](overhead.png)
 
-We've [open-sourced our benchmarks](http://blog.scoutapp.com/articles/2016/02/07/overhead-benchmarks-new-relic-vs-scout) so you can test on our own. If your results differ, [reach out to us at support@scoutapp.com](mailto:support@scoutapp.com).
+We've [open-sourced our benchmarks](https://scoutapm.com/blog/overhead-benchmarks-new-relic-vs-scout) so you can test on our own. If your results differ, [reach out to us at support@scoutapm.com](mailto:support@scoutapm.com).
 
 ### Call Aggregation
 
@@ -37,7 +39,7 @@ To limit our agent's memory usage, we stop recording the details of every instru
 
 ## Security
 
-We take the security of your code metrics extremely seriously. Keeping your data secure is fundamental to our business. Scout is nearing a decade storing critical metrics with our server monitoring product and those same fundamentals are applied here:
+We take the security of your code metrics extremely seriously. Keeping your data secure is fundamental to our business. Scout is nearing a decade storing critical metrics and those same fundamentals are applied here:
 
 * All data transmitted by our agent to our servers is sent as serialized JSON over SSL.
 * Our UI is only served under SSL.
@@ -56,15 +58,6 @@ The following data is sent to our servers from the agent:
   * Sanitized SQL query statements
 * Process memory and CPU usage
 * Error counts
-
-### HIPAA compliance
-
-While Scout itself is not HIPAA compliant, our agent can be installed safely in HIPAA compliant environments. To ensure user data is properly de-identified:
-
-1. Disable sending HTTP query params if these contain sensitive data via the `uri_reporting` config option.
-2. Do not add custom context (like reporting the current user in the session).
-
-Email support@scoutapp.com with any questions on security compliance.
 
 <h3 id="git-integration-security">Git Integration</h3>
 
@@ -126,45 +119,43 @@ During our BETA period, ScoutProf has a few limitations:
 
 The ScoutProf-enabled version of `scout_apm` can be safely installed on all environments our agent supports: the limitations above only prevent ScoutProf from running.
 
+### Can ScoutProf be enabled for ActionController::API and ActionController::Metal actions?
+
+Yes. Add the following to your controller:
+
+```ruby
+def enable_scoutprof?; true; end
+```
+
 ## Billing
 
 ### Free Trial
 
-We offer a no-risk, free 14-day trial. Delete your monitored apps before the trial concludes and you don't pay.
+We offer a no risk, fully featured, free trial. Enter a credit or debit card anytime to continue using Scout APM after the end of your trial.
 
 ### Billing Date
 
 Your first bill is 30 days after your signup date.
 
 ### Subscription Style
-
-You can choose the subscription style that makes sense for your organization. We offer two subscription styles:
-
-#### Per-Server
-
-__This is the default approach__. You are billed for the number of servers that are actively reporting on your billing date.
-
 #### Per-Request
 
-If you have a smaller application or have many smaller instances or Docker containers per-request billing may make more sense. Volume discounts are automatically applied as your application handles more throughput. Contact [support@scoutapp.com](mailto:support@scoutapp.com) for pricing options.
+We currently offer three transaction-based [pricing plans](https://scoutapm.com/info/pricing). Custom plans are available for higher transaction volume. Contact [support@scoutapm.com](mailto:support@scoutapm.com) for pricing options.
 
 ## Replacing New Relic
 
-Scout is an attractive <a href="https://scoutapp.com/newrelic-alternative" target="_blank">alternative to New Relic</a> for modern dev teams (frequent deploys, using Git, deploying to many micro instances & containers, using vendors for key infrastructure services like Amazon RDS, etc). We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.
+Scout is an attractive <a href="https://scoutapm.com/newrelic-alternative" target="_blank">alternative to New Relic</a> for modern dev teams. We provide a laser-focus on getting to slow custom application code fast vs. wide breadth as debugging slow custom application code is typically the most time-intensive performance optimization work.
 
 In many cases, Scout is able to replace New Relic as-is. However, there are cases where your app has specific needs we currently don't provide. Don't fret - here's some of the more common scenarios and our suggestions for building a monitoring stack you'll love:
 
-* __Exception Monitoring__ - we provide metrics on the rate of exceptions but we don't currently provide details on exceptions. Our favorite tool for this is [Sentry](http://getsentry.com):
-  * Affordable: starts @ $29/mo.
-  * Realtime exceptions: you'll see new exceptions coming through as-they-happen (every second).
-  * Great UI
-  * Context tracking (easy to see how an exception is impacting which users). We implemented a similar API for our slow request tracking.
-* __Browser Monitoring (Real User Monitoring)__ - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.
+* __Exception Monitoring__ - Scout doesn't provide exception monitoring, but we do integrate with ([Rollbar](#rollbar) and [Sentry](#sentry)) to provide a side-by-side view of your performance metrics and errors within the Scout UI.
 
-### Our Monitoring Stack
+* __Browser Monitoring (Real User Monitoring)__ - there are a number of dedicated tools for both Real User Monitoring (RUM) and synthetic monitoring. We've [reviewed Raygun Pulse](https://scoutapm.com/blog/real-user-monitoring-with-raygun), an attractive RUM product. You can also continue to use New Relic for browser monitoring and use Scout for application monitoring.
 
-Curious about what a company that lives-and-breathes monitoring (us!) uses to monitor our apps? [We shared our complete monitoring stack on our blog](http://blog.scoutapp.com/articles/2015/12/02/rails-monitoring-stack-2016).
+## Our Monitoring Stack
+
+Curious about what a company that lives-and-breathes monitoring (us!) uses to monitor our apps? [We shared our complete monitoring stack on our blog](https://scoutapm.com/blog/rails-monitoring-stack-2016).
 
 ### Talk to us about your monitoring stack
 
-Don't hesitate to [email us](mailto:support@scoutapp.com) if you need to talk through your monitoring stack. Monitoring is something we know and love.
+Don't hesitate to [email us](mailto:support@scoutapm.com) if you need to talk through your monitoring stack. Monitoring is something we know and love.

@@ -2,17 +2,7 @@
 
 <h2 id="ruby-requirements">Requirements</h2>
 
-Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+ and the following app servers/background job frameworks:
-
-* Phusion Passenger
-* Puma
-* Rainbows
-* Thin
-* Unicorn
-* WEBrick
-* Sidekiq
-* DelayedJob
-* Resque
+Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+. See a [list of libraries we auto-instrument](#ruby-instrumented-libs).
 
 [Memory Bloat detection](#memory-bloat-detection) and [ScoutProf](#scoutprof) require Ruby 2.1+.
 
@@ -42,7 +32,7 @@ bundle install
     <tr>
      	<td><span class="step">2</span></td>
      	<td><p>Download your customized config file, placing it at <code>config/scout_apm.yml</code>.</p>
-        <p class="smaller">Your customized config file is available within your Scout account, via [this link](https://apm.scoutapp.com/apps/new_ruby_application_configuration).</p>
+        <p class="smaller">Your customized config file is available within your [Scout Account](https://apm.scoutapp.com/apps/new_ruby_application_configuration).</p>
       </td>
     </tr>
     <tr>
@@ -52,11 +42,18 @@ bundle install
  	</tbody>
 </table>
 
+<p>
+* - If you've installed Scout via the Heroku Addon, the provisioning process automatically sets the required settings via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a> and a configuration file isn't required.
+</p>
+
 <h2 id="ruby-troubleshooting">Troubleshooting</h2>
 
 ### No Data
 
 Not seeing any data?
+
+<aside class="notice">Using Heroku? View our <a href="https://devcenter.heroku.com/articles/scout#troubleshooting">Heroku-specific troubleshooting instructions.</a></aside>
+
 
 <table class="help">
   <tbody>
@@ -114,7 +111,7 @@ bundle list scout_apm
       </td>
       <td>
         <p>
-          Did you restart the app?
+          Did you restart the app and let it run for a while?
         </p>
       </td>
     </tr>
@@ -138,7 +135,7 @@ tail -n1000 log/production.log | grep "Processing"
         <p>
           Using Unicorn?
         </p>
-        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="http://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
+        <p>Add the <code>preload_app true</code> directive to your Unicorn config file. <a href="https://unicorn.bogomips.org/Unicorn/Configurator.html#method-i-preload_app">Read more</a> in the Unicorn docs.
         </p>
       </td>
     </tr>
@@ -149,7 +146,7 @@ tail -n1000 log/production.log | grep "Processing"
       </td>
       <td>
         <p>
-          Oops! Looks like messed up. <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
+          Oops! Still not seeing any data? Check out the <a href="https://github.com/scoutapp/scout_apm_ruby/issues">GitHub issues</a> and <a href="mailto:support@scoutapm.com">send us an email</a> with the following:
         </p>
         <ul>
           <li>The last 1000 lines of your <code>log/scout_apm.log</code> file, if the file exists:<br/><code>tail -n1000 log/scout_apm.log</code>.
@@ -353,7 +350,7 @@ The following configuration settings are available:
         The protocol + domain where the agent should report.
       </td>
       <td>
-        <code>https://apm.scoutapp.com</code>
+        <code>https://scoutapm.com</code>
       </td>
       <td>
         No
@@ -443,7 +440,7 @@ The following configuration settings are available:
         The Git SHA that corresponds to the version of the app being deployed.
       </td>
       <td>
-        <a href="#deploy-tracking-config">See docs</a>
+        <a href="#ruby-deploy-tracking-config">See docs</a>
       </td>
       <td>No</td>
     </tr>
@@ -458,6 +455,26 @@ The following configuration settings are available:
       </td>
       <td>No</td>
     </tr>
+    <tr>
+      <th>collect_remote_ip</th>
+      <td>
+        Automatically capture end user IP addresses as part of each trace's context.
+      </td>
+       <td>
+         <code>true</code>
+       </td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <th>timeline_traces</th>
+      <td>
+        Send traces in both the summary and <a href="#timeline-transaction-trace">timeline</a> formats.
+      </td>
+       <td>
+         <code>true</code>
+       </td>
+      <td>No</td>
+    </tr>
   </tbody>
 </table>
 
@@ -465,7 +482,7 @@ The following configuration settings are available:
 
 You can also configure Scout APM via environment variables. _Environment variables override settings provided in_ `scout_apm.yml`.
 
-Environment variables have the same names as those in the Yaml config file, but are prefixed with `SCOUT_`. For example, to set the organization key via environment variables:
+To configure Scout via enviroment variables, uppercase the config key and prefix it with `SCOUT`. For example, to set the key via environment variables:
 
 ```ruby
 export SCOUT_KEY=YOURKEY
@@ -517,6 +534,14 @@ To enable [DevTrace](#devtrace), our in-browser profiler:
   </tbody>
 </table>
 
+<h2 id="ruby-server-timing">Server Timing</h2>
+
+View performance metrics (time spent in ActiveRecord, Redis, etc) for each of your app's requests in Chrome’s Developer tools with the [server_timing](https://github.com/scoutapp/ruby_server_timing) gem. Production-safe.
+
+![server timing](https://s3-us-west-1.amazonaws.com/scout-blog/ruby_server_timing.png)
+
+For install instructions and configuration options, see [server_timing](https://github.com/scoutapp/ruby_server_timing) on GitHub.
+
 ## Request Queuing
 
 Scout can measure the time it takes a request to reach your Rails app from farther upstream (a load balancer or web server). This appears in Scout as "Request Queuing" and provides an indication of your application's capacity. Large request queuing time is an indication that your app needs more capacity.
@@ -541,6 +566,10 @@ Include a value in the format `t=MICROSECONDS_SINCE_EPOCH` where `MICROSECONDS_S
 
 __Nearly any front-end HTTP server or load balancer can be configured to add this header.__ Some examples are below.
 
+<h3 id="ruby-heroku-request-queue">Heroku</h3>
+
+Time in queue is automatically collected for apps deployed on Heroku. This measures the time from when a request hits the Heroku router and when your app begins processing the request.
+
 ### Apache
 
 Apache's __mod_headers__ module includes a `%t` variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:
@@ -548,6 +577,12 @@ Apache's __mod_headers__ module includes a `%t` variable that is formatted for S
 ````
 RequestHeader set X-Request-Start "%t"
 ````
+
+#### Apache Request Queuing and File Uploads
+
+If you are using Apache, you may observe a spike in queue time within Scout for actions that process large file uploads. Apache adds the `X-Request-Start` header as soon as the request hits Apache. So, all of the time spent uploading a file will be reported as queue time.
+
+This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request. 
 
 ### HAProxy
 
@@ -646,7 +681,7 @@ end
 ```
 
 If you run into any issues, or want advice on naming or wrapping endpoints, contact us at
-support@scoutapp.com for additional help.
+support@scoutapm.com for additional help.
 
 ## Sinatra
 
@@ -815,7 +850,7 @@ The trace item will now be displayed as `Exporting/user_activity`.
 
 ### Instrumenting blocks of code
 
-To instrument a method call, add the following:
+To instrument a block of code, add the following:
 
 ```ruby
   class User
@@ -833,6 +868,25 @@ To instrument a method call, add the following:
 
 In the example above, the metric appear in traces as `User/generate_profile_pic`. On timeseries charts, the time will be allocated to a `User` type. To modify the type or simply, simply change the `instrument` corresponding method arguments.
 
+<h3 id="ruby-renaming-transactions">Renaming transactions</h3>
+
+There may be cases where you require more control over how Scout names transactions. For example, if you have a controller-action that renders both JSON and HTML formats and the rendering time varies significantly between the two, it may make sense to define a unique transaction name for each.
+
+Use `ScoutApm::Transaction#rename`:
+
+```ruby
+class PostsController < ApplicationController
+  def index                              
+    ScoutApm::Transaction.rename("posts/foobar")                                   
+    @posts = Post.all                    
+  end
+end
+```
+
+In the example above, the default name for the transaction is `posts/index`, which appears as `PostsController#index` in the Scout UI. Renaming the transaction to `posts/foobar` identifies the transaction as `PostsController#foobar` in the Scout UI.  
+
+Do not generate highly cardinality transaction names (ex: `ScoutApm::Transaction.rename("posts/foobar_#{current_user.id}")`) as we limit the number of transactions that can be tracked. High-cardinality transaction names can quickly surpass this limit.
+
 <h3 id="ruby-testing-instrumentation">Testing instrumentation</h3>
 
 Improper instrumentation can break your application. It's important to test before deploying to production. The easiest way to validate your instrumentation is by running [DevTrace](#devtrace) and ensuring the new metric appears as desired.
@@ -840,6 +894,40 @@ Improper instrumentation can break your application. It's important to test befo
 After restarting your dev server with DevTrace enabled, refresh the browser page and view the trace output. The new metric should appear in the trace:
 
 ![custom devtrace](custom_devtrace.png)
+
+## Rake + Rails Runner
+
+Scout doesn't have a dedicated API for instrumenting `rake` tasks or transactions called via `rails runner`. Instead, we suggest creating basic wrapper tasks that spawn a background job in a [framework we support](#ruby-instrumented-libs). These jobs are automatically monitored by Scout and appear in the Scout UI under "background jobs".
+
+For example, the following is a CronJob that triggers the execution of an `IntercomSync` background job:
+
+```
+10 * * * * cd /home/deploy/your_app/current && rails runner 'IntercomSync.perform_later'
+```
+
+## Sneakers
+
+Scout doesn't instrument [Sneakers](https://github.com/jondot/sneakers) (a background processing framework for Ruby and RabbitMQ) automatically. To add Sneakers instrumentation:
+
+* [Download the contents of this gist](https://gist.github.com/itsderek23/685c7485a3bd020b6cdd9b1d61cb847f). Place the file inside your application's `/lib` folder or similar.
+* In `config/boot.rb`, add: `require File.expand_path('lib/scout_sneakers.rb', __FILE__)`
+* In your `Worker` class, immediately following the `work` method, add<br/>`include ScoutApm::BackgroundJobIntegrations::Sneakers::Instruments`.
+
+This treats calls to the `work` method as distinct transactions, named with the worker class.
+
+Example usage:
+
+```ruby
+class BaseWorker
+  include Sneakers::Worker
+
+  def work(attributes)
+    # Do work
+  end
+  # This MUST be included AFTER the work method is defined.
+  include ScoutApm::BackgroundJobIntegrations::Sneakers::Instruments
+end
+```
 
 ## Docker <img src="images/docker.png" style="float:right;width: 150px" />
 
@@ -854,7 +942,7 @@ Scout runs on Heroku without any special configuration. When Scout detects that 
 * Logging is set to `STDOUT` vs. logging to a file. Log messages are prefixed with `[Scout]` for easy filtering.
 * The dyno name (ex: `web.1`) is reported vs. the dyno hostname. Dyno hostnames are dynamically generated and don't have any meaningful information.
 
-### Configuration
+<h3 id="heroku-configuration">Configuration</h3>
 
 Scout can be configured via environment variables. This means you can use `heroku config:set` to configure the agent. For example, you can set the application name that appears in the Scout UI with:
 
@@ -910,20 +998,29 @@ staging:
 
 The following libraries are currently instrumented:
 
-* ActiveRecord
-* ActionView
-* ActionController
-* ElasticSearch
-* HTTPClient
-* InfluxDB
-* Mongoid
-* Net::HTTP
-* Moped
-* Middleware
-* Redis
-* Sidekiq
-* DelayedJob
-* Resque
+* Datastores
+  * ActiveRecord
+  * ElasticSearch
+  * Mongoid
+  * Moped
+  * Redis
+* Rack frameworks
+  * Rails
+  * Sinatra
+  * Grape
+  * Middleware
+* Rails libraries
+  * ActionView
+  * ActionController
+* External HTTP calls
+  * HTTPClient
+  * Net::HTTP
+* Background Job Processing
+  * Sidekiq
+  * DelayedJob
+  * Resque
+  * Sneakers
+  * Shoryuken
 
 Additionally, [Scout can also instrument request queuing time](#request-queuing).
 
@@ -1014,10 +1111,49 @@ You can ignore requests to web endpoints that match specific paths (like `/healt
 To selectively ignore a web request or background job in your code, add the following within the transaction:
 
 ```ruby
-req = ScoutApm::RequestManager.lookup
-req.ignore_request!
+ScoutApm::Transaction.ignore!
+```
+
+### Sampling web requests
+
+Use probability sampling to limit the number of web requests Scout analyzes:
+
+```ruby
+# app/controllers/application_controller.rb
+before_action :sample_requests_for_scout
+
+def sample_requests_for_scout
+  # Sample rate should range from 0-1:
+  # * 0: captures no requests
+  # * 0.75: captures 75% of requests
+  # * 1: captures all requests
+  sample_rate = 0.75
+
+  if rand > sample_rate
+    Rails.logger.debug("[Scout] Ignoring request: #{request.original_url}")
+    ScoutApm::Transaction.ignore!
+  end
+end
 ```
 
 ### Ignoring all background jobs
 
 You can ignore all background jobs by setting `enable_background_jobs: false` in your configuration file. See the [configuration options](#ruby-configuration-options).
+
+## Overhead Considerations
+
+Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions. 
+
+There are a couple of scenarios worth mentioning where more overhead than expected may be observed. 
+
+### Enabling the detailed_middleware option
+
+By default, Scout aggregates all middleware timings together into a single "Middleware" category. Scout can provide a detailed breakdown of middleware timings by setting `detailed_middleware: true` in the configuration settings.
+
+This is `false` by default as instrumenting each piece of middleware adds additional overhead. It's common for Rails apps to use more than a dozen pieces of middleware. Typically, time spent in middleware is very small and isn't worth instrumenting. Additionally, most of these middleware pieces are maintained by third-parties and are thus more difficult to optimize.
+
+### Resque Instrumentation
+
+Since Resque works by forking a child process to run each job and exiting immediately when the job is finished, our instrumentation needs a way to aggregate the timing results and traces into a central store before reporting the information to our service. To support Resque, the Resque child process sends a simple payload to the parent which is listening via WEBRick on localhost. As long as there is one WEBRick instance listening on the configured port, then any Resque children will be able to send results back to it.
+
+The overhead is usually small, but it is more significant than instrumenting background job frameworks like Sidekiq and DelayedJob that do not use forking. The lighter the jobs are, more overhead is incurred in the serialization and reporting to WEBRick. In our testing, for jobs that took ~18 ms each, we found that the overhead is about ~8%. If your jobs take longer than that, on average, the overhead will be lower.

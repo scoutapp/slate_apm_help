@@ -1,6 +1,6 @@
 # Features
 
-Scout is Application Monitoring built for modern development teams. It's built to provide the fastest path to a slow line-of-code. [Signup for a free trial](https://apm.scoutapp.com/users/sign_up).
+Scout is Application Monitoring built for modern development teams. It's built to provide the fastest path to a slow line-of-code. [Signup for a trial](https://scoutapm.com/users/sign_up).
 
 ## App Performance Overview
 
@@ -19,15 +19,9 @@ You can sort traces by response time, object allocations, date, and more.
 
 ## Transaction Traces
 
-Scout collects detailed transactions across your endpoints automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. 
+Scout collects detailed transactions across your web endpoints and background jobs automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. 
 
-![transaction traces](transaction_traces.png)
-
-### Call Breakdown
-
-Method calls are aggregated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).
-
-![stream show breakdown](stream_show_call_breakdown.png)
+![transaction traces](trace_timeline.png)
 
 ### SQL Queries
 
@@ -35,17 +29,70 @@ Scout captures a sanitized version of SQL queries. Click the "SQL" button next t
 
 ![stream show sql](stream_show_sql_annotated.png)
 
-#### Don't see the query next to an SQL call?
+#### Don't see an SQL button next to a database query?
 
-For performance reasons, Scout doesn't attempt to sanitize large SQL queries. When this occurs, you won't see an "SQL" button to view the raw query next to an SQL method call.
+Scout collects a sanitized version of SQL queries and displays these in transaction traces. To limit agent overhead sanitizing queries, we do not collect query statements with more than 16k characters.
+
+This limit was raised to 16k characters from 4k characters in version 2.3.3 of the Ruby agent after determining the higher threshold was safe for production environments. If you have an older version of `scout_apm`, [update to the latest](#updating-to-the-newest-version).
 
 ### Code Backtraces
 
-You'll see "CODE" buttons next to method calls that are >= 500 ms. If you've enabled the GitHub integration, you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.
+You'll see "CODE" buttons next to method calls that are >= 500 ms. [If you've enabled the GitHub integration](#github), you can see the line-of-code, associated SQL or HTTP endpoint (if applicable), author, commit date, and deploy time for the relevant slow code.
 
 ![stream show git](stream_slow_git_annotated.png)
 
 If you don't enable the GitHub integration, you'll see a backtrace.
+
+### Trace Views
+
+There are two displays for showing the details of a transaction trace:
+
+* __Summary View__ - Method calls are aggregated together and ordered from most to least expensive.
+* __Timeline View__ - Shows the execution order of calls as they occur during the transaction.
+
+#### Summary View
+
+Method calls are aggregated together and listed from most expensive to least expensive. The time displayed is the total time across all calls (not the time per-call).
+
+![stream show breakdown](stream_show_call_breakdown.png)
+
+#### Timeline View
+
+See the execution order of your code. 
+
+![trace timeline](trace_timeline_annotated.png)
+
+The timeline view is especially helpful for:
+
+* understanding the distribution of `Controller` time across a request. Is there a lot of time spent in your custom code at the beginning of a request? Is it spread out? Is it at the end of a request?
+* understanding the timing of distinct SQL queries. Is one instance of many nearly identical queries slow or all of them?
+* getting the complete picture of parent and children method calls. How many SQL calls are being triggered by the same view partial?
+
+##### Upgrading to the timeline view
+
+If you see a message in the UI prompting you to upgrade, [follow our Ruby agent upgrade instructions](#updating-to-the-newest-version) to update to the latest agent, which supports sending the timeline trace format.
+
+##### Timeline view limitations
+
+* Ruby-only
+* No ScoutProf support
+* No support for background jobs
+* No DevTrace support
+
+## Trace Explorer
+
+What was the slowest request yesterday? How has the app performed for `user@domain.com`? Which endpoints are generating the bulk of slow requests? Trace Explorer lets you quickly filter the transaction traces collected by Scout, giving you answers to your unique questions.
+
+![crossfilter](https://s3-us-west-1.amazonaws.com/scout-blog/s_vs_nr/crossfilter.gif)
+
+Trace Explorer is accessed via the "Traces" navigation link when viewing an app. 
+
+### How to use Trace Explorer
+
+There are two main areas of Trace Explorer:
+
+* __Dimension Histograms__ - the top portion of the page generates a histogram representation for a number of trace dimensions (the response time distribution, count of traces by endpoints, and a display for each piece of [custom context](#context)). Selecting a specific area of a chart filters the transactions to just the selected data.
+* __List of transaction traces__ - the bottom portion of the page lists the [individual traces](#transaction-traces). The traces are updated to reflect those that match any filtered dimensions. You can increase the height of this pane by clicking and dragging the top portion of the pane. Clicking on a trace URI opens the transaction trace in a new browser tab.
 
 ## ScoutProf
 
@@ -88,72 +135,77 @@ A [detailed ScoutProf FAQ](#scoutprof-faq) is available in our reference area.
 
 ## Database Monitoring
 
-A database is shared resource: one expensive query can trigger a flood of slow queries that impact many web endpoints and background jobs. Scout's database monitoring helps in three primary areas:
+When the database monitoring addon is enabled, you'll gain access to both a high-level overview of your database query performance and detailed information on specific queries. Together, these pieces make it easier to get to the source of slow query performance.
 
-1. Identifying the cause of database capacity issues.
-2. Understanding your query workload and which web endpoints and background jobs are the greatest users of database time.
-3. Highlighting changes in query workload and performance metrics vs. the norm.
+### Database Queries Overview
 
-Database metrics appear in two areas of the UI:
+The high-level view helps you identify where to start:
 
-1. [Database Overview](#database-overview)
-2. [Web Endpoint & Background Job Breakdown](#endpoint-database-breakdown)
+<a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/overview.png"><img alt="overview" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/overview.png"/></a>
 
-The video below shows the two areas in action. There is a detailed description of each area beneath the video.
+The chart at the top shows your app's most time-consuming queries over time. Beneath the chart, you'll find a sortable list of queries grouped by a label (for Rails apps, this is the ActiveRecord model and operation) and the caller (a web endpoint or a background job):
 
-<iframe src="https://player.vimeo.com/video/241390934" width="640" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+This high-level view is engineered to reduce the investigation time required to:
 
-
-
-### Database Overview
-
-![database monitoring](db_monitoring.png)
-
-#### Overview chart
-
-The database monitoring overview chart helps answer important questions at-a-glance. For example:
-
-* Is time consumed by queries increasing because throughput is increasing?
-* Is one type of query showing a dramatic increase in time consumed?
-* How are query response times changing under load?
-
-The overview chart shows the top 4 most time-consuming queries and an aggregate of all other queries vs. overall query throughput.
+* __identify slow queries__: it's easy for queries to become more inefficient over time as the size of your data grows. Sorting queries by "95th percentile response time" and "mean response time" makes it easy to identify your slowest queries.
+* __solve capacity issues__: an overloaded database can have a dramatic impact on your app's performance. Sorting the list of queries by "% time consumed" shows you which queries are consuming the most time in your database.
 
 #### Zooming
 
-The primary interaction point of Scout's database monitoring is the zoom functionality.
+__If there is a spike in time consumed or throughput, you can easily see what changed during that period__. Click and drag over the area of interest on the chart:
 
-If you notice a spike in time spent by database queries, simply click and drag on the overview chart. The queries list will update, showing changes during the zoom window. 
+<a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/zoom.png"><img alt="zoom" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/zoom.png" /></a>
 
 Annotations are added to the queries list when zooming:
 
 * The change in rank, based on % time consumed, of each query. Queries that jump significantly in rank may trigger a dramatic change in database performance.
 * The % change across metrics in the zoom window vs. the larger timeframe. If the % change is not significant, the metric is faded.
-* A bullseye appears next to the max query time if the slowest occurrence of this query was executed during the zoom window. This may indicate a single slow query triggered a problem.
-
-#### Queries List
-
-A list of queries, broken down by their ActiveRecord model, operation, and caller (either a web endpoint or background job) is listed below the overview chart.
-
-By default, this list is truncated to display just the most time-consuming queries.
 
 #### Database Events
 
 Scout highlights significant events in database performance in the sidebar. For example, if time spent in database queries increases dramatically, you'll find an insight here. Clicking on an insight jumps to the time window referenced by the insight.
 
-### Endpoint Database Breakdown
+### Database Query Details
 
-A breakdown of time spent per-transaction appears beneath the overview chart for both web endpoints and database metrics. Database queries are broken out in this breakdown:
+After identifying an expensive query, you need to see where the query is called and the underlying SQL. Click on a query to reveal details:
 
-![database breakdown](db_monitoring_endpoint.png)
+<a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/detail.png"><img alt="detail" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/detail.png"/></a>
+
+You'll see the raw SQL and a list of individual query execution times that appeared in transaction traces. Scout collects backtraces on queries consuming more than 500 ms. If we've collected a backtrace for the query, you'll see an icon next to the timing information. Click on one of the traces to reveal that trace in a new window:
+
+<a href="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/trace.png"><img alt="trace" src="https://s3-us-west-1.amazonaws.com/scout-blog/db_monitoring/trace.png"/></a>
+
+The source of that trace is immediately displayed.
+
+### Slow Query Insights
+
+When the database monitoring addon is enabled, a new "Slow Query" insight is activated on your app dashboard:
+
+![slow query insights](slow_query_insights.png)
+
+This insight analyzes your queries in three dimensions, helping you focus on database optimizations that will most improve your app:
+
+1. __Which queries are most impacting app performance?__ This is based on the total time consumed of each query, where time consumed is the average query latency multiplied by the query throughput.
+2. __Which queries are significant bottlenecks inside web endpoints and background jobs?__ A single query that is responsible for a large percentage of the time spent in a transaction is a great place to investigate for a performance win.
+3. __Which queries are consistently slow?__ These are queries that have a high average latency.
+
+
 
 ### Pricing
 
 Database Monitoring is available as an addon. See your billing page for pricing information.
 
+### Database Addon Installation
+
+[Update](#updating-to-the-newest-version) - or install - the `scout_apm` gem in your application. There's no special libraries to install on your database servers.
+
 ### Database Monitoring Library Support
 
 Scout currently monitors queries executed via ActiveRecord, which includes most relational databases (PostgreSQL, MySQL, etc).
+
+### What does SQL#other mean?
+
+Some queries may be identified by a generic `SQL#other` label. This indicates our agent was unable to generate a friendly label from the raw SQL query. Ensure you are running version 2.3.3 of the `scout_apm` gem or higher as this release includes more advanced query labeling logic.
 
 ## Memory Bloat Detection
 
@@ -205,25 +257,13 @@ Alerts are sent to a notification group, which is composed of notification chann
 
 Correlate deploys with your app's performance: Scout's GitHub-enhanced deploy tracking makes it easy to identify the Git branch or tag running now and which team members contributed to every deploy.
 
-Scout tracks your deploys without additional configuration if you are running Capistrano. If you aren't using Capistrano or deploying your app to Heroku, see our [deploy tracking configuration docs](#deploy-tracking-config).
+Scout tracks your deploys without additional configuration if you are running Capistrano. If you aren't using Capistrano or deploying your app to Heroku, see our [deploy tracking configuration docs](#ruby-deploy-tracking-config).
 
 ### Sorting
 
 You can sort by memory allocations throughout the UI: from the list of endpoints, to our pulldowns, to transaction traces.
 
 ![memory sort](memory_sort.png)
-
-## Git Integration
-
-If your code is hosted at GitHub, you can see the [relevant slow line-of-code within the Scout user interface](#code-backtraces) when viewing a transaction trace. Additionally, you'll also see the:
-
-* author
-* commit time
-* deploy time
-
-Git integration must be configured on the settings page for each app. Scout integrates with GitHub via OAuth. Pick the repository name and branch name used for your application.
-
-![git settings](git_settings_annotated.png)
 
 ## Context
 
@@ -233,9 +273,12 @@ Context lets you see the forest from the trees. For example, you can add custom 
 * How many trial customers are impacted by slow requests?
 * How much of an impact are slow requests having on our highest paying customers?
 
-Adding custom context is easy - learn how via [Ruby](#ruby-custom-context) or [Elixir](#elixir-custom-context).
+Adding custom context is easy - learn how via [Ruby](#ruby-custom-context), [Elixir](#elixir-custom-context), or [Python](#python-custom-context).
 
-When viewing a transaction trace, click the "Context" section to see the context Scout has collected.
+Context information is displayed in two areas:
+
+* When viewing a [transaction trace](#transaction-traces) - click the "Context" section to see the context Scout has collected.
+* When using [Trace Explorer](#trace-explorer) - filter traces by context.
 
 ## Endpoints Performance
 
@@ -250,6 +293,14 @@ The endpoints area within Scout provides a sortable view of your app's overall p
 You can easily compare the performance of your application between different time periods via the time selection on the top right corner of the UI.
 
 ![time compare](time_compare_annotated.png)
+
+## Digest Email
+
+At a frequency of your choice (daily or weekly), Scout crunches the numbers on your app's performance (both web endpoints and background jobs). Performance is compared to the previous week, and highlights are mentioned in the email.
+
+![digest](digest_screenshot.png)
+
+The email identifies performance trends, slow outliers, and attempts to narrow down issues to a specific cause (like slow HTTP requests to another service).
 
 ## DevTrace
 

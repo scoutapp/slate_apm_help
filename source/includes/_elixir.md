@@ -1,25 +1,16 @@
 # Elixir Agent
 
-<aside class="warning">
-Elixir support is in BETA.
-</aside>
-
 <h2 id="elixir-requirements">Requirements</h2>
 
-Our Elixir agent supports Phoenix 1.2.0+ and Elixir 1.4+.
+Our Elixir agent supports Phoenix 1.2.0+, Ecto 2.0+, and Elixir 1.4+.
 
 <!-- old unique-ified anchor link -->
 <a name="installation22"></a>
 <h2 id="elixir-install">Installation</h2>
 
-<aside class="notice">
-  A free Scout account is required. <a href="https://apm.scoutapp.com/users/sign_up" target: '_blank'>Signup here</a>.
-</aside>
-
-Tailored instructions are provided within our user interface. General instructions:
+Tailored instructions are provided within our user interface. General instructions for a Phoenix 1.3+ app:
 
 <div class="install">
-
  <p class="instruct">
       <span class="step">A</span>Add the <code>scout_apm</code> dependency.
     </p>
@@ -27,22 +18,25 @@ Tailored instructions are provided within our user interface. General instructio
     </p>
     <pre class="terminal"># mix.exs
 
- def application do
-   [mod: {YourApp, []},
-    applications: [..., <span>:scout_apm</span>]]
- end
-
  def deps do
    [{:phoenix, "~> 1.2.0"},
     ...
     <span>{:scout_apm, "~> 0.0"}</span>]
  end</pre>
+    <p class="smaller">If your Mixfile manually specifies <code>applications</code>, <code>:scout_apm</code> must be added:</p>
+    <pre class="terminal"># mix.exs
+ def application do
+   [mod: {YourApp, []},
+    applications: [..., <span>:scout_apm</span>]]
+ end
+ </pre>
     <p class="smaller">
       Shell:
     </p>
     <div class="terminal">
       mix deps.get
     </div>
+
     <p class="instruct">
       <span class="step">B</span><span class="glyphicon glyphicon-download"></span> Download your customized config file, placing it at <code>config/scout_apm.exs</code>.
     </p>
@@ -51,27 +45,63 @@ Tailored instructions are provided within our user interface. General instructio
     <p class="instruct">
       <span class="step">C</span>Integrate into your Phoenix app.
     </p>
-    <p class="smaller"><code>config/config.exs</code>:
-    </p>
-    <pre class="terminal">
-# config/config.exs
-import_config "scout_apm.exs"
 
-config :your_app, YourApp.Repo,
-  loggers: [{Ecto.LogEntry, :log, []},
-            <span>{ScoutApm.Instruments.EctoLogger, :log, []}</span>]</pre>
-    <p class="smaller"><code>web/web.ex</code>:
+    <p class="smaller">Instrument Controllers. In <code>lib/your_app_web.ex</code>:
     </p>
-    <pre class="terminal"># web/web.ex
-defmodule HeroReview.Web do
+    <pre class="terminal"># lib/your_app_web.ex
+defmodule YourApp.Web do
   def controller do
     quote do
       use Phoenix.Controller
       <span>use ScoutApm.Instrumentation</span>
       ...</pre>
 
+    <p class="smaller">Instrument Templates. In <code>config/config.exs</code>:
+    </p>
+<pre class="terminal">
+# config/config.exs
+<span>config :phoenix, :template_engines,
+  eex: ScoutApm.Instruments.EExEngine,
+  exs: ScoutApm.Instruments.ExsEngine</span>
+</pre>
+
+<p class="instruct">
+  <span class="step">D</span>Integrate Ecto
+</p>
+
+    <p class="smaller">Using <strong>Ecto 2.x?</strong>. In <code>config/config.exs</code>:</p>
+    <pre class="terminal">
+# config/config.exs
+<span>import_config "scout_apm.exs"</span>
+
+<span>config :your_app, YourApp.Repo,
+  loggers: [{Ecto.LogEntry, :log, []},
+            {ScoutApm.Instruments.EctoLogger, :log, []}]</span></pre>
+
+
+    <p class="smaller">Using <strong>Ecto 3.x?</strong>. In <code>lib/my_app/application.ex</code>:</p>
+<pre class="terminal">
+# lib/my_app/application.ex
+defmodule MyApp.Application do
+  use Application
+
+  def start(_type, _args) do
+    import Supervisor.Spec
+    children = [
+        # ...
+    ]
+<span>
+    :ok = ScoutApm.Instruments.EctoTelemetry.attach(MyApp.Repo)
+</span>
+    # ...
+    Supervisor.start_link(children, opts)
+  end
+end
+</pre>
+
+
     <p class="instruct">
-      <span class="step">D</span>Restart your app.
+      <span class="step">E</span>Restart your app.
       <div class="terminal">
         mix phoenix.server
       </div>
@@ -81,12 +111,62 @@ defmodule HeroReview.Web do
 
 <h2 id="elixir-troubleshooting">Troubleshooting</h2>
 
-Not seeing data? <a href="mailto:support@scoutapp.com">Send us an email</a> with the following:
+Not seeing data?
 
-* A recent sample of your log file (the more, the better).
-* Your application's `mix.lock` file.
+<table class="help">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td><td>
+        <p>Examine your log file for any lines that match <code>Scout</code>.</p>
 
-We typically respond within a couple of hours during the business day.
+        <p>Look for:</p>
+
+<pre class="terminal">
+[info] Setup ScoutApm.Watcher on ScoutApm.Store
+[info] Setup ScoutApm.Watcher on ScoutApm.Config
+[info] Setup ScoutApm.Watcher on ScoutApm.PersistentHistogram
+[info] Setup ScoutApm.Watcher on ScoutApm.Logger
+[info] Setup ScoutApm.Watcher on ScoutApm.Supervisor</pre>
+
+        <p>
+          If none of the above appears, ensure <code>scout_apm</code> was added as a dependency. See the first step in the <a href="#elixir-install">Elixir install instructions</a>.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td>
+        <p>Is <code>use ScoutApm.Instrumentation</code> specified in <em>every</em> controller module you wish to instrument?</p>
+
+        <p>
+          This step is frequently missed if you are using multiple controller modules. See the third step in the <a href="#elixir-install">Elixir install instructions</a>.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">3</span>
+      </td>
+      <td>
+        <p>Still stuck? Email us.</p>
+
+        The following process helps us resolve issues faster:
+         <ul>
+            <li>Increase the log level of <code>scout_apm</code> by setting <code>log_level: "debug"</code> in your <code>config/scout_apm.exs</code> file and restart your app.</li>
+            <li>
+              Wait five minutes, then email <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> 
+              your log output and the application's <code>mix.lock</code> file.</li>
+          </ul>
+
+        <p>We typically respond within a couple of hours during the business day.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <h2 id="elixir-configuration">Configuration</h2>
 
@@ -191,7 +271,7 @@ The following configuration settings are available:
         The protocol + domain where the agent should report.
       </td>
       <td>
-        <code>https://apm.scoutapp.com</code>
+        <code>https://scoutapm.com</code>
       </td>
       <td>
         No
@@ -206,6 +286,34 @@ The following configuration settings are available:
       </td>
       <td>
         <code>:info</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        revision_sha
+      </th>
+      <td>
+        The Git SHA associated with this release.
+      </td>
+      <td>
+        <a href="#elixir-deploy-tracking-config">See docs</a>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        ignore
+      </th>
+      <td>
+        An array of URL prefixes to ignore in the Scout Plug instrumentation.
+      </td>
+      <td>
+        <code>[]</code>
       </td>
       <td>
         No
@@ -235,7 +343,13 @@ The following configuration settings are available:
 
 <h2 id="elixir-deploy-tracking-config">Deploy Tracking Config</h2>
 
-The Elixir agent doesn't support deploy tracking yet. Contact [support@scoutapp.com](support@scoutapp.com) to be notified of updates.
+Scout can [track deploys](#deploy-tracking), making it easier to correlate changes in your app to performance. To enable deploy tracking, first ensure you are on the latest version of `scout_apm`. See our [upgrade instructions](#elixir-upgrade).
+
+Scout identifies deploys via the following:
+
+1. A `revision_sha` config setting.
+2. A `SCOUT_REVISION_SHA` environment variable equal to the SHA of your latest release.
+3. If you are using Heroku, enable [Dyno Metadata](https://devcenter.heroku.com/articles/dyno-metadata). This adds a `HEROKU_SLUG_COMMIT` environment variable to your dynos, which Scout then associates with deploys.
 
 
 <h2 id="elixir-instrumented-libaries">Auto-Instrumented Libraries</h2>
@@ -246,16 +360,18 @@ Our [install instructions](#elixir-install) walk through instrumenting the follo
   * controllers
   * views
   * templates
-* Ecto 2.0
+* Ecto 2.0/3.0
+* Slime Templates
 
-See [instrumenting common librariess](/#instrumenting-common-libraries) for guides on instrumenting other Elixir libraries.
+See [instrumenting common libraries](/#instrumenting-common-libraries) for guides on instrumenting other Elixir libraries.
 
 ## Instrumenting Common Libraries
 
-We've collected best practices for instrumenting common transactions and timing functions below. If you have a suggestion, [please share it](mailto:support@scoutapp.com). See our [custom instrumentation quickstart](#elixir-custom-instrumentation) for more details on adding instrumentation.
+We've collected best practices for instrumenting common transactions and timing functions below. If you have a suggestion, [please share it](mailto:support@scoutapm.com). See our [custom instrumentation quickstart](#elixir-custom-instrumentation) for more details on adding instrumentation.
 
 * Transactions
   * [Phoenix Channels](#phoenix-channels)
+  * [Plug Chunked Response](#plug-chunked-response-http-streaming)
   * [GenServer calls](#genserver-calls)
   * [Task.start](#task-start)
   * [Task.Supervisor.start_child](#task-supervisor-start_child)
@@ -289,6 +405,55 @@ defmodule FirestormWeb.Web.PostsChannel do
     push socket, "update", FetchView.render("index.json", msg)
   end
 ```
+
+### Plug Chunked Response (HTTP Streaming)
+
+In a Plug application, a chunked response needs to be instrumented directly, rather than relying on
+the default Scout instrumentation Plug. The key part is to `start_layer` beforehand, and then call
+`before_send` after the chunked response is complete.
+
+```
+def chunked(conn, _params) do
+  # The "Controller" argument is required, and should not be changed. The second argument is the
+  # name this endpoint will appear as in the Scout UI. The `action_name` function determines this
+  # automatically.
+  ScoutApm.TrackedRequest.start_layer("Controller", ScoutApm.Plugs.ControllerTimer.action_name(conn))
+
+  conn =
+    conn
+    |> put_resp_content_type("text/plain")
+    |> send_chunked(200)
+
+  {:ok, conn} =
+    Repo.transaction(fn ->
+      Example.build_chunked_query(...)
+      |> Enum.reduce_while(conn, fn data, conn ->
+        case chunk(conn, data) do
+          {:ok, conn} ->
+            {:cont, conn}
+
+          {:error, :closed} ->
+            {:halt, conn}
+        end
+      end)
+    end)
+
+  ScoutApm.Plugs.ControllerTimer.before_send(conn)
+
+  conn
+end
+```
+
+Then have the default instrumentation ignore the endpoint's URL prefix (since it is manually instrumented now).
+See the [ignore configuration](#ignore-1) for more details.
+
+```
+config :scout_apm,
+  name: "My Scout App Name",
+  key: "My Scout Key",
+  ignore: ["/chunked"]
+```
+
 
 ### GenServer calls
 
@@ -359,18 +524,27 @@ Requests to the Absinthe plug can be grouped by the GraphQL `operationName` unde
 
 ### HTTPoison
 
-Download this <a href="https://gist.github.com/itsderek23/50296b49df16b266e47cc04d227d4b4a" target="_blank">ScoutApm.HTTPoison module</a> into your app's `/lib` folder, then `alias ScoutApm.HTTPoison` when calling `HTTPoison` functions:
+Download this <a href="https://gist.github.com/itsderek23/048eaf813af4a1a31a219d75221eb7b7" target="_blank">Demo.HTTPClient module</a> (you can rename to something more fitting) into your app's `/lib` folder, then `alias Demo.HTTPClient` when calling `HTTPoison` functions:
 
 ```elixir
 defmodule Demo.Web.PageController do
   use Demo.Web, :controller
-  # Will route function calls to `HTTPoision` through `ScoutApm.HTTPoison`, which times the execution of the HTTP call.
-  alias ScoutApm.HTTPoison
+  # Will route function calls to `HTTPoision` through `Demo.HTTPClient`, which times the execution of the HTTP call.
+  alias Demo.HTTPClient
 
   def index(conn, _params) do
     # "HTTP" will appear on timeseries charts. "HTTP/get" and the url "https://cnn.com" will appear in traces.
-    HTTPoison.get("https://cnn.com")
-    render conn, "index.html"
+    case HTTPClient.get("https://cnn.com") do
+      {:ok, %HTTPoison.Response{} = response} ->
+        # do something with response
+        render(conn, "index.html")
+      {:error, %HTTPoison.Error{} = error} ->
+        # do something with error
+        render(conn, "error.html")
+    end
+    HTTPClient.post("https://cnn.com", "")
+    HTTPClient.get!("http://localhost:4567")
+    render(conn, "index.html")
   end
 end
 ```
@@ -381,20 +555,23 @@ Download <a href="https://gist.github.com/itsderek23/051327a152bc4d95451fd76808b
 
 <h2 id="elixir-custom-instrumentation">Custom Instrumentation</h2>
 
-You can extend Scout to record additional types of transactions (background jobs, for example) and time the execution of code that fall outside our custom instrumentation.
+You can extend Scout to record additional types of transactions (background jobs, for example) and time the execution of code that fall outside our auto instrumentation.
 
 For full details on instrumentation functions, see our <a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html" target="_blank">ScoutApm.Tracing Hex docs</a>.
+
 
 ### Transactions & Timing
 
 Scout’s instrumentation is divided into 2 areas:
 
-1. __Transactions__: these wrap around a flow of work, like a web request or a GenServer call. The UI groups data under transactions. Use `@transaction` module attributes and the `transaction/4` macro.
-2. __Timing__: these measure individual pieces of work, like an HTTP request to an outside service or an Ecto query. Use `@timing` module attributes and the `timing/4` macro.
+1. __Transactions__: these wrap around a flow of work, like a web request or a GenServer call. The UI groups data under transactions. Use the `deftransaction/2` macro or wrap blocks of code with the `transaction/4` macro.
+2. __Timing__: these measure individual pieces of work, like an HTTP request to an outside service or an Ecto query, and displays timing information within a transaction trace. Use the `deftiming/2` macro or the `timing/4` macro.
 
 ### Instrumenting transactions
 
-Via `@transaction` module attributes:
+#### deftransaction Macro Example
+
+Replace your function `def` with `deftransaction` to instrument it. You can override the name and type by setting the `@transaction_opts` attribute right before the function.
 
 ```elixir
 defmodule YourApp.Web.RoomChannel do
@@ -402,20 +579,22 @@ defmodule YourApp.Web.RoomChannel do
   use ScoutApm.Tracing
 
   # Will appear under "Web" in the UI, named "YourApp.Web.RoomChannel.join".
-  @transaction(type: "web")
-  def join("topic:html", _message, socket) do
+  @transaction_opts [type: "web"]
+  deftransaction join("topic:html", _message, socket) do
     {:ok, socket}
   end
 
   # Will appear under "Background Jobs" in the UI, named "RoomChannel.ping".
-  @transaction(type: "background", name: "RoomChannel.ping")
-  def handle_in("ping", %{"body" => body}, socket) do
+  @transaction_opts [type: "background", name: "RoomChannel.ping"]
+  deftransaction handle_in("ping", %{"body" => body}, socket) do
     broadcast! socket, "new_msg", %{body: body}
     {:noreply, socket}
   end
 ```
 
-Via `transaction/4`:
+#### transaction/4 Example
+
+Wrap the block of code you'd like to instrument with `transaction/4`:
 
 ```elixir
 import ScoutApm.Tracking
@@ -434,7 +613,10 @@ See the <a href="https://hexdocs.pm/scout_apm/ScoutApm.Tracing.html" target="_bl
 
 ### Timing functions and blocks of code
 
-Via `@timing` module attributes:
+#### deftiming Macro Example
+
+Replace your function `def` with `deftiming` to instrument it. You can override the name and category by setting the `@timing_opts` attribute right before the function.
+
 
 ```elixir
 defmodule Searcher do
@@ -442,20 +624,22 @@ defmodule Searcher do
 
   # Time associated with this function will appear under "Hound" in timeseries charts.
   # The function will appear as `Hound/open_search` in transaction traces.
-  @timing(category: "Hound")
-  def open_search(url) do
+  @timing_opts [category: "Hound"]
+  deftiming open_search(url) do
     navigate_to(url)
   end
 
   # Time associated with this function will appear under "Hound" in timeseries charts.
   # The function will appear as `Hound/homepage` in transaction traces.
-  @timing(category: "Hound", name: "homepage")
-  def open_homepage(url) do
+  @timing_opts [category: "Hound", name: "homepage"]
+  deftiming open_homepage(url) do
     navigate_to(url)
   end
 ```
 
-Via `timing/4`:
+#### timing/4 Example
+
+Wrap the block of code you'd like to instrument with `timing/4`:
 
 ```elixir
 defmodule PhoenixApp.PageController do
@@ -633,3 +817,12 @@ config :scout_apm,
     </tr>
   </tbody>
 </table>
+
+<h2 id="elixir-server-timing">Server Timing</h2>
+
+View performance metrics (time spent in Controller, Ecto, etc) for each of your app's requests in Chrome’s Developer tools with the [plug_server_timing](https://github.com/scoutapp/elixir_plug_server_timing) package. Production-safe.
+
+![server timing](https://s3-us-west-1.amazonaws.com/scout-blog/elixir_server_timing.png
+)
+
+For install instructions and configuration options, see [plug_server_timing](https://github.com/scoutapp/elixir_plug_server_timing) on GitHub.
