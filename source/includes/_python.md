@@ -577,7 +577,7 @@ We typically respond within a couple of hours during the business day.
         core_agent_download
       </th>
       <td>
-        Wether to download the [Core Agent](#core-agent) automatically, if needed.
+        Whether to download the [Core Agent](#core-agent) automatically, if needed.
       </td>
       <td>
         <code>True</code> 
@@ -591,7 +591,7 @@ We typically respond within a couple of hours during the business day.
         core_agent_launch
       </th>
       <td>
-        Wether to start the [Core Agent](#core-agent) automatically, if needed.
+        Whether to start the [Core Agent](#core-agent) automatically, if needed.
       </td>
       <td>
         <code>True</code> 
@@ -619,7 +619,7 @@ We typically respond within a couple of hours during the business day.
         core_agent_triple
       </th>
       <td>
-        If you are running a MUSL based Linux (such as ArchLinux), you may need to explicitly specify the platform triple. E.g. <code>x86_64-unknown-linux-musl</code>code>
+        If you are running a MUSL based Linux (such as ArchLinux), you may need to explicitly specify the platform triple. E.g. <code>x86_64-unknown-linux-musl</code>
       </td>
       <td>
         Auto detected
