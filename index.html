@@ -1721,7 +1721,7 @@ with :system as the first value and the environment variable expected as the sec
         ignore
       </th>
       <td>
-        An array of URL prefixes to ignore in the Scout Plug instrumentation.
+        An array of URL prefixes to ignore in the Scout Plug instrumentation. Routes that match the prefixed path (ex: <code>['/health', '/status']</code>) will be ignored by the agent.
       </td>
       <td>
         <code>[]</code>
@@ -2147,6 +2147,19 @@ See the <a href="#ignore-1">ignore configuration</a> for more details.</p>
 
 <span class="n">config</span> <span class="ss">:scout_apm</span><span class="p">,</span>
   <span class="ss">name:</span> <span class="sd">"</span><span class="s2">YOUR APP - Staging"</span>
+</code></pre>
+<h2 id="elixir-ignoring-transactions">Ignoring Transactions</h2>
+
+<p>There are a couple of approaches to ignore web requests and background jobs you don&rsquo;t care to instrument. These approaches are listed below.</p>
+
+<h3 id="by-the-web-endpoint-path-name">By the web endpoint path name</h3>
+
+<p>You can ignore requests to web endpoints that match specific paths (like <code class="prettyprint">/health_check</code>). See the <code class="prettyprint">ignore</code> setting in the <a href="#elixir-configuration">configuration options</a>.</p>
+
+<h3 id="in-your-code">In your code</h3>
+
+<p>To selectively ignore a web request or background job in your code, add the following within the transaction:</p>
+<pre class="highlight elixir tab-elixir"><code><span class="no">ScoutApm</span><span class="o">.</span><span class="no">TrackedRequest</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>
 </code></pre>
 <!-- old reference -->
 
@@ -3606,7 +3619,61 @@ OSX/Darwin x86-64</p>
 <li><strong>List of transaction traces</strong> - the bottom portion of the page lists the <a href="#transaction-traces">individual traces</a>. The traces are updated to reflect those that match any filtered dimensions. You can increase the height of this pane by clicking and dragging the top portion of the pane. Clicking on a trace URI opens the transaction trace in a new browser tab.</li>
 </ul>
 
+<h2 id="autoinstruments">AutoInstruments</h2>
+
+<aside class="notice">AutoInstruments is in our BETA program.</aside>
+
+<p>In many apps, more than 30% of the time spent in a transaction is within custom code written by your development team. In traces, this shows up as time spent in &ldquo;Controller&rdquo; or &ldquo;Job&rdquo;. AutoInstruments helps break down the time spent in your custom code without the need to add custom instrumentation on your own.</p>
+
+<p>AutoInstruments instruments code expressions in Ruby on Rails controllers by instrumenting Ruby’s Abstract Syntax Tree (<a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a>) as code is loaded. These code expressions then appear in traces, just like the many libraries Scout already instruments:</p>
+
+<p><img src="images/auto_instrument_trace.png" alt="auto instruments trace" /></p>
+
+<p>In the screenshot of a trace above, 68% of the time would be allocated to the <code class="prettyprint">Controller</code> without enabling AutoInstruments. With AutoInstruments enabled, <code class="prettyprint">Controller</code> time is just 3% of the request and we can clearly see that most of the time is spent inside two method calls.</p>
+
+<p>AutoInstruments is currently available for Ruby on Rails applications.</p>
+
+<h3 id="enabling-autoinstruments">Enabling AutoInstruments</h3>
+
+<p>AutoInstruments is a BETA feature and available to apps using Ruby 2.3.1+. To enable:</p>
+
+<table class="help install">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td>
+        <p>Modify your <code>Gemfile</code> entry for <code>scout_apm</code>, 
+          changing it to:</p>
+          <pre>gem 'scout_apm', git: 'https://github.com/scoutapp/scout_apm_ruby.git', branch: 'auto_instruments'
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">2</span></td>
+      <td><p>Within your Rails app&rsquo;s directory, run:</p><pre>bundle update scout_apm</pre></td>
+    </tr>
+    <tr>
+      <td><span class="step">2</span></td>
+      <td>
+        <p>In your <code>config/boot.rb</code> add:</p>
+        <pre>
+# Added AFTER `File.expand_path('../../Gemfile', __FILE__)`
+# But BEFORE `require 'bundler/setup'`
+require 'scout_apm/auto_instrument'</pre>
+      </td>
+    </tr>
+      <tr>
+      <td><span class="step">3</span></td>
+      <td><p>Deploy</p></td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="scoutprof">ScoutProf</h2>
+
+<aside class="notice">ScoutProf will be deprecated and succeeded by <a href="#autoinstruments">AutoInstruments</a>.</aside>
 
 <p>Every millisecond, ScoutProf captures a backtrace of what each thread in your application is currently running.  Over many backtraces, when you combine them, it tells a story of what code paths are taking up the most time in your application.</p>
 
