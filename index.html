@@ -3661,13 +3661,13 @@ OSX/Darwin x86-64</p>
 
 <h2 id="transaction-traces">Transaction Traces</h2>
 
-<p>Scout collects detailed transactions across your web endpoints and background jobs automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. </p>
+<p>Scout collects detailed transactions across your web endpoints and background jobs automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view.</p>
 
 <p><img src="images/trace_timeline.png" alt="transaction traces" /></p>
 
 <h3 id="sql-queries">SQL Queries</h3>
 
-<p>Scout captures a sanitized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details. </p>
+<p>Scout captures a sanitized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details.</p>
 
 <p><img src="images/stream_show_sql_annotated.png" alt="stream show sql" /></p>
 
@@ -3702,7 +3702,7 @@ OSX/Darwin x86-64</p>
 
 <h4 id="timeline-view">Timeline View</h4>
 
-<p>See the execution order of your code. </p>
+<p>See the execution order of your code.</p>
 
 <p><img src="images/trace_timeline_annotated.png" alt="trace timeline" /></p>
 
@@ -3733,7 +3733,7 @@ OSX/Darwin x86-64</p>
 
 <p><img src="https://s3-us-west-1.amazonaws.com/scout-blog/s_vs_nr/crossfilter.gif" alt="crossfilter" /></p>
 
-<p>Trace Explorer is accessed via the &ldquo;Traces&rdquo; navigation link when viewing an app. </p>
+<p>Trace Explorer is accessed via the &ldquo;Traces&rdquo; navigation link when viewing an app.</p>
 
 <h3 id="how-to-use-trace-explorer">How to use Trace Explorer</h3>
 
@@ -3769,7 +3769,7 @@ OSX/Darwin x86-64</p>
         <span class="step">1</span>
       </td>
       <td>
-        <p>Modify your <code>Gemfile</code> entry for <code>scout_apm</code>, 
+        <p>Modify your <code>Gemfile</code> entry for <code>scout_apm</code>,
           changing it to:</p>
           <pre>gem 'scout_apm', git: 'https://github.com/scoutapp/scout_apm_ruby.git', branch: 'auto_instruments'
 </pre>
@@ -3779,24 +3779,12 @@ OSX/Darwin x86-64</p>
       <td><span class="step">2</span></td>
       <td><p>Within your Rails app&rsquo;s directory, run:</p><pre>bundle update scout_apm</pre></td>
     </tr>
-    <tr>
-      <td><span class="step">2</span></td>
-      <td>
-        <p>In your <code>config/boot.rb</code> add:</p>
-        <pre>
-# Added AFTER `File.expand_path('../../Gemfile', __FILE__)`
-# But BEFORE `require 'bundler/setup'`
-require 'scout_apm/auto_instrument'</pre>
-      </td>
-    </tr>
       <tr>
       <td><span class="step">3</span></td>
       <td><p>Deploy</p></td>
     </tr>
   </tbody>
 </table>
-
-<p>AutoInstruments isn&rsquo;t compatible with <a href="https://github.com/Shopify/bootsnap">Bootsnap</a>. Disable Bootsnap before using AutoInstruments.</p>
 
 <h2 id="scoutprof">ScoutProf</h2>
 
@@ -4038,7 +4026,7 @@ require 'scout_apm/auto_instrument'</pre>
 
 <p><img src="images/chart_embed.png" alt="chart_embed" /></p>
 
-<p>Note that you&rsquo;ll need to update the provided iframe url with a Scout API key. </p>
+<p>Note that you&rsquo;ll need to update the provided iframe url with a Scout API key.</p>
 
 <p>When clicking on an embedded chart, you&rsquo;ll be redirected to the relevant application.</p>
 
