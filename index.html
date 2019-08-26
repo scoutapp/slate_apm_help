@@ -2248,9 +2248,11 @@ Source code and issues can be found on our <a href="https://github.com/scoutapp/
 <li>Template blocks</li>
 <li>SQL queries</li>
 </ul></li>
+<li><a href="#dramatiq">Dramatiq</a></li>
 <li><a href="#falcon">Falcon</a></li>
 <li><a href="#flask">Flask</a></li>
 <li><a href="#flask-sqlalchemy">Flask SQLAlchemy</a></li>
+<li><a href="#nameko">Nameko</a></li>
 <li><a href="#pyramid">Pyramid</a></li>
 <li><a href="#sqlalchemy">SQLAlchemy</a></li>
 </ul>
@@ -2478,6 +2480,67 @@ MIDDLEWARE_CLASSES = [
 ]
 </pre>
 
+<h2 id="dramatiq">Dramatiq</h2>
+
+<p>Scout supports Dramatiq 1.0+.</p>
+
+<p>Add the following to instrument Dramatiq workers:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Add Scout to your Dramatiq broker:</p>
+<pre class="terminal" style="width: initial">
+import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
+<span>from scout_apm.dramatiq import ScoutMiddleware</span>
+<span>from scout_apm.api import Config</span>
+
+broker = RabbitmqBroker()
+<span>broker.add_middleware(ScoutMiddleware(), before=broker.middleware[0].__class__)</span>
+
+<span>
+Config.set(
+    key="SCOUT_KEY",
+    name="Same as Web App Name",
+    monitor=True,
+)
+</span>
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of calling <code>Config.set</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+        <p>Tasks will appear in the &ldquo;Background Jobs&rdquo; area of the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="falcon">Falcon</h2>
 
 <p>Scout supports Falcon 2.0+.</p>
@@ -2602,6 +2665,68 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <span class="c"># Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)</span>
 <span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
 </code></pre>
+<h2 id="nameko">Nameko</h2>
+
+<p>General instructions for a Nameko app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Configure scout once in the root of your app, and add a `ScoutReporter` to each Nameko service:</p>
+
+<pre style="width:initial">
+from scout_apm.api import Config
+from scout_apm.nameko import ScoutReporter
+
+
+Config.set(
+    key=os.environ["SCOUT_KEY"],
+    name="Test Nameko App",
+    monitor=True,
+)
+
+class Service(object):
+    name = "myservice"
+
+    scout = ScoutReporter()
+
+    @http("GET", "/")
+    def home(self, request):
+        return "Welcome home."
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>Config.set</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="pyramid">Pyramid</h2>
 
 <p>General instructions for a Pyramid app:</p>
@@ -2705,7 +2830,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
       <td>
         The organization API key.
       </td>
-      <td>       
+      <td>
       </td>
       <td>
         Yes
@@ -2718,7 +2843,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
       <td>
         Name of the application (ex: &lsquo;Photos App&rsquo;).
       </td>
-      <td>       
+      <td>
       </td>
       <td>
         Yes
@@ -2732,7 +2857,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         Whether monitoring data should be reported.
       </td>
       <td>
-        <code>false</code>       
+        <code>false</code>
       </td>
       <td>
         Yes
@@ -2746,7 +2871,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         The hostname the metrics should be aggregrated under.
       </td>
       <td>
-        <code>hostname</code>       
+        <code>hostname</code>
       </td>
       <td>
         Yes
@@ -2760,7 +2885,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         The Git SHA associated with this release.
       </td>
       <td>
-        <a href="#python-deploy-tracking-config">See docs</a>   
+        <a href="#python-deploy-tracking-config">See docs</a>
       </td>
       <td>
         No
@@ -2787,7 +2912,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         Path to create the directory which will store the [Core Agent](#core-agent).
       </td>
       <td>
-        <code>/tmp/scout_apm_core</code> 
+        <code>/tmp/scout_apm_core</code>
       </td>
       <td>
         No
@@ -2801,7 +2926,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         Whether to download the [Core Agent](#core-agent) automatically, if needed.
       </td>
       <td>
-        <code>True</code> 
+        <code>True</code>
       </td>
       <td>
         No
@@ -2815,7 +2940,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         Whether to start the [Core Agent](#core-agent) automatically, if needed.
       </td>
       <td>
-        <code>True</code> 
+        <code>True</code>
       </td>
       <td>
         No
@@ -2829,7 +2954,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         The permission bits to set when creating the directory of the [Core Agent](#core-agent).
       </td>
       <td>
-        <code>700</code> 
+        <code>700</code>
       </td>
       <td>
         No
@@ -3060,7 +3185,7 @@ logging.basicConfig(level='DEBUG')
 
 <h4 id="python-span-limits">Limits</h4>
 
-<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation_for_user_&quot; + user.email)</code>) as this can quickly exceed our rate limits. </p>
+<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation_for_user_&quot; + user.email)</code>) as this can quickly exceed our rate limits.</p>
 
 <p>For high-cardinality details, use tags: <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation&quot;, tags={&quot;user&quot;: user.email})</code>.</p>
 
@@ -3670,6 +3795,8 @@ require 'scout_apm/auto_instrument'</pre>
     </tr>
   </tbody>
 </table>
+
+<p>AutoInstruments isn&rsquo;t compatible with <a href="https://github.com/Shopify/bootsnap">Bootsnap</a>. Disable Bootsnap before using AutoInstruments.</p>
 
 <h2 id="scoutprof">ScoutProf</h2>
 
