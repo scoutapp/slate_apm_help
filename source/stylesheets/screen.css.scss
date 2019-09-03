@@ -47,7 +47,8 @@ html, body {
   width: 20px;
 }
 
-.toc-wrapper {
+
+.tocify-wrapper {
   transition: left 0.3s ease-in-out;
 
   overflow-y: auto;
@@ -134,6 +135,14 @@ html, body {
   }
 
 
+  .tocify-item>a, .toc-footer li {
+    padding: 0 $nav-padding 0 $nav-padding;
+    display: block;
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   // The Table of Contents is composed of multiple nested
   // unordered lists.  These styles remove the default
   // styling of an unordered list because it is ugly.
@@ -148,30 +157,26 @@ html, body {
     color: $nav-text;
     transition-property: background;
     transition-timing-function: linear;
-    transition-duration: 200ms;
+    transition-duration: 230ms;
   }
 
   // This is the currently selected ToC entry
-  .toc-link.active {
+  .tocify-focus {
     background-color: $nav-active-bg;
     color: $nav-active-text;
   }
 
-  // this is parent links of the currently selected ToC entry
-  .toc-link.active-parent {
-    background-color: $nav-active-parent-bg;
-    color: $nav-active-parent-text;
-  }
-
-  .toc-list-h2 {
-    display: none;
+  // Subheaders are the submenus that slide open
+  // in the table of contents.
+  .tocify-subheader {
+    display: none; // tocify will override this when needed
     background-color: $nav-subitem-bg;
     font-weight: 500;
-  }
 
-  .toc-h2 {
-    padding-left: $nav-padding + $nav-indent;
-    font-size: 12px;
+    .tocify-item>a {
+      padding-left: $nav-padding + $nav-indent;
+      font-size: 12px;
+    }
   }
 
   .toc-footer {
@@ -194,19 +199,6 @@ html, body {
       text-decoration: none;
     }
   }
-}
-
-.toc-link, .toc-footer li {
-  padding: 0 $nav-padding 0 $nav-padding;
-  display: block;
-  overflow-x: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  text-decoration: none;
-  color: $nav-text;
-  transition-property: background;
-  transition-timing-function: linear;
-  transition-duration: 130ms;
 }
 
 // button to show navigation on mobile devices
@@ -556,7 +548,7 @@ html, body {
 // There are also a couple styles disperesed
 
 @media (max-width: $tablet-width) {
-  .toc-wrapper {
+  .tocify-wrapper {
     left: -$nav-width;
 
     &.open {
@@ -572,7 +564,7 @@ html, body {
     display: block;
   }
 
-  .toc-link {
+  .tocify-wrapper .tocify-item > a {
     padding-top: 0.3em;
     padding-bottom: 0.3em;
   }
@@ -587,7 +579,7 @@ html, body {
     margin-right: 0;
   }
 
-  .toc-wrapper .lang-selector {
+  .tocify-wrapper .lang-selector {
     display: block;
   }
 
