@@ -795,6 +795,16 @@ tail -n1000 log/production.log | grep "Processing"
        </td>
       <td>No</td>
     </tr>
+    <tr>
+      <th id="auto_instruments_config">auto_instruments</th>
+      <td>
+        Instrument custom code with <a href="#autoinstruments">AutoInstruments</a>.
+      </td>
+       <td>
+         <code>false</code>
+       </td>
+      <td>No</td>
+    </tr>
   </tbody>
 </table>
 
@@ -896,7 +906,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>If you are using Apache, you may observe a spike in queue time within Scout for actions that process large file uploads. Apache adds the <code class="prettyprint">X-Request-Start</code> header as soon as the request hits Apache. So, all of the time spent uploading a file will be reported as queue time.</p>
 
-<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request. </p>
+<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request.</p>
 
 <h3 id="haproxy">HAProxy</h3>
 
@@ -1399,9 +1409,9 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <h2 id="overhead-considerations">Overhead Considerations</h2>
 
-<p>Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions. </p>
+<p>Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions.</p>
 
-<p>There are a couple of scenarios worth mentioning where more overhead than expected may be observed. </p>
+<p>There are a couple of scenarios worth mentioning where more overhead than expected may be observed.</p>
 
 <h3 id="enabling-the-detailed_middleware-option">Enabling the detailed_middleware option</h3>
 
@@ -3765,20 +3775,29 @@ OSX/Darwin x86-64</p>
 <table class="help install">
   <tbody>
     <tr>
-      <td>
-        <span class="step">1</span>
-      </td>
-      <td>
-        <p>Modify your <code>Gemfile</code> entry for <code>scout_apm</code>,
-          changing it to:</p>
-          <pre>gem 'scout_apm', git: 'https://github.com/scoutapp/scout_apm_ruby.git', branch: 'auto_instruments'
-</pre>
+      <td><span class="step">1</span></td>
+      <td><p>Within your Rails app&rsquo;s directory, run:</p><pre>bundle update scout_apm</pre>
+<p>AutoInstruments was released in <code>scout_apm</code> version 2.6.0.</p>
       </td>
     </tr>
     <tr>
       <td><span class="step">2</span></td>
-      <td><p>Within your Rails app&rsquo;s directory, run:</p><pre>bundle update scout_apm</pre></td>
+      <td><p>Set the <code>auto_instruments</code> <a href="auto_instruments_config">config option</a> to <code>true</code>.</p>
+
+      If you are using a config file:
+<pre>
+# config/scout_apm.yml
+production:
+  auto_instruments: true</pre>
+
+        If you are using environment variables:
+<pre>
+SCOUT_AUTO_INSTRUMENTS=true</pre>
+      </td>
+
+
     </tr>
+
       <tr>
       <td><span class="step">3</span></td>
       <td><p>Deploy</p></td>
