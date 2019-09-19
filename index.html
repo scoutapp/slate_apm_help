@@ -795,6 +795,16 @@ tail -n1000 log/production.log | grep "Processing"
        </td>
       <td>No</td>
     </tr>
+    <tr>
+      <th id="auto_instruments_config">auto_instruments</th>
+      <td>
+        Instrument custom code with <a href="#autoinstruments">AutoInstruments</a>.
+      </td>
+       <td>
+         <code>false</code>
+       </td>
+      <td>No</td>
+    </tr>
   </tbody>
 </table>
 
@@ -896,7 +906,7 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>If you are using Apache, you may observe a spike in queue time within Scout for actions that process large file uploads. Apache adds the <code class="prettyprint">X-Request-Start</code> header as soon as the request hits Apache. So, all of the time spent uploading a file will be reported as queue time.</p>
 
-<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request. </p>
+<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request.</p>
 
 <h3 id="haproxy">HAProxy</h3>
 
@@ -1399,9 +1409,9 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 
 <h2 id="overhead-considerations">Overhead Considerations</h2>
 
-<p>Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions. </p>
+<p>Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions.</p>
 
-<p>There are a couple of scenarios worth mentioning where more overhead than expected may be observed. </p>
+<p>There are a couple of scenarios worth mentioning where more overhead than expected may be observed.</p>
 
 <h3 id="enabling-the-detailed_middleware-option">Enabling the detailed_middleware option</h3>
 
@@ -1437,9 +1447,9 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
     <pre class="terminal"># mix.exs
 
  def deps do
-   [{:phoenix, "~> 1.2.0"},
+   [{:phoenix, "~> 1.4.0"},
     ...
-    <span>{:scout_apm, "~> 0.0"}</span>]
+    <span>{:scout_apm, "~> 1.0"}</span>]
  end</pre>
     <p class="smaller">If your Mixfile manually specifies <code>applications</code>, <code>:scout_apm</code> must be added:</p>
     <pre class="terminal"># mix.exs
@@ -1521,7 +1531,7 @@ end
     <p class="instruct">
       <span class="step">E</span>Restart your app.
       <div class="terminal">
-        mix phoenix.server
+        mix phx.server
       </div>
     </p>
 
@@ -1558,6 +1568,14 @@ end
         <span class="step">2</span>
       </td>
       <td>
+      <p>Run <code>mix scout.test_config</code> in your terminal to check for any configuration issues</p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">3</span>
+      </td>
+      <td>
         <p>Is <code>use ScoutApm.Instrumentation</code> specified in <em>every</em> controller module you wish to instrument?</p>
 
         <p>
@@ -1567,7 +1585,7 @@ end
     </tr>
     <tr>
       <td>
-        <span class="step">3</span>
+        <span class="step">4</span>
       </td>
       <td>
         <p>Still stuck? Email us.</p>
@@ -1730,6 +1748,103 @@ with :system as the first value and the environment variable expected as the sec
         No
       </td>
     </tr>
+    <tr>
+      <th>
+        core_agent_dir
+      </th>
+      <td>
+        Path to create the directory which will store the <a href="#core-agent">Core Agent</a>.
+      </td>
+      <td>
+        <code>/tmp/scout_apm_core</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        core_agent_download
+      </th>
+      <td>
+        Whether to download the <a href="#core-agent">Core Agent</a> automatically, if needed.
+      </td>
+      <td>
+        <code>True</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        core_agent_launch
+      </th>
+      <td>
+        Whether to start the <a href="#core-agent">Core Agent</a> automatically, if needed.
+      </td>
+      <td>
+        <code>True</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        core_agent_tcp_ip
+      </th>
+      <td>
+        The TCP IP address the <a href="#core-agent">Core Agent</a> uses to communicate with your application.
+      </td>
+      <td>
+        <code>{127, 0, 0, 1}</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        core_agent_tcp_port
+      </th>
+      <td>
+        The TCP port the <a href="#core-agent">Core Agent</a> uses to communicate with your application.
+      </td>
+      <td>
+        <code>9000</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        core_agent_triple
+      </th>
+      <td>
+        If you are running a MUSL based Linux (such as ArchLinux), you may need to explicitly specify the platform triple. E.g. <code>x86_64-unknown-linux-musl</code>
+      </td>
+      <td>
+        Auto detected
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        hostname
+      </th>
+      <td>
+        The host registered with the <a href="#core-agent">.
+      </td>
+      <td>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -1822,13 +1937,14 @@ with :system as the first value and the environment variable expected as the sec
 <p>An example:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">FirestormWeb</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">PostsChannel</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">FirestormWeb</span><span class="o">.</span><span class="no">Web</span><span class="p">,</span> <span class="ss">:channel</span>
-  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Will appear under "Web" in the UI, named "PostsChannel.update"</span>
-  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">PostsChannel.update"</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">handle_out</span><span class="p">(</span><span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nv">@transaction_opts</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">PostsChannel.update"</span><span class="p">]</span>
+  <span class="n">deftransaction</span> <span class="n">handle_out</span><span class="p">(</span><span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">socket</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">push</span> <span class="n">socket</span><span class="p">,</span> <span class="sd">"</span><span class="s2">update"</span><span class="p">,</span> <span class="no">FetchView</span><span class="o">.</span><span class="n">render</span><span class="p">(</span><span class="sd">"</span><span class="s2">index.json"</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
   <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
 <h3 id="plug-chunked-response-http-streaming">Plug Chunked Response (HTTP Streaming)</h3>
 
@@ -1884,13 +2000,14 @@ See the <a href="#ignore-1">ignore configuration</a> for more details.</p>
 <p>An example:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Flight</span><span class="o">.</span><span class="no">Checker</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">GenServer</span>
-  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Will appear under "Background Jobs" in the UI, named "Flight.handle_check".</span>
-  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">check"</span><span class="p">)</span>
+  <span class="nv">@transaction_opts</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">,</span> <span class="ss">name:</span> <span class="sd">"</span><span class="s2">check"</span><span class="p">]</span>
   <span class="k">def</span> <span class="n">handle_call</span><span class="p">({</span><span class="ss">:check</span><span class="p">,</span> <span class="n">flight</span><span class="p">},</span> <span class="n">_from</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
     <span class="c1"># Do work...</span>
   <span class="k">end</span>
+<span class="k">end</span>
 </code></pre>
 <h3 id="task-start">Task.start</h3>
 
@@ -1914,13 +2031,13 @@ See the <a href="#ignore-1">ignore configuration</a> for more details.</p>
 </code></pre>
 <h3 id="exq">Exq</h3>
 
-<p>To instrument <a href="https://github.com/akira/exq">Exq</a> background jobs, <code class="prettyprint">use ScoutApm.Tracing</code>, and add a <code class="prettyprint">@transaction</code> module attribute to each worker&rsquo;s <code class="prettyprint">perform</code> function:</p>
+<p>To instrument <a href="https://github.com/akira/exq">Exq</a> background jobs, <code class="prettyprint">import ScoutApm.Tracing</code>, use <code class="prettyprint">deftransaction</code> to define the function, and add a <code class="prettyprint">@transaction_opts</code> module attribute to optionally override the name and type:</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">MyWorker</span> <span class="k">do</span>
-  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Will appear under "Background Jobs" in the UI, named "MyWorker.perform".</span>
-  <span class="nv">@transaction</span><span class="p">(</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">)</span>
-  <span class="k">def</span> <span class="n">perform</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nv">@transaction_opts</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">background"</span><span class="p">]</span>
+  <span class="n">deftransaction</span> <span class="n">perform</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span> <span class="k">do</span>
     <span class="c1"># do work</span>
   <span class="k">end</span>
 <span class="k">end</span>
@@ -1979,7 +2096,7 @@ See the <a href="#ignore-1">ignore configuration</a> for more details.</p>
 <p>Replace your function <code class="prettyprint">def</code> with <code class="prettyprint">deftransaction</code> to instrument it. You can override the name and type by setting the <code class="prettyprint">@transaction_opts</code> attribute right before the function.</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">RoomChannel</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Channel</span>
-  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Will appear under "Web" in the UI, named "YourApp.Web.RoomChannel.join".</span>
   <span class="nv">@transaction_opts</span> <span class="p">[</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">web"</span><span class="p">]</span>
@@ -2016,7 +2133,7 @@ See the <a href="#ignore-1">ignore configuration</a> for more details.</p>
 
 <p>Replace your function <code class="prettyprint">def</code> with <code class="prettyprint">deftiming</code> to instrument it. You can override the name and category by setting the <code class="prettyprint">@timing_opts</code> attribute right before the function.</p>
 <pre class="highlight elixir tab-elixir"><code><span class="k">defmodule</span> <span class="no">Searcher</span> <span class="k">do</span>
-  <span class="kn">use</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
+  <span class="kn">import</span> <span class="no">ScoutApm</span><span class="o">.</span><span class="no">Tracing</span>
 
   <span class="c1"># Time associated with this function will appear under "Hound" in timeseries charts.</span>
   <span class="c1"># The function will appear as `Hound/open_search` in transaction traces.</span>
@@ -2248,9 +2365,11 @@ Source code and issues can be found on our <a href="https://github.com/scoutapp/
 <li>Template blocks</li>
 <li>SQL queries</li>
 </ul></li>
+<li><a href="#dramatiq">Dramatiq</a></li>
 <li><a href="#falcon">Falcon</a></li>
 <li><a href="#flask">Flask</a></li>
 <li><a href="#flask-sqlalchemy">Flask SQLAlchemy</a></li>
+<li><a href="#nameko">Nameko</a></li>
 <li><a href="#pyramid">Pyramid</a></li>
 <li><a href="#sqlalchemy">SQLAlchemy</a></li>
 </ul>
@@ -2478,6 +2597,67 @@ MIDDLEWARE_CLASSES = [
 ]
 </pre>
 
+<h2 id="dramatiq">Dramatiq</h2>
+
+<p>Scout supports Dramatiq 1.0+.</p>
+
+<p>Add the following to instrument Dramatiq workers:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Add Scout to your Dramatiq broker:</p>
+<pre class="terminal" style="width: initial">
+import dramatiq
+from dramatiq.brokers.rabbitmq import RabbitmqBroker
+<span>from scout_apm.dramatiq import ScoutMiddleware</span>
+<span>from scout_apm.api import Config</span>
+
+broker = RabbitmqBroker()
+<span>broker.add_middleware(ScoutMiddleware(), before=broker.middleware[0].__class__)</span>
+
+<span>
+Config.set(
+    key="SCOUT_KEY",
+    name="Same as Web App Name",
+    monitor=True,
+)
+</span>
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of calling <code>Config.set</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+        <p>Tasks will appear in the &ldquo;Background Jobs&rdquo; area of the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="falcon">Falcon</h2>
 
 <p>Scout supports Falcon 2.0+.</p>
@@ -2602,6 +2782,68 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <span class="c"># Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)</span>
 <span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
 </code></pre>
+<h2 id="nameko">Nameko</h2>
+
+<p>General instructions for a Nameko app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Configure scout once in the root of your app, and add a `ScoutReporter` to each Nameko service:</p>
+
+<pre style="width:initial">
+from scout_apm.api import Config
+from scout_apm.nameko import ScoutReporter
+
+
+Config.set(
+    key=os.environ["SCOUT_KEY"],
+    name="Test Nameko App",
+    monitor=True,
+)
+
+class Service(object):
+    name = "myservice"
+
+    scout = ScoutReporter()
+
+    @http("GET", "/")
+    def home(self, request):
+        return "Welcome home."
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>Config.set</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="pyramid">Pyramid</h2>
 
 <p>General instructions for a Pyramid app:</p>
@@ -2705,7 +2947,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
       <td>
         The organization API key.
       </td>
-      <td>       
+      <td>
       </td>
       <td>
         Yes
@@ -2718,7 +2960,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
       <td>
         Name of the application (ex: &lsquo;Photos App&rsquo;).
       </td>
-      <td>       
+      <td>
       </td>
       <td>
         Yes
@@ -2732,7 +2974,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         Whether monitoring data should be reported.
       </td>
       <td>
-        <code>false</code>       
+        <code>false</code>
       </td>
       <td>
         Yes
@@ -2746,7 +2988,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         The hostname the metrics should be aggregrated under.
       </td>
       <td>
-        <code>hostname</code>       
+        <code>hostname</code>
       </td>
       <td>
         Yes
@@ -2760,7 +3002,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         The Git SHA associated with this release.
       </td>
       <td>
-        <a href="#python-deploy-tracking-config">See docs</a>   
+        <a href="#python-deploy-tracking-config">See docs</a>
       </td>
       <td>
         No
@@ -2784,10 +3026,10 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         core_agent_dir
       </th>
       <td>
-        Path to create the directory which will store the [Core Agent](#core-agent).
+        Path to create the directory which will store the <a href="#core-agent">Core Agent</a>.
       </td>
       <td>
-        <code>/tmp/scout_apm_core</code> 
+        <code>/tmp/scout_apm_core</code>
       </td>
       <td>
         No
@@ -2798,10 +3040,10 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         core_agent_download
       </th>
       <td>
-        Whether to download the [Core Agent](#core-agent) automatically, if needed.
+        Whether to download the <a href="#core-agent">Core Agent</a> automatically, if needed.
       </td>
       <td>
-        <code>True</code> 
+        <code>True</code>
       </td>
       <td>
         No
@@ -2812,10 +3054,10 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         core_agent_launch
       </th>
       <td>
-        Whether to start the [Core Agent](#core-agent) automatically, if needed.
+        Whether to start the <a href="#core-agent">Core Agent</a> automatically, if needed.
       </td>
       <td>
-        <code>True</code> 
+        <code>True</code>
       </td>
       <td>
         No
@@ -2826,10 +3068,10 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         core_agent_permissions
       </th>
       <td>
-        The permission bits to set when creating the directory of the [Core Agent](#core-agent).
+        The permission bits to set when creating the directory of the <a href="#core-agent">.
       </td>
       <td>
-        <code>700</code> 
+        <code>700</code>
       </td>
       <td>
         No
@@ -3060,7 +3302,7 @@ logging.basicConfig(level='DEBUG')
 
 <h4 id="python-span-limits">Limits</h4>
 
-<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation_for_user_&quot; + user.email)</code>) as this can quickly exceed our rate limits. </p>
+<p>We limit the number of metrics that can be instrumented. Tracking too many unique metrics can impact the performance of our UI. Do not dynamically generate metric types in your instrumentation (ie <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation_for_user_&quot; + user.email)</code>) as this can quickly exceed our rate limits.</p>
 
 <p>For high-cardinality details, use tags: <code class="prettyprint">with scout_apm.api.instrument(&quot;Computation&quot;, tags={&quot;user&quot;: user.email})</code>.</p>
 
@@ -3205,7 +3447,7 @@ You can suggest additional libraries you&rsquo;d like Scout to instrument
       <td style="padding-top: 15px">
         <p>Install the <code>scoutapp/scout-apm-laravel</code> package:</p>
 <pre style="width:500px">
-composer install scoutapp/scout-apm-laravel
+composer require scoutapp/scout-apm-laravel
 </pre>
 <p>
 Note that the <code>scout-apm-php</code> package will automatically be included. It does
@@ -3536,13 +3778,13 @@ OSX/Darwin x86-64</p>
 
 <h2 id="transaction-traces">Transaction Traces</h2>
 
-<p>Scout collects detailed transactions across your web endpoints and background jobs automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view. </p>
+<p>Scout collects detailed transactions across your web endpoints and background jobs automatically. The transaction traces provide a number of visual queues to direct you to hotspots. Dig into bottlenecks - down to the line-of-code, author, commit date, and deploy time - from this view.</p>
 
 <p><img src="images/trace_timeline.png" alt="transaction traces" /></p>
 
 <h3 id="sql-queries">SQL Queries</h3>
 
-<p>Scout captures a sanitized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details. </p>
+<p>Scout captures a sanitized version of SQL queries. Click the &ldquo;SQL&rdquo; button next to a call to view details.</p>
 
 <p><img src="images/stream_show_sql_annotated.png" alt="stream show sql" /></p>
 
@@ -3577,7 +3819,7 @@ OSX/Darwin x86-64</p>
 
 <h4 id="timeline-view">Timeline View</h4>
 
-<p>See the execution order of your code. </p>
+<p>See the execution order of your code.</p>
 
 <p><img src="images/trace_timeline_annotated.png" alt="trace timeline" /></p>
 
@@ -3608,7 +3850,7 @@ OSX/Darwin x86-64</p>
 
 <p><img src="https://s3-us-west-1.amazonaws.com/scout-blog/s_vs_nr/crossfilter.gif" alt="crossfilter" /></p>
 
-<p>Trace Explorer is accessed via the &ldquo;Traces&rdquo; navigation link when viewing an app. </p>
+<p>Trace Explorer is accessed via the &ldquo;Traces&rdquo; navigation link when viewing an app.</p>
 
 <h3 id="how-to-use-trace-explorer">How to use Trace Explorer</h3>
 
@@ -3640,36 +3882,37 @@ OSX/Darwin x86-64</p>
 <table class="help install">
   <tbody>
     <tr>
-      <td>
-        <span class="step">1</span>
-      </td>
-      <td>
-        <p>Modify your <code>Gemfile</code> entry for <code>scout_apm</code>, 
-          changing it to:</p>
-          <pre>gem 'scout_apm', git: 'https://github.com/scoutapp/scout_apm_ruby.git', branch: 'auto_instruments'
-</pre>
+      <td><span class="step">1</span></td>
+      <td><p>Within your Rails app&rsquo;s directory, run:</p><pre>bundle update scout_apm</pre>
+<p>AutoInstruments was released in <code>scout_apm</code> version 2.6.0.</p>
       </td>
     </tr>
     <tr>
       <td><span class="step">2</span></td>
-      <td><p>Within your Rails app&rsquo;s directory, run:</p><pre>bundle update scout_apm</pre></td>
-    </tr>
-    <tr>
-      <td><span class="step">2</span></td>
-      <td>
-        <p>In your <code>config/boot.rb</code> add:</p>
-        <pre>
-# Added AFTER `File.expand_path('../../Gemfile', __FILE__)`
-# But BEFORE `require 'bundler/setup'`
-require 'scout_apm/auto_instrument'</pre>
+      <td><p>Set the <code>auto_instruments</code> <a href="auto_instruments_config">config option</a> to <code>true</code>.</p>
+
+      If you are using a config file:
+<pre>
+# config/scout_apm.yml
+production:
+  auto_instruments: true</pre>
+
+        If you are using environment variables:
+<pre>
+SCOUT_AUTO_INSTRUMENTS=true</pre>
       </td>
+
+
     </tr>
+
       <tr>
       <td><span class="step">3</span></td>
       <td><p>Deploy</p></td>
     </tr>
   </tbody>
 </table>
+
+<p>A <a href="#autoinstruments-faq">detailed AutoInstruments FAQ</a> is available in our reference area.</p>
 
 <h2 id="scoutprof">ScoutProf</h2>
 
@@ -3911,7 +4154,7 @@ require 'scout_apm/auto_instrument'</pre>
 
 <p><img src="images/chart_embed.png" alt="chart_embed" /></p>
 
-<p>Note that you&rsquo;ll need to update the provided iframe url with a Scout API key. </p>
+<p>Note that you&rsquo;ll need to update the provided iframe url with a Scout API key.</p>
 
 <p>When clicking on an embedded chart, you&rsquo;ll be redirected to the relevant application.</p>
 
@@ -4208,7 +4451,7 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p>Don&rsquo;t hesitate to contact us at <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> with any issues. We typically respond in a couple of hours during the business day.</p>
 
-<p>Or, join us on <a href="http://slack.scoutapm.com/">Slack</a>. We are often, but not always, in Slack. </p>
+<p>Or, join us on <a href="http://slack.scoutapm.com/">Slack</a>. We are often, but not always, in Slack.</p>
 
 <h1 id="reference">Reference</h1>
 
@@ -4295,6 +4538,45 @@ endpoint returned results, it will be under a results keys.</p>
 <li>Create a new Github user and make them a member of that team.</li>
 <li>Authenticate with this user.</li>
 </ul>
+
+<h2 id="autoinstruments-faq">AutoInstruments FAQ</h2>
+
+<h3 id="what-files-within-a-rails-app-does-autoinstruments-attempt-to-instrument">What files within a Rails app does AutoInstruments attempt to instrument?</h3>
+
+<p>AutoInstruments applies instrumentation to file names that match <code class="prettyprint">RAILS_ROOT/app/controllers/*_controller.rb</code>.</p>
+
+<h3 id="why-is-autoinstruments-limited-to-controllers">Why is Autoinstruments limited to controllers?</h3>
+
+<p>Adding instrumentation induces a small amount of overhead to each instrumented code expression. If we added instrumentation to every line of code within a Rails app, the overhead would be too significant on a production deployment. By limiting Autoinstruments to controllers, we&rsquo;re striking a balance between visibility and overhead.</p>
+
+<h3 id="what-are-some-examples-of-code-expressions-that-are-instrumented">What are some examples of code expressions that are instrumented?</h3>
+
+<p>Below are some examples of how autoinstrumented spans appear in traces.</p>
+<pre class="highlight ruby tab-ruby"><code><span class="c1"># RAILS_ROOT/app/controllers/users_controller.rb</span>
+<span class="c1"># This file will be instrumented as its name matches `app/controllers/*_controller.rb`.</span>
+<span class="k">class</span> <span class="nc">UsersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+
+  <span class="k">def</span> <span class="nf">index</span>
+    <span class="n">fetch_users</span> <span class="c1"># &lt;- Appears as `fetch_users` in traces.</span>
+    <span class="k">if</span> <span class="n">rss?</span> <span class="o">||</span> <span class="n">xml?</span> <span class="c1"># &lt;- This is broken into 2 spans within traces: (`rss?` and `xml?`)</span>
+      <span class="n">formatter</span> <span class="o">=</span> <span class="nb">proc</span> <span class="k">do</span> <span class="o">|</span><span class="n">row</span><span class="o">|</span> <span class="c1"># &lt;- The entire block will appear under "proc do |row|..."</span>
+        <span class="n">row</span><span class="p">.</span><span class="nf">to_json</span>
+      <span class="k">end</span>
+      <span class="k">return</span> <span class="n">render_xml</span> <span class="c1"># &lt;- Appears as `return render_xml`</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">fetch_users</span>
+    <span class="k">return</span> <span class="k">unless</span> <span class="n">authorized?</span> <span class="c1"># &lt;- Appears as `return unless authorized?` in traces.</span>
+    <span class="n">source</span> <span class="o">||=</span> <span class="n">params</span><span class="p">[</span><span class="ss">:source</span><span class="p">].</span><span class="nf">present?</span> <span class="c1"># &lt;- Appears as `params[:source].present?`</span>
+    <span class="vi">@users</span> <span class="o">=</span> <span class="no">User</span><span class="p">.</span><span class="nf">all</span><span class="p">(</span><span class="ss">limit: </span><span class="mi">10</span><span class="p">)</span> <span class="c1"># &lt;- ActiveRecord queries are instrumented w/our AR instrumentation</span>
+  <span class="k">end</span>
+</code></pre>
+<h3 id="is-every-method-call-to-an-autoinstrumented-code-expression-recorded">Is every method call to an autoinstrumented code expression recorded?</h3>
+
+<p>Prior to storing a span, our agent checks if the span&rsquo;s total execution time is at least 5 ms. If the time spent is under this threshold, the span is thrown away and the time is allocated to the parent span. This decreases the amount of noise that appears in traces (spans consuming &lt; 5ms are unlikely optimization candidates) and decreases the memory usage of the agent. Only autoinstrumented spans are thrown away - spans that are explicity instrumented are retained.</p>
 
 <h2 id="scoutprof-faq">ScoutProf FAQ</h2>
 
