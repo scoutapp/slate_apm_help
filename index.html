@@ -805,6 +805,16 @@ tail -n1000 log/production.log | grep "Processing"
        </td>
       <td>No</td>
     </tr>
+    <tr>
+      <th id="auto_instruments_ignore_config">auto_instruments_ignore</th>
+      <td>
+        Excludes the listed files names from being autoinstrumented. Ex: <code>['application_controller']</code>.
+      </td>
+       <td>
+         <code>[]</code>
+       </td>
+      <td>No</td>
+    </tr>
   </tbody>
 </table>
 
@@ -4578,6 +4588,48 @@ endpoint returned results, it will be under a results keys.</p>
 
 <p>Prior to storing a span, our agent checks if the span&rsquo;s total execution time is at least 5 ms. If the time spent is under this threshold, the span is thrown away and the time is allocated to the parent span. This decreases the amount of noise that appears in traces (spans consuming &lt; 5ms are unlikely optimization candidates) and decreases the memory usage of the agent. Only autoinstrumented spans are thrown away - spans that are explicity instrumented are retained.</p>
 
+<h3 id="what-do-charts-look-like-when-autoinstruments-is-enabled">What do charts look like when autoinstruments is enabled?</h3>
+
+<p>When autoinstruments is enabled, a large portion of controller time will shift to autoinstruments:</p>
+
+<p><img src="images/autoinstruments_before_after.png" alt="autoinstruments before after" /></p>
+
+<p>This is expected.</p>
+
+<h3 id="how-much-overhead-does-autoinstruments-add">How much overhead does autoinstruments add?</h3>
+
+<p>When When autoinstruments is enabled, you can estimate the additional overhead by inspecting your overview chart. Measure the mean <code class="prettyprint">controller</code> time before the deploy then <code class="prettyprint">controller</code> + <code class="prettyprint">autoinstruments</code> after. The difference between these numbers is the additional overhead.</p>
+
+<h3 id="how-can-the-overhead-of-autoinstruments-be-reduced">How can the overhead of autoinstruments be reduced?</h3>
+
+<p>By default, the Scout agent adds autoinstruments to every controller in your Rails app. You can exclude controllers from instrumentation, which will reduce overhead via the <a href="#auto_instruments_ignore_config"><code class="prettyprint">autoinstruments_ignore</code></a> option. To determine which controllers should be ignored:</p>
+
+<ol>
+<li>Ensure you are running version 2.6.1 of <code class="prettyprint">scout_apm</code> or later.</li>
+<li>Adjust the Scout agent log level to <code class="prettyprint">DEBUG</code>.</li>
+<li>Restart your app.</li>
+<li>After about 10 minutes run the following command inside your <code class="prettyprint">RAILS_ROOT</code>:</li>
+</ol>
+<pre class="highlight  tab-plaintext"><code>grep -A20 "AutoInstrument Significant Layer Histograms" log/scout_apm.log
+</code></pre>
+<p>For each controller file, this will display the total number of spans recorded and the ratio of significant to total spans. Look for controllers that have a large <code class="prettyprint">total</code> and a small percentage of <code class="prettyprint">significant</code> spans. In the output below, it makes sense to ignore <code class="prettyprint">application_controller</code> as only 10% of those spans are significant:</p>
+<pre class="highlight  tab-plaintext"><code>[09/23/19 07:27:52 -0600 Dereks-MacBook-Pro.local (87116)] DEBUG : AutoInstrument Significant Layer Histograms: {"/Users/dlite/projects/scout/apm/app/controllers/application_controller.rb"=&gt;
+  {:total=&gt;545, :significant=&gt;0.1},
+ "/Users/dlite/projects/scout/apm/app/controllers/apps_controller.rb"=&gt;
+  {:total=&gt;25, :significant=&gt;0.56},
+ "/Users/dlite/projects/scout/apm/app/controllers/checkin_controller.rb"=&gt;
+  {:total=&gt;31, :significant=&gt;0.39},
+ "/Users/dlite/projects/scout/apm/app/controllers/status_pages_controller.rb"=&gt;
+  {:total=&gt;2, :significant=&gt;0.5},
+ "/Users/dlite/projects/scout/apm/app/controllers/errors_controller.rb"=&gt;
+  {:total=&gt;2, :significant=&gt;1.0},
+ "/Users/dlite/projects/scout/apm/app/controllers/insights_controller.rb"=&gt;
+  {:total=&gt;2, :significant=&gt;1.0}}
+</code></pre>
+<p>Add the following to the <code class="prettyprint">common: &amp;defaults</code> section of the <code class="prettyprint">config/scout_apm.yml</code> file to avoid instrumenting <code class="prettyprint">application_controller.rb</code>:</p>
+<pre class="highlight yaml tab-yaml"><code><span class="na">common</span><span class="pi">:</span> <span class="nl">&amp;defaults</span>
+  <span class="na">auto_instruments_ignore</span><span class="pi">:</span> <span class="pi">[</span><span class="s1">'</span><span class="s">application_controller'</span><span class="pi">]</span>
+</code></pre>
 <h2 id="scoutprof-faq">ScoutProf FAQ</h2>
 
 <h3 id="does-scoutprof-work-with-stackprof">Does ScoutProf work with Stackprof?</h3>
