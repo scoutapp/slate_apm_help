@@ -3446,7 +3446,7 @@ You can suggest additional libraries you&rsquo;d like Scout to instrument
 
 <h2 id="laravel">Laravel</h2>
 
-<p>Scout supports Laravel 5.8+.</p>
+<p>Scout supports Laravel 5.5+.</p>
 
 <table class="help install install_ruby">
   <tbody>
@@ -3580,7 +3580,7 @@ aggregates data by the app name.</p>
 Laravel instruments automatically wire up the framework&rsquo;s logger to the
 agent&rsquo;s logging.</p>
 
-<p>If required, you can override this by calling <code class="prettyprint">$agent-&gt;setLogger($logger)</code></p>
+<p>If required, you can override this by changing the container service <code class="prettyprint">log</code>.</p>
 
 <h2 id="php-custom-instrumentation">Custom Instrumentation</h2>
 
@@ -3660,7 +3660,7 @@ $request-&gt;setApiVersion($version);
 </code></pre>
 <p>It is wrapped with instrumentation:</p>
 <pre class="highlight  tab-plaintext"><code>// At top, with other imports
-use ScoutApm;
+use Scoutapm\Laravel\Facades\ScoutApm;
 
 // Replacing the above code
 $request = ScoutApm::instrument(
@@ -3703,7 +3703,7 @@ you can add custom context to answer critical questions like:</p>
 </ul>
 
 <p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app:</p>
-<pre class="highlight php tab-php"><code>use ScoutApm; // Laravel only: Add near the other use statements
+<pre class="highlight php tab-php"><code>use Scoutapm\Laravel\Facades\ScoutApm; // Laravel only: Add near the other use statements
 
 ScoutApm::addContext("Key", "Value");
 
@@ -3741,10 +3741,7 @@ specific deploys to changes in performance.</p>
 <p>Scout identifies deploys via the following approaches:</p>
 
 <ul>
-<li>Setting a <code class="prettyprint">SCOUT_REVISION_SHA</code> environment variable to the SHA of your release.</li>
-<li>If you are using Heroku, enable <a href="https://devcenter.heroku.com/articles/dyno-metadata">Dyno Metadata</a>.
-This adds a <code class="prettyprint">HEROKU_SLUG_COMMIT</code> environment variable to your dynos, which Scout then
-associates with deploys.</li>
+<li>Detecting the current git sha (this is automatically detected when <code class="prettyprint">composer install</code> is run)</li>
 </ul>
 
           <h1 id="core-agent">Core Agent</h1>
