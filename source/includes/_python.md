@@ -753,6 +753,25 @@ We typically respond within a couple of hours during the business day.
         No
       </td>
     </tr>
+    <tr>
+      <th>
+        log_level
+      </th>
+      <td>
+        The log level of the core agent.
+        This should be one of: <code>"trace"</code>, <code>"debug"</code>, <code>"info"</code>, <code>"warn"</code>, <code>"error"</code>.
+        <br>
+        <br>
+        This does not affect the log level of the Python library.
+        To change that, directly configure the python <code>logging</code> module as per <a href="#python-logging">the below documentation</a>.
+      </td>
+      <td>
+        <code>"info"</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
   </tbody>
 </table>
 
