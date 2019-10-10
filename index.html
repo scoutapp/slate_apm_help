@@ -3425,7 +3425,7 @@ is in the <code class="prettyprint">scoutapp/scout-apm-laravel</code>. See our i
 
 <p>Scout provides instrumentation for Laravel.</p>
 
-<h3 id="some-configuration-required">Some configuration required</h3>
+<h3 id="php-some-configuration-required">Some configuration required</h3>
 
 <p>The libraries below require a small number of configuration updates. Click on
 the respective library for instructions.</p>
@@ -3493,7 +3493,7 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
   </tbody>
 </table>
 
-<h3 id="middleware">Middleware</h3>
+<h3 id="php-middleware">Middleware</h3>
 
 <p>Scout automatically inserts its middleware into your application on Laravel startup.</p>
 
@@ -3588,7 +3588,7 @@ agent&rsquo;s logging.</p>
 libraries (e.g. Cron jobs and other web frameworks) and time the execution of
 sections of code that falls outside our provided instrumentation.</p>
 
-<h3 id="transactions-timing">Transactions &amp; Timing</h3>
+<h3 id="php-transactions-timing">Transactions & Timing</h3>
 
 <p>Scout’s instrumentation is divided into 2 areas:</p>
 
@@ -3600,7 +3600,7 @@ transaction, like an HTTP request to an outside service, or a database call.
 This is displayed within a transaction trace in the UI.</li>
 </ol>
 
-<h3 id="instrumenting-transactions">Instrumenting Transactions</h3>
+<h3 id="php-instrumenting-transactions">Instrumenting Transactions</h3>
 
 <p>A transaction groups a sequence of work under in the Scout UI. These are used
 to generate transaction traces. For example, you may create a transaction that
@@ -3633,7 +3633,7 @@ user-facing experience (example: cron jobs). These will be available in the
 <pre class="highlight php tab-php"><code>$agent-&gt;webTransaction("GET Users", function() { ... your code ... });
 $agent-&gt;send();
 </code></pre>
-<h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
+<h3 id="php-timing-blocks">Timing functions and blocks of code</h3>
 
 <p>In existing transactions, both automatically created with Laravel instruments,
 and also manually created, you can time sections of code that are interesting
@@ -3710,7 +3710,7 @@ ScoutApm::addContext("Key", "Value");
 // or if you have an $agent instance:
 $agent-&gt;addContext("Key", "Value");
 </code></pre>
-<h3 id="context-key-restrictions">Context Key Restrictions</h3>
+<h3 id="php-context-key-restrictions">Context Key Restrictions</h3>
 
 <p>The Context <code class="prettyprint">key</code> must be a <code class="prettyprint">String</code> with only printable characters. Custom
 context keys may contain alphanumeric characters, dashes, and underscores.
@@ -3718,7 +3718,7 @@ Spaces are not allowed.</p>
 
 <p>Attempts to add invalid context will be ignored.</p>
 
-<h3 id="context-value-types">Context Value Types</h3>
+<h3 id="php-context-value-types">Context Value Types</h3>
 
 <p>Context values can be any json-serializable type. Examples:</p>
 
