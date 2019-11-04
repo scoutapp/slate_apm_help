@@ -3101,6 +3101,28 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
         No
       </td>
     </tr>
+    <tr>
+      <th>
+        core_agent_log_level
+      </th>
+      <td>
+        The log level of the core agent process.
+        This should be one of: <code>"trace"</code>, <code>"debug"</code>, <code>"info"</code>, <code>"warn"</code>, <code>"error"</code>.
+        <br>
+        <br>
+        This does not affect the log level of the Python library.
+        To change that, directly configure the python <code>logging</code> module as per <a href="#python-logging">the below documentation</a>.
+        <br>
+        <br>
+        Prior to version 2.6.0, this was called `log_level`. That name now works as an alias, but is deprecated and will log a warning.
+      </td>
+      <td>
+        <code>"info"</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
   </tbody>
 </table>
 
@@ -4432,7 +4454,7 @@ endpoint returned results, it will be under a results keys.</p>
 
 <h2 id="hipaa">HIPAA</h2>
 
-<p>While Scout itself is not HIPAA compliant, our agent can be installed safely in HIPAA compliant environments. To ensure user data is properly de-identified:</p>
+<p>Our agent can be installed safely in HIPAA compliant environments. To ensure user data is properly de-identified:</p>
 
 <ol>
 <li>Disable sending HTTP query params if these contain sensitive data via the <code class="prettyprint">uri_reporting</code> config option.</li>
