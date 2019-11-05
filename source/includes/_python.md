@@ -167,6 +167,9 @@ If you've installed Scout via the Heroku Addon, the provisioning process automat
 [Plotly Dash](https://dash.plot.ly/) is built on top of Flask. Therefore you should use the Scout Flask integration with the underlying Flask application object. For example:
 
 <pre style="width:500px">
+import dash
+from scout_apm.flask import ScoutApm
+
 app = dash.Dash("myapp")
 app.config.suppress_callback_exceptions = True
 flask_app = app.server
