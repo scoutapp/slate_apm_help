@@ -598,20 +598,21 @@ pip install scout-apm
       <td style="padding-top: 15px">
         <p>Configure Scout and attach its middleware to your Starlette app:</p>
 
-<pre style="width:initial">
-from scout_apm.api import Config
-from scout_apm.async_.starlette import ScoutMiddleware
+<pre class="terminal" style="width: initial">
+<span>from scout_apm.api import Config</span>
+<span>from scout_apm.async_.starlette import ScoutMiddleware</span>
 from starlette.applications import Starlette
 
 app = Starlette()
 
-Config.set(
+<span>Config.set(
     key="[AVAILABLE IN THE SCOUT UI]",
     name="A FRIENDLY NAME FOR YOUR APP",
     monitor=True,
-)
-# Add *last* out of all middleware, so it's the outermost and can track all requests
-app.add_middleware(ScoutMiddleware)
+)</span>
+<span># Should be *last* call to add_middleware, so it's the outermost and can</span>
+<span>track all requests</span>
+<span>app.add_middleware(ScoutMiddleware)</span>
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>Config.set</code>.</p>
