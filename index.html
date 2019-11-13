@@ -2367,6 +2367,7 @@ Source code and issues can be found on our <a href="https://github.com/scoutapp/
 <ul>
 <li><a href="#bottle">Bottle</a></li>
 <li><a href="#celery">Celery</a></li>
+<li><a href="#dash">Dash</a></li>
 <li><a href="#django">Django</a>
 
 <ul>
@@ -2379,6 +2380,7 @@ Source code and issues can be found on our <a href="https://github.com/scoutapp/
 <li><a href="#falcon">Falcon</a></li>
 <li><a href="#flask">Flask</a></li>
 <li><a href="#flask-sqlalchemy">Flask SQLAlchemy</a></li>
+<li><a href="#huey">Huey</a></li>
 <li><a href="#nameko">Nameko</a></li>
 <li><a href="#pyramid">Pyramid</a></li>
 <li><a href="#sqlalchemy">SQLAlchemy</a></li>
@@ -2487,7 +2489,7 @@ from celery import Celery
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
 <span>
 Config.set(
-    key="SCOUT_KEY",
+    key="[AVAILABLE IN THE SCOUT UI]",
     name="Same as Web App Name",
     monitor=True,
 )
@@ -2512,6 +2514,25 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
     </tr>
   </tbody>
 </table>
+
+<h2 id="dash">Dash</h2>
+
+<p><a href="https://dash.plot.ly/">Plotly Dash</a> is built on top of Flask. Therefore you should use the Scout Flask integration with the underlying Flask application object. For example:</p>
+
+<pre style="width:500px">
+import dash
+from scout_apm.flask import ScoutApm
+
+app = dash.Dash("myapp")
+app.config.suppress_callback_exceptions = True
+flask_app = app.server
+
+# Setup as per Flask integration
+ScoutApm(flask_app)
+flask_app.config["SCOUT_NAME"] = "A FRIENDLY NAME FOR YOUR APP"
+</pre>
+
+<p>For full instructions, see <a href="#flask">the Flask integration</a>.</p>
 
 <h2 id="django">Django</h2>
 
@@ -2643,7 +2664,7 @@ broker = RabbitmqBroker()
 
 <span>
 Config.set(
-    key="SCOUT_KEY",
+    key="[AVAILABLE IN THE SCOUT UI]",
     name="Same as Web App Name",
     monitor=True,
 )
@@ -2692,7 +2713,7 @@ pip install scout-apm
         <span class="step">2</span>
       </td>
       <td style="padding-top: 15px">
-        <p>Configure Scout inside your Flask app:</p>
+        <p>Attach the Scout middleware to your Falcon app:</p>
 
 <pre style="width:initial">
 import falcon
@@ -2792,6 +2813,65 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <span class="c"># Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)</span>
 <span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
 </code></pre>
+<h2 id="huey">Huey</h2>
+
+<p>Scout supports Huey 2.0+.</p>
+
+<p>Add the following to instrument your Huey application:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Add Scout to your Huey application:</p>
+<pre class="terminal" style="width: initial">
+from huey import SqliteHuey
+<span>from scout_apm.api import Config</span>
+<span>from scout_apm.huey import attach_scout</span>
+
+broker = SqliteHuey()
+
+<span>
+Config.set(
+    monitor=True,
+    name="A FRIENDLY NAME FOR YOUR APP",
+    key="[AVAILABLE IN THE SCOUT UI]",
+)</span>
+<span>attach_scout(huey)</span>
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of calling <code>Config.set()</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+        <p>Tasks will appear in the &ldquo;Background Jobs&rdquo; area of the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="nameko">Nameko</h2>
 
 <p>General instructions for a Nameko app:</p>
@@ -2822,8 +2902,8 @@ from scout_apm.nameko import ScoutReporter
 
 
 Config.set(
-    key=os.environ["SCOUT_KEY"],
-    name="Test Nameko App",
+    key="[AVAILABLE IN THE SCOUT UI]",
+    name="A FRIENDLY NAME FOR YOUR APP",
     monitor=True,
 )
 
@@ -2884,9 +2964,9 @@ import scout_apm.pyramid
 if __name__ == "__main__":
     with Configurator() as config:
         config.add_settings(
-            SCOUT_KEY="...",
+            SCOUT_KEY="[AVAILABLE IN THE SCOUT UI]",
             SCOUT_MONITOR=True,
-            SCOUT_NAME="My Pyramid App"
+            SCOUT_NAME="A FRIENDLY NAME FOR YOUR APP"
         )
         config.include("scout_apm.pyramid")
 
@@ -2918,6 +2998,66 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 <span class="c"># Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)</span>
 <span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
 </code></pre>
+<h2 id="starlette">Starlette</h2>
+
+<p>Scout supports Starlette 0.12+.</p>
+
+<p>General instructions for a Starlette app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Configure Scout and attach its middleware to your Starlette app:</p>
+
+<pre class="terminal" style="width: initial">
+<span>from scout_apm.api import Config</span>
+<span>from scout_apm.async_.starlette import ScoutMiddleware</span>
+from starlette.applications import Starlette
+
+app = Starlette()
+
+<span>Config.set(
+    key="[AVAILABLE IN THE SCOUT UI]",
+    name="A FRIENDLY NAME FOR YOUR APP",
+    monitor=True,
+)</span>
+<span># Should be *last* call to add_middleware, so it's the outermost and can</span>
+<span>track all requests</span>
+<span>app.add_middleware(ScoutMiddleware)</span>
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>Config.set</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 <h2 id="python-troubleshooting">Troubleshooting</h2>
 
 <p>Not seeing data? Email support@scoutapm.com with:</p>
@@ -3328,6 +3468,25 @@ logging.basicConfig(level='DEBUG')
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/418"</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </code></pre>
+<h3 id="ignoring-transactions">Ignoring Transactions</h3>
+
+<p>If you don&rsquo;t want to track the current transaction, at any point you can call <code class="prettyprint">ignore_transaction()</code> to ignore it:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="k">if</span> <span class="n">is_health_check</span><span class="p">():</span>
+    <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">ignore_transaction</span><span class="p">()</span>
+</code></pre>
+<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
+
+<h3 id="renaming-transactions">Renaming Transactions</h3>
+
+<p>If you want to rename the current transaction, call <code class="prettyprint">rename_transaction()</code> with the new name:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">rename_transaction</span><span class="p">(</span><span class="s">"Controller/"</span> <span class="o">+</span> <span class="n">derive_graphql_name</span><span class="p">())</span>
+</code></pre>
+<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
+
 <h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
 
 <p>Traces that allocate significant amount of time to <code class="prettyprint">View</code>, <code class="prettyprint">Job</code>, or <code class="prettyprint">Template</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
