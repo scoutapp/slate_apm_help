@@ -3646,7 +3646,7 @@ not need to be installed directly.
 </p>
       </td>
     </tr>
-<!--    <tr>
+    <tr style="display:none">
       <td>
         <span class="step">2</span>
       </td>
@@ -3661,7 +3661,7 @@ Several instruments require the native extension to be included, including timin
 For more information, or to compile manually, the <a href="https://github.com/scoutapp/scout-apm-php-ext">README</a> has additional instructions.
 </p>
       </td>
-    </tr> &ndash;>
+    </tr>
     <tr>
       <td>
         <span class="step">2</span>
@@ -3845,7 +3845,7 @@ amount of time is falling outside our default instrumentation.</p>
 <p>We limit the number of metrics that can be instrumented. Tracking too many
 unique metrics can impact the performance of our UI. Do not dynamically
 generate metric types in your instrumentation as this can quickly exceed our
-rate limits. </p>
+rate limits.</p>
 
 <p>For high-cardinality details, use tags.</p>
 
