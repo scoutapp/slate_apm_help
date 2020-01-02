@@ -3655,33 +3655,6 @@ logging.basicConfig(level='DEBUG')
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/418"</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </code></pre>
-<h2 id="python-ignoring-transactions">Ignoring Transactions</h2>
-
-<p>If you don&rsquo;t want to track the current transaction, at any point you can call <code class="prettyprint">ignore_transaction()</code> to ignore it:</p>
-<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
-
-<span class="k">if</span> <span class="n">is_health_check</span><span class="p">():</span>
-    <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">ignore_transaction</span><span class="p">()</span>
-</code></pre>
-<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
-
-<p>You can also ignore a set of URL path prefixes by configuring the <code class="prettyprint">ignore</code> setting:</p>
-<pre class="highlight python tab-python"><code><span class="n">Config</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span>
-    <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s">"/health-check/"</span><span class="p">,</span> <span class="s">"/admin/"</span><span class="p">],</span>
-<span class="p">)</span>
-</code></pre>
-<p>When specifying this as an environment variable, it should be a comma-separated list:</p>
-<pre class="highlight shell"><code><span class="nb">export </span><span class="nv">SCOUT_IGNORE</span><span class="o">=</span><span class="s1">'/health-check/,/admin/'</span>
-</code></pre>
-<h3 id="python-renaming-transactions">Renaming Transactions</h3>
-
-<p>If you want to rename the current transaction, call <code class="prettyprint">rename_transaction()</code> with the new name:</p>
-<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
-
-<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">rename_transaction</span><span class="p">(</span><span class="s">"Controller/"</span> <span class="o">+</span> <span class="n">derive_graphql_name</span><span class="p">())</span>
-</code></pre>
-<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
-
 <h3 id="timing-functions-and-blocks-of-code">Timing functions and blocks of code</h3>
 
 <p>Traces that allocate significant amount of time to <code class="prettyprint">View</code>, <code class="prettyprint">Job</code>, or <code class="prettyprint">Template</code> are good candidates to add custom instrumentation. This indicates a significant amount of time is falling outside our default instrumentation.</p>
@@ -3727,6 +3700,33 @@ logging.basicConfig(level='DEBUG')
 <span class="k">def</span> <span class="nf">bar</span><span class="p">():</span>
     <span class="c"># Work</span>
 </code></pre>
+<h2 id="python-ignoring-transactions">Ignoring Transactions</h2>
+
+<p>If you don&rsquo;t want to track the current transaction, at any point you can call <code class="prettyprint">ignore_transaction()</code> to ignore it:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="k">if</span> <span class="n">is_health_check</span><span class="p">():</span>
+    <span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">ignore_transaction</span><span class="p">()</span>
+</code></pre>
+<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
+
+<p>You can also ignore a set of URL path prefixes by configuring the <code class="prettyprint">ignore</code> setting:</p>
+<pre class="highlight python tab-python"><code><span class="n">Config</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span>
+    <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s">"/health-check/"</span><span class="p">,</span> <span class="s">"/admin/"</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre>
+<p>When specifying this as an environment variable, it should be a comma-separated list:</p>
+<pre class="highlight shell"><code><span class="nb">export </span><span class="nv">SCOUT_IGNORE</span><span class="o">=</span><span class="s1">'/health-check/,/admin/'</span>
+</code></pre>
+<h3 id="python-renaming-transactions">Renaming Transactions</h3>
+
+<p>If you want to rename the current transaction, call <code class="prettyprint">rename_transaction()</code> with the new name:</p>
+<pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
+
+<span class="n">scout_apm</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">rename_transaction</span><span class="p">(</span><span class="s">"Controller/"</span> <span class="o">+</span> <span class="n">derive_graphql_name</span><span class="p">())</span>
+</code></pre>
+<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
+
 <h2 id="python-custom-context">Custom Context</h2>
 
 <p><a href="#context">Context</a> lets you see the forest from the trees. For example, you can add custom context to answer critical questions like:</p>
