@@ -3655,7 +3655,7 @@ logging.basicConfig(level='DEBUG')
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/418"</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </code></pre>
-<h3 id="python-ignoring-transactions">Ignoring Transactions</h3>
+<h2 id="python-ignoring-transactions">Ignoring Transactions</h2>
 
 <p>If you don&rsquo;t want to track the current transaction, at any point you can call <code class="prettyprint">ignore_transaction()</code> to ignore it:</p>
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
