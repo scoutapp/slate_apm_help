@@ -2366,16 +2366,10 @@ Source code and issues can be found on our <a href="https://github.com/scoutapp/
 
 <ul>
 <li><a href="#bottle">Bottle</a></li>
+<li><a href="#cherrypy">CherryPy</a></li>
 <li><a href="#celery">Celery</a></li>
 <li><a href="#dash">Dash</a></li>
-<li><a href="#django">Django</a>
-
-<ul>
-<li>Middleware</li>
-<li>Templates (compiling &amp; rendering)</li>
-<li>Template blocks</li>
-<li>SQL queries</li>
-</ul></li>
+<li><a href="#django">Django</a></li>
 <li><a href="#dramatiq">Dramatiq</a></li>
 <li><a href="#falcon">Falcon</a></li>
 <li><a href="#flask">Flask</a></li>
@@ -2441,6 +2435,71 @@ bottle.install(scout)
 </pre>
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>app.config.update</code>.</p>
+
+<p>
+If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
+</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">3</span></td>
+      <td style="padding-top: 15px">
+        <p>Deploy.</p>
+        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="cherrypy">CherryPy</h2>
+
+<p>Scout supports CherryPy 18.0.0+.</p>
+
+<p>General instructions for a CherryPy app:</p>
+
+<table class="help install install_ruby">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Install the <code>scout-apm</code> package:</p>
+<pre style="width:500px">
+pip install scout-apm
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td style="padding-top: 15px">
+        <p>Attach the Scout plugin to your app:</p>
+
+<pre class="terminal" style="width: initial">
+import cherrypy
+
+<span>from scout_apm.api import Config
+from scout_apm.cherrypy import ScoutPlugin</span>
+
+class Views(object):
+    @cherrypy.expose
+    def index(self):
+        return "Hi"
+
+app = cherrypy.Application(Views(), "/")
+
+<span>Config.set(
+    key="[AVAILABLE IN THE SCOUT UI]",
+    monitor=True,
+    name="A FRIENDLY NAME FOR YOUR APP",
+)
+scout_plugin = ScoutPlugin(cherrypy.engine)
+scout_plugin.subscribe()</span>
+</pre>
+
+<p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> and remove the call to <code>Config.set</code>.</p>
 
 <p>
 If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
@@ -3257,6 +3316,23 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
     </tr>
     <tr>
       <th>
+        ignore
+      </th>
+      <td>
+        A list of (relative) URL path prefixes to avoid collecting metrics for.
+        If specified as an environment variable, it should be a comma-separated
+        list. See <a href="#python-ignoring-transactions">Ignoring
+        Transactions</h4>.
+      </td>
+      <td>
+        <code>[]</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
         revision_sha
       </th>
       <td>
@@ -3579,7 +3655,7 @@ logging.basicConfig(level='DEBUG')
     <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"https://httpbin.org/status/418"</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </code></pre>
-<h3 id="ignoring-transactions">Ignoring Transactions</h3>
+<h3 id="python-ignoring-transactions">Ignoring Transactions</h3>
 
 <p>If you don&rsquo;t want to track the current transaction, at any point you can call <code class="prettyprint">ignore_transaction()</code> to ignore it:</p>
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
@@ -3589,7 +3665,15 @@ logging.basicConfig(level='DEBUG')
 </code></pre>
 <p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
 
-<h3 id="renaming-transactions">Renaming Transactions</h3>
+<p>You can also ignore a set of URL path prefixes by configuring the <code class="prettyprint">ignore</code> setting:</p>
+<pre class="highlight python tab-python"><code><span class="n">Config</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span>
+    <span class="n">ignore</span><span class="o">=</span><span class="p">[</span><span class="s">"/health-check/"</span><span class="p">,</span> <span class="s">"/admin/"</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre>
+<p>When specifying this as an environment variable, it should be a comma-separated list:</p>
+<pre class="highlight shell"><code><span class="nb">export </span><span class="nv">SCOUT_IGNORE</span><span class="o">=</span><span class="s1">'/health-check/,/admin/'</span>
+</code></pre>
+<h3 id="python-renaming-transactions">Renaming Transactions</h3>
 
 <p>If you want to rename the current transaction, call <code class="prettyprint">rename_transaction()</code> with the new name:</p>
 <pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">scout_apm.api</span>
@@ -3693,8 +3777,33 @@ logging.basicConfig(level='DEBUG')
 </code></pre>
 <ul>
 <li>Setting a <code class="prettyprint">SCOUT_REVISION_SHA</code> environment variable equal to the SHA of your latest release.</li>
-<li>If you are using Heroku, enable <a href="https://devcenter.heroku.com/articles/dyno-metadata">Dyno Metadata</a>. This adds a <code class="prettyprint">HEROKU_SLUG_COMMIT</code> environment variable to your dynos, which Scout then associates with deploys.</li>
+<li>If you are using Heroku, enable <a href="https://devcenter.heroku.com/articles/dyno-metadata">Dyno Metadata</a>. This adds a <code class="prettyprint">HEROKU_SLUG_COMMIT</code> environment variable to your dynos, which Scout then associates with deploys.
+œ
+## Ignoring Transactions</li>
 </ul>
+
+<p>You can ignore transactions two ways:</p>
+
+<p>The <code class="prettyprint">ignore</code> configuration option. This is a list of URI paths that will be ignored if they match the path seen in Django, Flask, Bottle, Pyramid.
+By calling <code class="prettyprint">scout_apm.api.ignore_transaction()</code> from within your own code.
+from <code class="prettyprint">scout_apm.api</code> import Config
+Config.set(ignore=[&ldquo;/healthcheck&rdquo;])</p>
+
+<p><code class="prettyprint">settings.py</code>:
+<code class="prettyprint">python
+SCOUT_IGNORE = [&quot;/healthcheck&quot;]
+</code></p>
+
+<p><code class="prettyprint">urls.py</code>:
+&ldquo;`python
+def healthcheck(request):
+        return HttpResponse()</p>
+
+<p>urlpatterns = [
+    url(r&rsquo;^healthcheck/?$&lsquo;, healthcheck),
+    &hellip;
+]
+&rdquo;`</p>
 
           <h1 id="php-agent">PHP Agent</h1>
 
