@@ -1269,6 +1269,16 @@ should be called <em>after</em> you require other gems (ActiveRecord, Mongo, etc
 <span class="na">staging</span><span class="pi">:</span>
   <span class="s">&lt;&lt;</span><span class="pi">:</span> <span class="nv">*defaults</span>
 </code></pre>
+<h2 id="graphql">GraphQL <img src="images/graphql_logo.png" style="float:right;width: 110px;margin-bottom: 10px" /></h2>
+
+<p>If you have a GraphQL endpoint which serves any number of queries, you likely want to have each of those types of queries show up in the Scout UI as different endpoints. You can accomplish this by renaming the transaction during the request like so:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="n">scout_transaction_name</span> <span class="o">=</span> <span class="s2">"GraphQL/"</span> <span class="o">+</span> <span class="n">operation_name</span>
+<span class="no">ScoutApm</span><span class="o">::</span><span class="no">Transaction</span><span class="p">.</span><span class="nf">rename</span><span class="p">(</span><span class="n">scout_transaction_name</span><span class="p">)</span>
+</code></pre>
+<p>Where <code class="prettyprint">operation_name</code> is determined dynamically based on the GraphQL query. E.g. <code class="prettyprint">get_profile</code>, <code class="prettyprint">find_user</code>, etc.</p>
+
+<p>Do not generate highly cardinality transaction names, like <code class="prettyprint">ScoutApm::Transaction.rename(&quot;GraphQL/foobar_#{current_user.id}&quot;)</code>, as we limit the number of transactions that can be tracked. High-cardinality transaction names can quickly surpass this limit.</p>
+
 <h2 id="ruby-instrumented-libs">Instrumented Libraries</h2>
 
 <p>The following libraries are currently instrumented:</p>
