@@ -23,3 +23,8 @@ _yardoc
 doc/
 .idea/
 .rbenv-gemsets
+
+# Emacs
+*~
+\#*
+*\#
