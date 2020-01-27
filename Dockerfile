@@ -19,12 +19,12 @@ WORKDIR $INSTALL_PATH
 ADD Gemfile* $INSTALL_PATH/
 ENV BUNDLE_GEMFILE=$INSTALL_PATH/Gemfile BUNDLE_JOBS=2 BUNDLE_PATH=/bundle
 
-# Update bundler to latest version and run the install
-RUN bundle install
-
 # Copy in the application code from your work station at the current directory
 # over to the working directory.
 COPY . .
+
+# Update bundler to latest version and run the install
+RUN bundle install
 
 #EXPOSE 4567
 
