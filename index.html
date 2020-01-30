@@ -4976,7 +4976,33 @@ endpoint returned results, it will be under a results keys.</p>
   }
 }
 </code></pre>
-          <h1 id="compliance">Compliance</h1>
+          <h1 id="compliance-and-privacy">Compliance and Privacy</h1>
+
+<h2 id="what-data-is-collected-by-the-scout-apm-agent">What Data is Collected by the Scout APM Agent?</h2>
+
+<p>When you install our APM agent into your application, we instrument your code in order to gather timing and other data. The data collected for all transactions includes:</p>
+
+<ul>
+<li>Numeric metrics (timing, object allocations, memory)</li>
+<li>Controller (in MVC terms) name and invoked controller function name</li>
+<li>Background job name and invoked function name</li>
+<li>SQL table and operation (e.g. Users#select)</li>
+</ul>
+
+<p>In addition to collecting general data for every transaction, Scout uses an algorithm to pick out the most interesting transactions. These detailed transactions gather more information about the specifics of the transaction including:</p>
+
+<ul>
+<li>URL path</li>
+<li>URL parameters</li>
+<li>SQL query strings (scrubbed and sanitized before being sent to Scout)</li>
+<li>Outgoing HTTP request URLs (of instrumented HTTP libraries)</li>
+<li>End user IP (the IP of a user making a request to your web server)</li>
+<li>File name and line number of slow functions (used to display a backtrace)</li>
+</ul>
+
+<p>Some of this information can be disabled for detailed transactions. Refer to our configuration section for your language at <a href="https://docs.scoutapm.com">https://docs.scoutapm.com</a></p>
+
+<p>In Ruby, you can set <code class="prettyprint">log_level = debug</code> to inspect the entire payload sent by our agent.</p>
 
 <h2 id="hipaa">HIPAA</h2>
 
