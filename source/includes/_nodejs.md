@@ -283,6 +283,20 @@ We typically respond within a couple of hours during the business day.
         No
       </td>
     </tr>
+    <tr>
+      <th>
+        SCOUT_REVISION_SHA
+      </th>
+      <td>
+        SHA checksum of the current version of the code
+      </td>
+      <td>
+        <code>"82b59c496acc891c111d81bb8a2a57f5a3802bc4"</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
 
   </tbody>
 
@@ -562,12 +576,13 @@ you can add custom context to answer critical questions like:
 It's simple to add [custom context](#context) to your app:
 
 ```javascript
-use Scoutapm\Express\Facades\ScoutApm; // Express only: Add near the other use statements
+// Express only: Add context inside a handler function
+app.get("/", (req, req) => {
+  req.scout.request.addContext("Key", "Value");
+})
 
-ScoutApm::addContext("Key", "Value");
-
-// or if you have an $agent instance:
-$agent->addContext("Key", "Value");
+// or if you have access to a request instance:
+request.addContext("Key", "Value");
 ```
 
 
@@ -591,16 +606,13 @@ Context values can be any json-serializable type. Examples:
 <h2 id="nodejs-upgrade">Updating to the Newest Version</h2>
 
 ```sh
-composer update scout-apm-express
+yarn upgrade @scout_apm/scout-apm
 ```
 
 The package changelog is [available here](https://github.com/scoutapp/scout_apm_node/blob/master/CHANGELOG.md).
 
 <h2 id="nodejs-deploy-tracking-config">Deploy Tracking Config</h2>
 
-Scout can [track deploys](#deploy-tracking), making it easier to correlate
-specific deploys to changes in performance.
+Scout can [track deploys](#deploy-tracking), making it easier to correlate specific deploys to changes in performance.
 
-Scout identifies deploys via the following approaches:
-
-* Detecting the current git sha (this is automatically detected when `composer install` is run)
+To ensure scout tracks your deploy, please provide the `SCOUT_REVISION_SHA` environment variable.
