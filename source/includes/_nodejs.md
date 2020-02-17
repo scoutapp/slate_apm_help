@@ -9,19 +9,19 @@ Source code and issues can be found on our [`@scout_apm/scout-apm`](https://gith
 
 `@scout_apm/scout-apm` requires:
 
-* NodeJS
+* [NodeJS](https://nodejs.org/)
 * A POSIX operating system, such as Linux or macOS.
 
 <h2 id="nodejs-instrumented-libraries">Instrumented Libraries</h2>
 
 Scout provides instrumentation for:
 
-- Express
-- Postgres (via [`pg`](https://www.npmjs.com/package/pg))
-- MySQL (via [`mysql`](https://www.npmjs.com/package/mysql) and [`mysql2`](https://www.npmjs.com/package/mysql2))
-- Pug
-- Mustache
-- EJS
+- [Express](https://expressjs.com)
+- [Postgres](https://www.postgresql.org/) (via [`pg`](https://www.npmjs.com/package/pg))
+- [MySQL](https://www.mysql.com/) (via [`mysql`](https://www.npmjs.com/package/mysql) and [`mysql2`](https://www.npmjs.com/package/mysql2))
+- [Pug](https://pugjs.org)
+- [Mustache](https://github.com/janl/mustache.js)
+- [EJS](https://www.npmjs.com/package/ejs)
 
 ###
 <h3 id="nodejs-some-configuration-required">Some configuration required</h3>
