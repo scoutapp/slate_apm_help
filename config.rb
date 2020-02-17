@@ -44,6 +44,14 @@ configure :build do
   # activate :gzip
 end
 
+# Enable livereload
+live_reload_enabled = (ENV["MIDDLEMAN_LIVE_RELOAD"] || "false").downcase == "true"
+if live_reload_enabled then
+  includes_dir = "#{File.dirname __FILE__}/source/includes"
+  puts "[config.rb] Enabling live reload for path [#{includes_dir}]"
+  activate :livereload, :port (ENV["LIVERELOAD_PORT"] || 35729)
+end
+
 # Deploy Configuration
 # If you want Middleman to listen on a different port, you can set that below
 set :port, 4567

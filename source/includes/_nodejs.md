@@ -1,7 +1,7 @@
 # NodeJS Agent
 
 Scout's NodeJS agent supports many popular libraries to instrument middleware, request times, SQL queries, and more.
-The base package is called `@scout_apm/scout-apm`. See our install instructions for more details..
+The base package is called `@scout_apm/scout-apm`. See our install instructions for more details.
 
 Source code and issues can be found on our [`@scout_apm/scout-apm`](https://github.com/scoutapp/scout_apm_node) GitHub repository.
 

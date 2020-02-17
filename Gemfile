@@ -25,3 +25,6 @@ gem "ipaddr"
 gem "openssl"
 gem "cgi"
 gem "forwardable"
+
+# Utilities
+gem "middleman-livereload"
