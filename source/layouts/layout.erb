@@ -29,7 +29,6 @@ under the License.
     <%= stylesheet_link_tag :screen_overrides, media: :screen %>
     <%= stylesheet_link_tag :print, media: :print %>
     <%= stylesheet_link_tag :scout %>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <% if current_page.data.search %>
       <%= javascript_include_tag  "all" %>
     <% else %>
@@ -39,14 +38,6 @@ under the License.
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Slab:400,700' rel='stylesheet' type='text/css'>
 
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,400italic,700,700italic,800,800italic|Arimo:400,400i,700' rel='stylesheet' type='text/css'>
-
-    <% if language_tabs %>
-      <script>
-        $(function() {
-          setupLanguages(<%= language_tabs.map{ |lang| lang.is_a?(Hash) ? lang.keys.first : lang }.to_json %>);
-        });
-      </script>
-    <% end %>
 
     <!-- Segment.io -->
     <script>
@@ -70,7 +61,6 @@ under the License.
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W82W6H5"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-
     <a href="#" id="nav-button">
       <span>
         NAV
@@ -130,7 +120,7 @@ under the License.
     </div>
   </body>
   <script>
-    /* From AnchorJS docs: Don't add anchors on later events, like $(document).ready() or window.onload as some browsers will attempt to jump to your ID before AnchorJS can add it to the page. 
+    /* From AnchorJS docs: Don't add anchors on later events, like $(document).ready() or window.onload as some browsers will attempt to jump to your ID before AnchorJS can add it to the page.
     */
     /**
      * AnchorJS v3.2.0 options and selector
