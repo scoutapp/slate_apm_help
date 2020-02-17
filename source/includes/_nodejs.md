@@ -310,7 +310,6 @@ To enable agent logging with the `express` middleware, your middleware should be
 const express = require("express");
 const scout = require("@scout_apm/scout-apm");
 
-const scout = require("@scout/
 // Enable the app-wide scout middleware
 app.use(scout.expressMiddleware({
   config: {
@@ -504,33 +503,35 @@ unique metrics can impact the performance of our UI. Do not dynamically
 generate metric types in your instrumentation as this can quickly exceed our
 rate limits.
 
-For high-cardinality details, use tags.
+For high-cardinality details, use context.
 
 <h4 id="nodejs-span-getting-started">Getting Started</h4>
 
 With existing code like:
 
 ```
-$request = new ServiceRequest();
-$request->setApiVersion($version);
+// A handler that handles GET /
+const handler = (req, res) => {
+    // Functionality here
+};
 ```
 
-It is wrapped with instrumentation:
+The express middleware automatically wraps the request with a transaction/instrumentation like the following:
 
 ```
 // At top, with other imports
-use Scoutapm\Express\Facades\ScoutApm;
+const express = require("express");
+const scout = require("@scout_apm/scout-apm");
 
-// Replacing the above code
-$request = ScoutApm::instrument(
-    "Custom", // Kind
-    "Building Service Request", // Name
-    function ($span) use ($version) {
-        $request = new ServiceRequest();
-        $request->setApiVersion($version);
-        return $request;
-    }
-);
+// Enable the app-wide scout middleware
+app.use(scout.expressMiddleware({ ... }));
+
+// Pseudo-code for the replaced handler
+scout.transaction("Controller/GET /", finishTransaction => { // transaction name format is `<kind>/<name>`
+  scout.instrument("Controller/GET /", finishSpan => { // instrumentation name format is `<kind>/<name>`
+    // the handler code
+  });
+});
 ```
 
 * `kind` - A high level area of the application. This defaults to `Custom`.
@@ -547,7 +548,6 @@ $request = ScoutApm::instrument(
 * `tags` - A dictionary of key/value pairs. Key should be a string, but value
   can be any json-able structure. High-cardinality fields like a user ID are
   permitted.
-
 
 <h2 id="nodejs-custom-context">Custom Context</h2>
 
