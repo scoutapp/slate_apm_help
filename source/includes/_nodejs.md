@@ -615,4 +615,13 @@ The package changelog is [available here](https://github.com/scoutapp/scout_apm_
 
 Scout can [track deploys](#deploy-tracking), making it easier to correlate specific deploys to changes in performance.
 
-To ensure scout tracks your deploy, please provide the `SCOUT_REVISION_SHA` environment variable.
+To ensure scout tracks your deploy, please provide the `SCOUT_REVISION_SHA` environment variable. You may also set the `revisionSHA` on a `ScountConfiguration` object instance:
+
+```javascript
+const config = buildScoutConfiguration({
+    monitor: true,
+    key: "<app key>",
+    name: "<app name>",
+    revisionSHA: "<sha>",
+});
+```
