@@ -81,7 +81,7 @@ If you've installed Scout via the Heroku Addon, the provisioning process automat
 
 Scout's Express middleware can be used by adding it to your application:
 
-```js
+```javascript
 const express = require("express");
 const scout = require("@scout_apm/scout-apm");
 
@@ -277,7 +277,7 @@ We typically respond within a couple of hours during the business day.
         The log file for the core agent process
       </td>
       <td>
-        <code>"info"</code>
+        <code>"/path/to/your/log/file"</code>
       </td>
       <td>
         No
@@ -296,26 +296,80 @@ as a separate application within Scout and ignore the development and test
 environments. Configure a unique app name for each environment as Scout
 aggregates data by the app name.
 
+For example, `app-staging` might be used to represent a Staging environment where as `app-production` would represent a Production environment.
 
 <h2 id="nodejs-logging">Logging</h2>
 
-Scout logs internal activity via a configured `Psr\Log\LoggerInterface`. The
-Express instruments automatically wire up the framework's logger to the
-agent's logging.
+Scout logs internal activity via a configured logging function with the signature `(msg: string, level: LogLevel) => void`.
 
-If required, you can override this by changing the container service `log`.
+<h3 id="nodejs-logging-express-middleware">Express middleware logging</h3>
 
-Scout's logging defaults to the same log level as the LoggerInterface provided,
-but that can be set to a stricter level to quiet the agent's logging via the
-`log_level` configuration. The underlying LoggerInterface's level will take
-precedence if it is tighter than the `log_level` configuration.
+To enable agent logging with the `express` middleware, your middleware should be set up like the following:
 
+```javascript
+const express = require("express");
+const scout = require("@scout_apm/scout-apm");
+
+const scout = require("@scout/
+// Enable the app-wide scout middleware
+app.use(scout.expressMiddleware({
+  config: {
+    allowShutdown: true, // allow shutting down spawned scout-agent processes from this program
+    monitor: true, // enable monitoring
+    name: "<application name>",
+    key: "<scout key>",
+  },
+  logFn: scout.consoleLogFn,
+}));
+```
+
+If you are using [`winston`](https://www.npmjs.com/package/winston) you may build a `logFn` by passing a `winston.Logger` to the exported `scout.buildWinstonLogger` helper function:
+
+```javascript
+  logFn: scout.buildWinstonLogger(yourLogger),
+```
+
+If a `winston.Logger` instance is provided, Scout's logging defaults to the same log level as the instance, otherwise it defaults to `ERROR`. You may set the logging to a stricter level to quiet the agent's logging via the `logLevel` in the `config` sub-object (or `SCOUT_LOG_LEVEL` via ENV). The underlying LoggerInterface's level will take precedence if it is tighter than the `logLevel` configuration.
 
 <h2 id="nodejs-custom-instrumentation">Custom Instrumentation</h2>
 
-You can extend Scout to trace transactions outside our officially supported
-libraries (e.g. Cron jobs and other web frameworks) and time the execution of
-sections of code that falls outside our provided instrumentation.
+You can extend Scout to trace transactions outside our officially supported libraries (e.g. Cron jobs and other web frameworks) and time the execution of sections of code that falls outside our provided instrumentation.
+
+Asynchronous functionality can be marked as a transaction with code similar to the following:
+
+```javascript
+scout.transaction("transaction-name", (finishTransaction) => {
+   yourAsyncFunction()
+   .then(() => finishTransaction())
+   .catch(err => {
+    // error handling code goes here
+    finishTransaction();
+   });
+});
+```
+
+For Asynchronous functionality in a callback-passing style:
+
+```javascript
+scout.transaction("transaction-name", (finishTransaction) => {
+   yourCallbackStyleAsyncFunction((err) => {
+    if (err) {
+      // error handling code goes here
+      return;
+    }
+
+    finishTransaction();
+   });
+});
+```
+
+Synchronous functionality can be marked as transactions with code similar to the following:
+
+```javascript
+scout.transactionSync("sync-transaction-name", () => {
+  yourSyncFunction();
+});
+```
 
 <h3 id="nodejs-transactions-timing">Transactions & Timing</h3>
 
@@ -333,9 +387,7 @@ A transaction groups a sequence of work under in the Scout UI. These are used
 to generate transaction traces. For example, you may create a transaction that
 wraps around the entire execution of a NodeJS script that is ran as a Cron Job.
 
-The Express instrumentation does this all for you. You only will need to
-manually instrument transactions in special cases. Contact us at
-support@scoutapm.com for help.
+The Express integration does this all for you. You only will need to manually instrument transactions in special cases. [Contact us at support@scoutapm.com](mailto:support@scoutapm.com?subject=Custom%20Integration%20Assistance%20%5bYour%20App%5d) for help.
 
 <h4 id="nodejs-transaction-limits">Limits</h4>
 
@@ -356,9 +408,8 @@ Scout distinguishes between two types of transactions:
   user-facing experience (example: cron jobs). These will be available in the
   "Background Jobs" area of the UI.
 
-```nodejs
-$agent->webTransaction("GET Users", function() { ... your code ... });
-$agent->send();
+```javascript
+scout.transaction("GET /users", () => { ... your code ... });
 ```
 
 <h3 id="nodejs-timing-blocks">Timing functions and blocks of code</h3>
@@ -370,6 +421,81 @@ to your application.
 Traces that allocate significant amount of time to `Controller` or `Job` layers
 are good candidates to add custom instrumentation. This indicates a significant
 amount of time is falling outside our default instrumentation.
+
+Asynchronous functionality may be instrumented with code similar to the following:
+
+```javascript
+// NOTE: The transaction is *implicit* inside of express route handlers, if you are using the express middleware
+scout.transaction("transaction-name", (finishTransaction) => {
+  // Start the first instrumentation
+  const first = scout.instrument("instrument-name", (finishInstrument) => {
+    // instrument code
+    return yourAsyncFunction()
+        .then(() => finishInstrument());
+  });
+
+  // Start the second instrumentation
+  scout.instrument("instrument-name", (finishInstrument) => {
+    // instrument code
+    return yourAsyncFunction()
+        .then(() => finishInstrument());
+  });
+
+  // Finish the transaction once all instrumentations are recorded
+  Promise.all([first, second])
+    .then(() => finishTransaction());
+});
+```
+
+For Asynchronous functionality in a callback-passing style:
+
+```javascript
+// NOTE: The transaction is *implicit* inside of express route handlers, if you are using the express middleware
+scout.transaction("transaction-name", (finishTransaction) => {
+  // Start the first instrumentation
+  const first = scout.instrument("first-instrumentation", (finishFirst) => {
+    // instrument code
+    yourCallbackStyleAsyncFunction((err) => {
+      if (err) {
+        // error handling code here
+        return;
+      }
+
+      finishFirst();
+
+      // Start a second instrumentation
+      const second = scout.instrument("second-instrumentation", (finishSecond) => {
+        // instrument code
+        yourCallbackStyleAsyncFunction((err) => {
+          if (err) {
+            // error handling code here
+            return;
+          }
+
+          finishSecond();
+          finishTransaction();
+        });
+      });
+
+    });
+  });
+});
+```
+
+Synchronous functionality can be instrumented with code similar to the following:
+
+```javascript
+// NOTE: The transaction is *implicit* inside of express route handlers, if you are using the express middleware
+scout.transactionSync("sync-transaction-name", (finishTransaction) => {
+  scout.instrumentSync("first-instrumentation", () => {
+    yourSyncFunction();
+  });
+
+  scout.instrumentSync("second-instrumentation", () => {
+    yourSyncFunction();
+  });
+});
+```
 
 <h4 id="nodejs-span-limits">Limits</h4>
 
@@ -435,7 +561,7 @@ you can add custom context to answer critical questions like:
 
 It's simple to add [custom context](#context) to your app:
 
-```nodejs
+```javascript
 use Scoutapm\Express\Facades\ScoutApm; // Express only: Add near the other use statements
 
 ScoutApm::addContext("Key", "Value");
