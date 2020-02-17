@@ -618,7 +618,7 @@ Scout can [track deploys](#deploy-tracking), making it easier to correlate speci
 To ensure scout tracks your deploy, please provide the `SCOUT_REVISION_SHA` environment variable. You may also set the `revisionSHA` on a `ScountConfiguration` object instance:
 
 ```javascript
-const config = buildScoutConfiguration({
+const config = scout.buildScoutConfiguration({
     monitor: true,
     key: "<app key>",
     name: "<app name>",
