@@ -11,5 +11,8 @@ end
 
 desc "Run docker image"
 task "docker:image:run" do |t, args|
-  sh "docker run --rm --name #{DOCKER_IMAGE_NAME} #{DOCKER_IMAGE_FULL_NAME}"
+  sh "docker run --rm" \
+     " -p #{MIDDLEMAN_PORT}:#{MIDDLEMANPORT}" \
+     " --name #{DOCKER_IMAGE_NAME}" \
+     " #{DOCKER_IMAGE_FULL_NAME}"
 end
