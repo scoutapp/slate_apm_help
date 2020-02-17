@@ -23,16 +23,12 @@ Scout provides instrumentation for:
 - [Mustache](https://github.com/janl/mustache.js)
 - [EJS](https://www.npmjs.com/package/ejs)
 
-###
 <h3 id="nodejs-some-configuration-required">Some configuration required</h3>
 
 The libraries below require a small number of configuration updates. Click on
 the respective library for instructions.
 
 * [Express](#express)
-    * Middleware
-    * Controllers
-    * SQL queries
 
 You can instrument your own code or other libraries via [custom instrumentation](#nodejs-custom-instrumentation).
 You can suggest additional libraries you'd like Scout to instrument [on GitHub](https://github.com/scoutapp/scout_apm_node/issues).
@@ -50,21 +46,20 @@ Scout supports Express 4.x+.
       <td style="padding-top: 15px">
         <p>Install the <code>@scout_apm/scout-apm</code> package:</p>
         <pre style="width:500px">
-            yarn add @scout_apm/scout-apm
+$ yarn add @scout_apm/scout-apm
         </pre>
       </td>
     </tr>
     <tr>
       <td>
-        <span class="step">3</span>
+        <span class="step">2</span>
       </td>
       <td style="padding-top: 15px">
         <p>Configure Scout via ENV variables:</p>
 <pre style="width:500px">
-# Scout settings
-SCOUT_MONITOR=true
-SCOUT_KEY="[AVAILABLE IN THE SCOUT UI]"
-SCOUT_NAME="A FRIENDLY NAME FOR YOUR APP"
+export SCOUT_MONITOR=true
+export SCOUT_KEY="[AVAILABLE IN THE SCOUT UI]"
+export SCOUT_NAME="A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
 <p>
@@ -73,7 +68,7 @@ If you've installed Scout via the Heroku Addon, the provisioning process automat
       </td>
     </tr>
     <tr>
-      <td><span class="step">4</span></td>
+      <td><span class="step">3</span></td>
       <td style="padding-top: 15px">
         <p>Deploy.</p>
         <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
@@ -105,11 +100,11 @@ app.use(scout.expressMiddleware({
 
 <h2 id="nodejs-troubleshooting">Troubleshooting</h2>
 
-Not seeing data? Email support@scoutapm.com with:
+Not seeing data? [Email support@scoutapm.com](mailto:support@scoutapm.com?subject=New%20Support%20Ticket%20%5bYour%20App%5d&body=Scout%20Link%20to%20your%20app:%20%0A%0dNodeJS%20Version:%20%0A%0dFramework:%20%0A%0dScout%20logs:%20%0A%0d) with:
 
 * A link to your app within Scout (if applicable)
 * Your NodeJS version
-* The name of the framework and version you are trying to instrument, e.g. Express 5.8
+* The name of the framework and version you are trying to instrument, e.g. Express 4.17.0
 * <a href="#nodejs-logging">Scout logs</a>
 
 We typically respond within a couple of hours during the business day.
