@@ -23,6 +23,28 @@ Scout provides instrumentation for:
 - [Mustache](https://github.com/janl/mustache.js)
 - [EJS](https://www.npmjs.com/package/ejs)
 
+For all integrations, `scout` should be required as early as possible:
+
+```javascript
+const scout = require("@scout_apm/scout-apm");
+```
+
+Requiring `scout` before other dependencies ensures that it is set up for use with your other dependencies. For example Postgres (or some library that depends on `pg`):
+
+```javascript
+const scout = require("@scout_apm/scout-apm");
+const pg = require("pg");
+```
+
+In a [Typescript](https://www.typescriptlang.org/) project, if you do not import *all* of `scout`, you will need to run `setupRequireIntegrations` with the packages you want to set up:
+
+```javascript
+import { setupRequireIntegrations } from "@scout_apm/scout-apm"; // alternatively, `import "@scout_apm/scout-apm";`
+setupRequireIntegrations(["pg"]);
+
+import { Client } from "pg";
+```
+
 <h3 id="nodejs-some-configuration-required">Some configuration required</h3>
 
 The libraries below require a small number of configuration updates. Click on
@@ -555,7 +577,7 @@ scout.api.WebTransaction.run("Controller/GET /", finishTransaction => { // trans
 If you don't want to track the current transaction, at any point you can call `scout.api.ignoreTransaction()` to ignore it:
 
 ```javascript
-const scout = require("scout");
+const scout = require("@scout_apm/scout-apm");
 
 if (isHealthCheck) {
   scout.api.ignoreTransaction_transaction()
@@ -567,7 +589,7 @@ You can use this whether the transaction was started from a built-in integration
 You can also ignore a set of URL path prefixes by configuring the `ignore` setting in your `ScoutConfiguration`:
 
 ```javascript
-buildScoutConfiguration({
+scout.buildScoutConfiguration({
   ignore: ["/health-check/", "/admin/"],
 });
 ```
