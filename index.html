@@ -2390,6 +2390,19 @@ The base package is called <code class="prettyprint">@scout_apm/scout-apm</code>
 <li><a href="https://www.npmjs.com/package/ejs">EJS</a></li>
 </ul>
 
+<p>For all integrations, <code class="prettyprint">scout</code> should be required as early as possible:</p>
+<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">scout</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"@scout_apm/scout-apm"</span><span class="p">);</span>
+</code></pre>
+<p>Requiring <code class="prettyprint">scout</code> before other dependencies ensures that it is set up for use with your other dependencies. For example Postgres (or some library that depends on <code class="prettyprint">pg</code>):</p>
+<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">scout</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"@scout_apm/scout-apm"</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">pg</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"pg"</span><span class="p">);</span>
+</code></pre>
+<p>In a <a href="https://www.typescriptlang.org/">Typescript</a> project, if you do not import <em>all</em> of <code class="prettyprint">scout</code>, you will need to run <code class="prettyprint">setupRequireIntegrations</code> with the packages you want to set up:</p>
+<pre class="highlight javascript tab-javascript"><code><span class="kr">import</span> <span class="p">{</span> <span class="nx">setupRequireIntegrations</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">"@scout_apm/scout-apm"</span><span class="p">;</span> <span class="c1">// alternatively, `import "@scout_apm/scout-apm";`</span>
+<span class="nx">setupRequireIntegrations</span><span class="p">([</span><span class="s2">"pg"</span><span class="p">]);</span>
+
+<span class="kr">import</span> <span class="p">{</span> <span class="nx">Client</span> <span class="p">}</span> <span class="nx">from</span> <span class="s2">"pg"</span><span class="p">;</span>
+</code></pre>
 <h3 id="nodejs-some-configuration-required">Some configuration required</h3>
 
 <p>The libraries below require a small number of configuration updates. Click on
@@ -2696,7 +2709,7 @@ aggregates data by the app name.</p>
 <p>You can extend Scout to trace transactions outside our officially supported libraries (e.g. Cron jobs and other web frameworks) and time the execution of sections of code that falls outside our provided instrumentation.</p>
 
 <p>Asynchronous functionality can be marked as a transaction with code similar to the following:</p>
-<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">transaction</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
    <span class="nx">yourAsyncFunction</span><span class="p">()</span>
    <span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">finishTransaction</span><span class="p">())</span>
    <span class="p">.</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="o">=&gt;</span> <span class="p">{</span>
@@ -2706,7 +2719,7 @@ aggregates data by the app name.</p>
 <span class="p">});</span>
 </code></pre>
 <p>For Asynchronous functionality in a callback-passing style:</p>
-<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">transaction</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
    <span class="nx">yourCallbackStyleAsyncFunction</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
       <span class="c1">// error handling code goes here</span>
@@ -2718,7 +2731,7 @@ aggregates data by the app name.</p>
 <span class="p">});</span>
 </code></pre>
 <p>Synchronous functionality can be marked as transactions with code similar to the following:</p>
-<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">transactionSync</span><span class="p">(</span><span class="s2">"sync-transaction-name"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">runSync</span><span class="p">(</span><span class="s2">"sync-transaction-name"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="nx">yourSyncFunction</span><span class="p">();</span>
 <span class="p">});</span>
 </code></pre>
@@ -2762,7 +2775,8 @@ and appear in the &ldquo;Web&rdquo; area of the UI.</li>
 user-facing experience (example: cron jobs). These will be available in the
 &ldquo;Background Jobs&rdquo; area of the UI.</li>
 </ul>
-<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">transaction</span><span class="p">(</span><span class="s2">"GET /users"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="nx">your</span> <span class="nx">code</span> <span class="p">...</span> <span class="p">});</span>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">"GET /users"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="nx">your</span> <span class="nx">code</span> <span class="p">...</span> <span class="p">});</span>
+<span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">BackgroundTransaction</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">"your-bg-transaction"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="p">...</span> <span class="nx">your</span> <span class="nx">code</span> <span class="p">...</span> <span class="p">});</span>
 </code></pre>
 <h3 id="nodejs-timing-blocks">Timing functions and blocks of code</h3>
 
@@ -2776,16 +2790,16 @@ amount of time is falling outside our default instrumentation.</p>
 
 <p>Asynchronous functionality may be instrumented with code similar to the following:</p>
 <pre class="highlight javascript tab-javascript"><code><span class="c1">// NOTE: The transaction is *implicit* inside of express route handlers, if you are using the express middleware</span>
-<span class="nx">scout</span><span class="p">.</span><span class="nx">transaction</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="c1">// Start the first instrumentation</span>
-  <span class="kr">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"instrument-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishInstrument</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"instrument-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishInstrument</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="c1">// instrument code</span>
     <span class="k">return</span> <span class="nx">yourAsyncFunction</span><span class="p">()</span>
         <span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">finishInstrument</span><span class="p">());</span>
   <span class="p">});</span>
 
   <span class="c1">// Start the second instrumentation</span>
-  <span class="nx">scout</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"instrument-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishInstrument</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"instrument-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishInstrument</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="c1">// instrument code</span>
     <span class="k">return</span> <span class="nx">yourAsyncFunction</span><span class="p">()</span>
         <span class="p">.</span><span class="nx">then</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="nx">finishInstrument</span><span class="p">());</span>
@@ -2798,9 +2812,9 @@ amount of time is falling outside our default instrumentation.</p>
 </code></pre>
 <p>For Asynchronous functionality in a callback-passing style:</p>
 <pre class="highlight javascript tab-javascript"><code><span class="c1">// NOTE: The transaction is *implicit* inside of express route handlers, if you are using the express middleware</span>
-<span class="nx">scout</span><span class="p">.</span><span class="nx">transaction</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s2">"transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
   <span class="c1">// Start the first instrumentation</span>
-  <span class="kr">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"first-instrumentation"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishFirst</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="kr">const</span> <span class="nx">first</span> <span class="o">=</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"first-instrumentation"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishFirst</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="c1">// instrument code</span>
     <span class="nx">yourCallbackStyleAsyncFunction</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
       <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
@@ -2811,7 +2825,7 @@ amount of time is falling outside our default instrumentation.</p>
       <span class="nx">finishFirst</span><span class="p">();</span>
 
       <span class="c1">// Start a second instrumentation</span>
-      <span class="kr">const</span> <span class="nx">second</span> <span class="o">=</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"second-instrumentation"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishSecond</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kr">const</span> <span class="nx">second</span> <span class="o">=</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">instrument</span><span class="p">(</span><span class="s2">"second-instrumentation"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishSecond</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
         <span class="c1">// instrument code</span>
         <span class="nx">yourCallbackStyleAsyncFunction</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
           <span class="k">if</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="p">{</span>
@@ -2830,12 +2844,12 @@ amount of time is falling outside our default instrumentation.</p>
 </code></pre>
 <p>Synchronous functionality can be instrumented with code similar to the following:</p>
 <pre class="highlight javascript tab-javascript"><code><span class="c1">// NOTE: The transaction is *implicit* inside of express route handlers, if you are using the express middleware</span>
-<span class="nx">scout</span><span class="p">.</span><span class="nx">transactionSync</span><span class="p">(</span><span class="s2">"sync-transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nx">scout</span><span class="p">.</span><span class="nx">instrumentSync</span><span class="p">(</span><span class="s2">"first-instrumentation"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+<span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">WebTransaction</span><span class="p">.</span><span class="nx">runSync</span><span class="p">(</span><span class="s2">"sync-transaction-name"</span><span class="p">,</span> <span class="p">(</span><span class="nx">finishTransaction</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">instrumentSync</span><span class="p">(</span><span class="s2">"first-instrumentation"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">yourSyncFunction</span><span class="p">();</span>
   <span class="p">});</span>
 
-  <span class="nx">scout</span><span class="p">.</span><span class="nx">instrumentSync</span><span class="p">(</span><span class="s2">"second-instrumentation"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">instrumentSync</span><span class="p">(</span><span class="s2">"second-instrumentation"</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
     <span class="nx">yourSyncFunction</span><span class="p">();</span>
   <span class="p">});</span>
 <span class="p">});</span>
@@ -2866,8 +2880,8 @@ const scout = require("@scout_apm/scout-apm");
 app.use(scout.expressMiddleware({ ... }));
 
 // Pseudo-code for the replaced handler
-scout.transaction("Controller/GET /", finishTransaction =&gt; { // transaction name format is `&lt;kind&gt;/&lt;name&gt;`
-  scout.instrument("Controller/GET /", finishSpan =&gt; { // instrumentation name format is `&lt;kind&gt;/&lt;name&gt;`
+scout.api.WebTransaction.run("Controller/GET /", finishTransaction =&gt; { // transaction name format is `&lt;kind&gt;/&lt;name&gt;`
+  scout.api.instrument("Controller/GET /", finishSpan =&gt; { // instrumentation name format is `&lt;kind&gt;/&lt;name&gt;`
     // the handler code
   });
 });
@@ -2889,6 +2903,25 @@ can be any json-able structure. High-cardinality fields like a user ID are
 permitted.</li>
 </ul>
 
+<h2 id="nodejs-ignoring-transactions">Ignoring Transactions</h2>
+
+<p>If you don&rsquo;t want to track the current transaction, at any point you can call <code class="prettyprint">scout.api.ignoreTransaction()</code> to ignore it:</p>
+<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">scout</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"@scout_apm/scout-apm"</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="nx">isHealthCheck</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">ignoreTransaction_transaction</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre>
+<p>You can use this whether the transaction was started from a built-in integration or custom instrumentation.</p>
+
+<p>You can also ignore a set of URL path prefixes by configuring the <code class="prettyprint">ignore</code> setting in your <code class="prettyprint">ScoutConfiguration</code>:</p>
+<pre class="highlight javascript tab-javascript"><code><span class="nx">scout</span><span class="p">.</span><span class="nx">buildScoutConfiguration</span><span class="p">({</span>
+  <span class="na">ignore</span><span class="p">:</span> <span class="p">[</span><span class="s2">"/health-check/"</span><span class="p">,</span> <span class="s2">"/admin/"</span><span class="p">],</span>
+<span class="p">});</span>
+</code></pre>
+<p>When specifying this as an environment variable, it should be a comma-separated list:</p>
+<pre class="highlight shell"><code><span class="nb">export </span><span class="nv">SCOUT_IGNORE</span><span class="o">=</span><span class="s1">'/health-check/,/admin/'</span>
+</code></pre>
 <h2 id="nodejs-custom-context">Custom Context</h2>
 
 <p><a href="#context">Context</a> lets you see the key attributes of requests. For example,
@@ -2904,11 +2937,8 @@ you can add custom context to answer critical questions like:</p>
 <p>It&rsquo;s simple to add <a href="#context">custom context</a> to your app:</p>
 <pre class="highlight javascript tab-javascript"><code><span class="c1">// Express only: Add context inside a handler function</span>
 <span class="nx">app</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-  <span class="nx">req</span><span class="p">.</span><span class="nx">scout</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">addContext</span><span class="p">(</span><span class="s2">"Key"</span><span class="p">,</span> <span class="s2">"Value"</span><span class="p">);</span>
+  <span class="nx">scout</span><span class="p">.</span><span class="nx">api</span><span class="p">.</span><span class="nx">addContext</span><span class="p">(</span><span class="s2">"Key"</span><span class="p">,</span> <span class="s2">"Value"</span><span class="p">);</span> <span class="c1">// returns a Promise</span>
 <span class="p">})</span>
-
-<span class="c1">// or if you have access to a request instance:</span>
-<span class="nx">request</span><span class="p">.</span><span class="nx">addContext</span><span class="p">(</span><span class="s2">"Key"</span><span class="p">,</span> <span class="s2">"Value"</span><span class="p">);</span>
 </code></pre>
 <h3 id="nodejs-context-key-restrictions">Context Key Restrictions</h3>
 
@@ -3144,22 +3174,28 @@ pip install scout-apm
         <span class="step">2</span>
       </td>
       <td style="padding-top: 15px">
-        <p>Configure Scout in your <code>settings.py</code> file:</p>
+        <p>Configure Scout in your Celery application file:</p>
+
 <pre class="terminal" style="width: initial">
 <span>import scout_apm.celery</span>
 <span>from scout_apm.api import Config</span>
 from celery import Celery
 
 app = Celery('tasks', backend='redis://localhost', broker='redis://localhost')
+
 <span>
+# If you are using app.config_from_object() to point to your Django settings
+# and have configured Scout there, this is not necessary:
 Config.set(
     key="[AVAILABLE IN THE SCOUT UI]",
     name="Same as Web App Name",
     monitor=True,
 )
 </span>
-<span>scout_apm.celery.install()</span>
+<span>scout_apm.celery.install(app)</span>
 </pre>
+
+The `app` argument is optional and was added in version 2.12.0, but you should provide it for complete instrumentation.
 
 <p>If you wish to configure Scout via environment variables, use <code>SCOUT_MONITOR</code>, <code>SCOUT_NAME</code> and <code>SCOUT_KEY</code> instead of calling <code>Config.set</code>.</p>
 
@@ -4058,6 +4094,23 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
     </tr>
     <tr>
       <th>
+        core_agent_config_file
+      </th>
+      <td>
+        Point to a configuration file for the <a href="#core-agent">Core Agent</a>.
+        This may be useful for debugging your setup with files provided by Scout APM staff.
+        <br>
+        <br>
+        Prior to version 2.13.0, this was called <strong>config_file</strong>. That name now works as an alias, and takes precedence to allow old configuration to continue to work.
+      </td>
+      <td>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
         core_agent_download
       </th>
       <td>
@@ -4086,6 +4139,49 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
     </tr>
     <tr>
       <th>
+        core_agent_log_file
+      </th>
+      <td>
+        The log file for the <a href="#core-agent">Core Agent</a> to write its logs to.
+        If not set, it won&rsquo;t be written.
+        <br>
+        <br>
+        This does not affect the logging configuration of the Python library.
+        To change that, directly configure the python <code>logging</code> module as per <a href="#python-logging">the below documentation</a>.
+        <br>
+        <br>
+        Prior to version 2.13.0, this was called <strong>log_file</strong>. That name now works as an alias, and takes precedence to allow old configuration to continue to work.
+      </td>
+      <td>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
+        core_agent_log_level
+      </th>
+      <td>
+        The log level of the <a href="#core-agent">Core Agent</a>.
+        This should be one of: <code>"trace"</code>, <code>"debug"</code>, <code>"info"</code>, <code>"warn"</code>, <code>"error"</code>.
+        <br>
+        <br>
+        This does not affect the log level of the Python library.
+        To change that, directly configure the python <code>logging</code> module as per <a href="#python-logging">the below documentation</a>.
+        <br>
+        <br>
+        Prior to version 2.6.0, this was called <strong>log_level</strong>. That name now works as an alias, and takes precedence to allow old configuration to continue to work.
+      </td>
+      <td>
+        <code>"info"</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
         core_agent_permissions
       </th>
       <td>
@@ -4100,10 +4196,14 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
     </tr>
     <tr>
       <th>
-        core_agent_triple
+        core_agent_socket_path
       </th>
       <td>
-        If you are running a MUSL based Linux (such as ArchLinux), you may need to explicitly specify the platform triple. E.g. <code>x86_64-unknown-linux-musl</code>
+        The path to the socket to connect to the <a href="#core-agent">Core Agent</a>, passed to it when launching.
+        This does not normally need to be set, as it can be automatically derived to live in the same directoy as the core agent.
+        <br>
+        <br>
+        Prior to version 2.13.0, this was called <strong>socket_path</strong>. That name now works as an alias, and takes precedence to allow old configuration to continue to work.
       </td>
       <td>
         Auto detected
@@ -4114,21 +4214,13 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
     </tr>
     <tr>
       <th>
-        core_agent_log_level
+        core_agent_triple
       </th>
       <td>
-        The log level of the core agent process.
-        This should be one of: <code>"trace"</code>, <code>"debug"</code>, <code>"info"</code>, <code>"warn"</code>, <code>"error"</code>.
-        <br>
-        <br>
-        This does not affect the log level of the Python library.
-        To change that, directly configure the python <code>logging</code> module as per <a href="#python-logging">the below documentation</a>.
-        <br>
-        <br>
-        Prior to version 2.6.0, this was called `log_level`. That name now works as an alias, but is deprecated and will log a warning.
+        If you are running a MUSL based Linux (such as ArchLinux), you may need to explicitly specify the platform triple. E.g. <code>x86_64-unknown-linux-musl</code>
       </td>
       <td>
-        <code>"info"</code>
+        Auto detected
       </td>
       <td>
         No
