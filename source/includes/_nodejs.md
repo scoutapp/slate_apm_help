@@ -116,19 +116,17 @@ const express = require("express");
 const scout = require("@scout_apm/scout-apm");
 
 // Set up scout (this returns a Promise you may wait on if desired)
-scout.install();
+scout.install({
+  monitor: true, // enable monitoring
+  name: "<application name>",
+  key: "<scout key>",
+});
 
 // Initialize your express application
 const app = express();
 
 // Enable the app-wide scout middleware
-app.use(scout.expressMiddleware({
-  config: {
-    monitor: true, // enable monitoring
-    name: "<application name>",
-    key: "<scout key>",
-  },
-}));
+app.use(scout.expressMiddleware());
 ```
 
 <h2 id="nodejs-troubleshooting">Troubleshooting</h2>
@@ -344,18 +342,20 @@ const express = require("express");
 const scout = require("@scout_apm/scout-apm");
 
 // Set up scout (this returns a Promise you may wait on if desired)
-scout.install();
-
-// Enable the app-wide scout middleware
-app.use(scout.expressMiddleware({
-  config: {
+scout.install(
+  {
     allowShutdown: true, // allow shutting down spawned scout-agent processes from this program
     monitor: true, // enable monitoring
     name: "<application name>",
     key: "<scout key>",
   },
-  logFn: scout.consoleLogFn,
-}));
+  {
+    logFn: scout.consoleLogFn
+  },
+);
+
+// Enable the app-wide scout middleware
+app.use(scout.expressMiddleware());
 ```
 
 If you are using [`winston`](https://www.npmjs.com/package/winston) you may build a `logFn` by passing a `winston.Logger` to the exported `scout.buildWinstonLogger` helper function:
