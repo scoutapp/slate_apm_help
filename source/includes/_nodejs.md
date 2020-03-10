@@ -27,6 +27,9 @@ For all integrations, `scout` should be required as early as possible:
 
 ```javascript
 const scout = require("@scout_apm/scout-apm");
+
+// Set up scout (this returns a Promise you may wait on if desired)
+scout.install();
 ```
 
 Requiring `scout` before other dependencies ensures that it is set up for use with your other dependencies. For example Postgres (or some library that depends on `pg`):
@@ -34,15 +37,20 @@ Requiring `scout` before other dependencies ensures that it is set up for use wi
 ```javascript
 const scout = require("@scout_apm/scout-apm");
 const pg = require("pg");
+
+// Set up scout (this returns a Promise you may wait on if desired)
+scout.install();
 ```
 
 In a [Typescript](https://www.typescriptlang.org/) project, if you do not import *all* of `scout`, you will need to run `setupRequireIntegrations` with the packages you want to set up:
 
 ```javascript
-import { setupRequireIntegrations } from "@scout_apm/scout-apm"; // alternatively, `import "@scout_apm/scout-apm";`
+import { setupRequireIntegrations, install as installScout } from "@scout_apm/scout-apm"; // alternatively, `import "@scout_apm/scout-apm";`
 setupRequireIntegrations(["pg"]);
 
 import { Client } from "pg";
+
+installScout();
 ```
 
 <h3 id="nodejs-some-configuration-required">Some configuration required</h3>
@@ -106,6 +114,9 @@ Scout's Express middleware can be used by adding it to your application:
 ```javascript
 const express = require("express");
 const scout = require("@scout_apm/scout-apm");
+
+// Set up scout (this returns a Promise you may wait on if desired)
+scout.install();
 
 // Initialize your express application
 const app = express();
@@ -332,6 +343,9 @@ To enable agent logging with the `express` middleware, your middleware should be
 const express = require("express");
 const scout = require("@scout_apm/scout-apm");
 
+// Set up scout (this returns a Promise you may wait on if desired)
+scout.install();
+
 // Enable the app-wide scout middleware
 app.use(scout.expressMiddleware({
   config: {
@@ -546,6 +560,9 @@ The express middleware automatically wraps the request with a transaction/instru
 const express = require("express");
 const scout = require("@scout_apm/scout-apm");
 
+// Set up scout (this returns a Promise you may wait on if desired)
+scout.install();
+
 // Enable the app-wide scout middleware
 app.use(scout.expressMiddleware({ ... }));
 
@@ -578,6 +595,9 @@ If you don't want to track the current transaction, at any point you can call `s
 
 ```javascript
 const scout = require("@scout_apm/scout-apm");
+
+// Set up scout (this returns a Promise you may wait on if desired)
+scout.install();
 
 if (isHealthCheck) {
   scout.api.ignoreTransaction_transaction()
