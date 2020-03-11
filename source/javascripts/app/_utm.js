@@ -1,7 +1,12 @@
 window.addEventListener("DOMContentLoaded", function(event) {
-  var searchParams = new URLSearchParams(window.location.search);
-  var expiryDate = generateExpiryDate();
-  processParams(searchParams, expiryDate);
+  try{
+    var searchParams = new URLSearchParams(window.location.search);
+    var expiryDate = generateExpiryDate();
+    processParams(searchParams, expiryDate);
+  }
+  catch(error){
+    console.error("URLSearchParams not supported in IE");
+  }
 });
 
 function processParams(searchParams, expiryDate) {
