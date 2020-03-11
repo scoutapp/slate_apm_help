@@ -445,7 +445,7 @@ Scout distinguishes between two types of transactions:
 
 ```javascript
 scout.api.WebTransaction.run("GET /users", () => { ... your code ... });
-scout.api.BackgroundTransaction.run("your-bg-transaction", () => { ... your code ... });
+scout.api.BackgroundTransaction.run("your-large-transaction", () => { ... your code ... });
 ```
 
 <h3 id="nodejs-timing-blocks">Timing functions and blocks of code</h3>
