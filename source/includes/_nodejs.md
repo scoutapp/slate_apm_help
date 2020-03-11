@@ -112,8 +112,8 @@ If you've installed Scout via the Heroku Addon, the provisioning process automat
 Scout's Express middleware can be used by adding it to your application:
 
 ```javascript
-const express = require("express");
 const scout = require("@scout_apm/scout-apm");
+const express = require("express");
 
 // Set up scout (this returns a Promise you may wait on if desired)
 scout.install({
@@ -338,8 +338,8 @@ Scout logs internal activity via a configured logging function with the signatur
 To enable agent logging with the `express` middleware, your middleware should be set up like the following:
 
 ```javascript
-const express = require("express");
 const scout = require("@scout_apm/scout-apm");
+const express = require("express");
 
 // Set up scout (this returns a Promise you may wait on if desired)
 scout.install(
@@ -557,8 +557,8 @@ The express middleware automatically wraps the request with a transaction/instru
 
 ```
 // At top, with other imports
-const express = require("express");
 const scout = require("@scout_apm/scout-apm");
+const express = require("express");
 
 // Set up scout (this returns a Promise you may wait on if desired)
 scout.install();
