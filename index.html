@@ -2437,6 +2437,26 @@ $ yarn add @scout_apm/scout-apm
         <span class="step">2</span>
       </td>
       <td style="padding-top: 15px">
+        <p>Add to Express Middleware:</p>
+        <pre style="width:500px">
+const express = require("express");
+
+// Require scout-apm after express, but before all other requires.
+const scout = require("@scout_apm/scout-apm");
+
+// Initialize your express application
+const app = express();
+
+// Enable the app-wide scout middleware
+app.use(scout.expressMiddleware());
+        </pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">3</span>
+      </td>
+      <td style="padding-top: 15px">
         <p>Configure Scout via ENV variables:</p>
 <pre style="width:500px">
 export SCOUT_MONITOR=true
@@ -2450,33 +2470,15 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
       </td>
     </tr>
     <tr>
-      <td><span class="step">3</span></td>
+      <td><span class="step">4</span></td>
       <td style="padding-top: 15px">
         <p>Deploy.</p>
-        <p>It takes approximatively five minutes for your data to first appear within the Scout UI.</p>
+        <p>It takes just a few minutes for your data to first appear within the Scout UI.</p>
       </td>
     </tr>
   </tbody>
 </table>
 
-<h3 id="nodejs-middleware">Middleware</h3>
-
-<p>Scout&rsquo;s Express middleware can be used by adding it to your application:</p>
-<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"express"</span><span class="p">);</span>
-<span class="kr">const</span> <span class="nx">scout</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"@scout_apm/scout-apm"</span><span class="p">);</span>
-
-<span class="c1">// Initialize your express application</span>
-<span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
-
-<span class="c1">// Enable the app-wide scout middleware</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">scout</span><span class="p">.</span><span class="nx">expressMiddleware</span><span class="p">({</span>
-  <span class="na">config</span><span class="p">:</span> <span class="p">{</span>
-    <span class="na">monitor</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// enable monitoring</span>
-    <span class="na">name</span><span class="p">:</span> <span class="s2">"&lt;application name&gt;"</span><span class="p">,</span>
-    <span class="na">key</span><span class="p">:</span> <span class="s2">"&lt;scout key&gt;"</span><span class="p">,</span>
-  <span class="p">},</span>
-<span class="p">}));</span>
-</code></pre>
 <h2 id="nodejs-troubleshooting">Troubleshooting</h2>
 
 <p>Not seeing data? <a href="mailto:support@scoutapm.com?subject=New%20Support%20Ticket%20%5bYour%20App%5d&amp;body=Scout%20Link%20to%20your%20app:%20%0A%0dNodeJS%20Version:%20%0A%0dFramework:%20%0A%0dScout%20logs:%20%0A%0d">Email support@scoutapm.com</a> with:</p>
