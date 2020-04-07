@@ -95,7 +95,8 @@ Results:
   availableMetrics": [
     "response_time",
     "errors",
-    "throughput"
+    "throughput",
+    "queue_time"
   ]
 }
 ```
