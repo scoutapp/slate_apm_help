@@ -35,6 +35,8 @@ The libraries below require a small number of configuration updates. Click on th
 * [RQ](#rq)
 * [SQLAlchemy](#sqlalchemy)
 
+Additionally, [Scout can also instrument request queuing time](#request-queuing).
+
 ### Automatically applied
 
 The libraries below are automatically detected by the agent during the startup process and do not require explicit configuration to add instrumentation.
