@@ -43,6 +43,24 @@ The Rollbar configuration is an __app-specific__ integration, configured by prov
 
 ![rollbar settings](rollbar_settings.png)
 
+## Sentry
+
+When the Sentry integration is enabled, Scout displays errors from the app's associated Sentry project alongside performance data within the Scout UI.  You can either use the hosted service found on [Sentry.io](https://www.sentry.io) or you can use the self-hosted Sentry option.
+
+![sentry errors](sentry_errors_screenshot.png)
+
+When the error count is in <span style="color:#fff;background:#f0592a;padding: 2px">orange</span>, a new error has appeared in the current timeframe. When the error count is in <span style="background:#ccc;padding:2px">gray</span>, older errors are continuing in this timeframe.
+
+<h3 id="sentry-configuration">Configuration</h3>
+
+The Rollbar configuration is an __app-specific__ integration, configured by providing a read-only Sentry __Access Token__ in the app settings within Scout.
+
+![sentry access token](sentry_access_token.png)
+
+![sentry settings](sentry_settings.png)
+
+**Note:**  If you are using the self-hosted option, please make sure to include the full URL in the base URL field.  `https://self-hosted.sentry.com`, not `selfhost.sentry.com`.
+
 ## Slack
 
 To integrate Slack with Scout's Alert Notification system, you can utilize the Webhook feature on the *Application > Notification Channels* page. In order for Scout and Slack to be able to work together, you need to use a third-party service called [Zapier](https://zapier.com/). Zapier is a service which allows you to connect different web services together to make custom work-flows. As well as Slack, a similar method to the one described below can be used to integrate with many different services. You can read more on our GitHub pages about how to integrate with [PagerDuty](https://github.com/scoutapp/roadmap/issues/15), [VictorOps](https://github.com/scoutapp/roadmap/issues/3) and [xMatters](https://github.com/scoutapp/roadmap/issues/75).
