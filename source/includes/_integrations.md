@@ -53,7 +53,7 @@ When the error count is in <span style="color:#fff;background:#f0592a;padding: 2
 
 <h3 id="sentry-configuration">Configuration</h3>
 
-The Rollbar configuration is an __app-specific__ integration, configured by providing a read-only Sentry __Access Token__ in the app settings within Scout.
+The Sentry configuration is an __app-specific__ integration, configured by providing a read-only Sentry __Access Token__ in the app settings within Scout.
 
 ![sentry access token](sentry_access_token.png)
 
