@@ -94,6 +94,7 @@ Results:
 "results": {
   availableMetrics": [
     "response_time",
+    "response_time_95th",
     "errors",
     "throughput",
     "queue_time"
