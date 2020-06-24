@@ -114,6 +114,8 @@ export SCOUT_KEY="[AVAILABLE IN THE SCOUT UI]"
 export SCOUT_NAME="A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
+**NOTE** You may pass configuration to `scout.expressMiddleware` *and/or* `scout.install`, and if a scout agent instance does not exist already one will be created for you on the fly. Inbound requests will *not* wait until the middleware is ready, but will start being recorded once the `core-agent` has been setup.
+
 <p>
 If you've installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
 </p>
