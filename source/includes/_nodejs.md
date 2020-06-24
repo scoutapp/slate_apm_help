@@ -89,7 +89,17 @@ const app = express();
 
 // Enable the app-wide scout middleware
 app.use(scout.expressMiddleware());
-        </pre>
+
+async function start() {
+  // Trigger the download and installation of the core-agent
+  await scout.install();
+
+  // Start express
+  app.start();
+}
+
+if require.main === module { start(); }
+       </pre>
       </td>
     </tr>
     <tr>
