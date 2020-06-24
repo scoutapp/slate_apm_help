@@ -624,7 +624,7 @@ It's simple to add [custom context](#context) to your app:
 ```javascript
 // Express only: Add context inside a handler function
 app.get("/", (req, req) => {
-  scout.api.addContext("Key", "Value"); // returns a Promise
+  scout.api.Context.add("Key", "Value"); // returns a Promise
 })
 ```
 
