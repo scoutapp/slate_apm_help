@@ -524,13 +524,17 @@ If your app uses `flask-sqlalchemy`, [see below](#flask-sqlalchemy) for addition
 
 ## Flask SQLAlchemy
 
-Instrument [`flask-sqlalchemy`](https://flask-sqlalchemy.palletsprojects.com/) queries:
+Instrument [`flask-sqlalchemy`](https://flask-sqlalchemy.palletsprojects.com/) queries by calling `instrument_sqlalchemy()` on your `SQLAlchemy` instance:
 
 ```py
+from flask_sqlalchemy import SQLAlchemy
 from scout_apm.flask.sqlalchemy import instrument_sqlalchemy
 
-# Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)
-instrument_sqlalchemy(engine)
+app = ...  # Your Flask app
+
+db = SQLAlchemy(app)
+
+instrument_sqlalchemy(db)
 ```
 
 ## Huey
