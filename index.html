@@ -3509,11 +3509,15 @@ If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process a
 
 <h2 id="flask-sqlalchemy">Flask SQLAlchemy</h2>
 
-<p>Instrument <a href="https://flask-sqlalchemy.palletsprojects.com/"><code class="prettyprint">flask-sqlalchemy</code></a> queries:</p>
-<pre class="highlight py tab-python"><code><span class="kn">from</span> <span class="nn">scout_apm.flask.sqlalchemy</span> <span class="kn">import</span> <span class="n">instrument_sqlalchemy</span>
+<p>Instrument <a href="https://flask-sqlalchemy.palletsprojects.com/"><code class="prettyprint">flask-sqlalchemy</code></a> queries by calling <code class="prettyprint">instrument_sqlalchemy()</code> on your <code class="prettyprint">SQLAlchemy</code> instance:</p>
+<pre class="highlight py tab-python"><code><span class="kn">from</span> <span class="nn">flask_sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
+<span class="kn">from</span> <span class="nn">scout_apm.flask.sqlalchemy</span> <span class="kn">import</span> <span class="n">instrument_sqlalchemy</span>
 
-<span class="c"># Assuming something like engine = create_engine('sqlite:///:memory:', echo=True)</span>
-<span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">engine</span><span class="p">)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="o">...</span>  <span class="c"># Your Flask app</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+
+<span class="n">instrument_sqlalchemy</span><span class="p">(</span><span class="n">db</span><span class="p">)</span>
 </code></pre>
 <h2 id="huey">Huey</h2>
 
