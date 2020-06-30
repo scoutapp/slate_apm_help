@@ -892,62 +892,6 @@ tail -n1000 log/production.log | grep "Processing"
 
 <p>For install instructions and configuration options, see <a href="https://github.com/scoutapp/ruby_server_timing">server_timing</a> on GitHub.</p>
 
-<h2 id="request-queuing">Request Queuing</h2>
-
-<p>Scout can measure the time it takes a request to reach your Rails app from farther upstream (a load balancer or web server). This appears in Scout as &ldquo;Request Queuing&rdquo; and provides an indication of your application&rsquo;s capacity. Large request queuing time is an indication that your app needs more capacity.</p>
-
-<p><img src="images/request_queue_annotated.png" alt="request queuing" /></p>
-
-<p>To see this metric within Scout, you need to configure your upstream software, adding an HTTP header that our agent reads. This is typically a one-line change.</p>
-
-<h3 id="http-header">HTTP Header</h3>
-
-<p>The Scout agent depends on an HTTP request header set by an upstream load balancer (ex: HAProxy) or web server (ex: Apache, Ngnix).</p>
-
-<p><strong>Protip:</strong> We suggest adding the header as early as possible in your infrastructure. This ensures you won&rsquo;t miss performance issues that appear before the header is set.</p>
-
-<p>The agent will read any of the following headers as the start time of the request:</p>
-<pre class="highlight ruby tab-ruby"><code><span class="sx">%w(X-Queue-Start X-Request-Start X-QUEUE-START X-REQUEST-START x-queue-start x-request-start)</span>
-</code></pre>
-<p>Include a value in the format <code class="prettyprint">t=MICROSECONDS_SINCE_EPOCH</code> where <code class="prettyprint">MICROSECONDS_SINCE_EPOCH</code> is an integer value of the number of microseconds that have elapsed since the beginning of Unix epoch.</p>
-
-<p><strong>Nearly any front-end HTTP server or load balancer can be configured to add this header.</strong> Some examples are below.</p>
-
-<h3 id="ruby-heroku-request-queue">Heroku</h3>
-
-<p>Time in queue is automatically collected for apps deployed on Heroku. This measures the time from when a request hits the Heroku router and when your app begins processing the request.</p>
-
-<h3 id="apache">Apache</h3>
-
-<p>Apache&rsquo;s <strong>mod_headers</strong> module includes a <code class="prettyprint">%t</code> variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:</p>
-<pre class="highlight  tab-plaintext"><code>RequestHeader set X-Request-Start "%t"
-</code></pre>
-<h4 id="apache-request-queuing-and-file-uploads">Apache Request Queuing and File Uploads</h4>
-
-<p>If you are using Apache, you may observe a spike in queue time within Scout for actions that process large file uploads. Apache adds the <code class="prettyprint">X-Request-Start</code> header as soon as the request hits Apache. So, all of the time spent uploading a file will be reported as queue time.</p>
-
-<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request.</p>
-
-<h3 id="haproxy">HAProxy</h3>
-
-<p>HAProxy 1.5+ supports timestamped headers and can be set in the frontend or backend section. We suggest putting this in the frontend to get a more accurate number:</p>
-<pre class="highlight  tab-plaintext"><code>http-request set-header X-Request-Start t=%Ts
-</code></pre>
-<h3 id="nginx">Nginx</h3>
-
-<p>Nginx 1.2.6+ supports the use of the <code class="prettyprint">#{msec}</code> variable. This makes adding the request queuing header straightforward.</p>
-
-<p>General Nginx usage:</p>
-<pre class="highlight  tab-plaintext"><code>proxy_set_header X-Request-Start "t=${msec}";
-</code></pre>
-<p>Passenger 5+:</p>
-<pre class="highlight  tab-plaintext"><code>passenger_set_header X-Request-Start "t=${msec}";
-</code></pre>
-<p>Older Passsenger versions:</p>
-<pre class="highlight  tab-plaintext"><code>passenger_set_cgi_param X-REQUEST-START "t=${msec}";
-</code></pre>
-<p>Note: The Nginx option is local to the <a href="https://www.phusionpassenger.com/library/config/nginx/reference/#this-configuration-option-is-not-inherited-across-contexts">location block</a>, and isn&rsquo;t inherited.</p>
-
 <h2 id="actioncontroller-metal">ActionController::Metal</h2>
 
 <p>Prior to agent version 2.1.26, an extra step was required to instrument <code class="prettyprint">ActionController::Metal</code>
@@ -3018,6 +2962,8 @@ Source code and issues can be found on our <a href="https://github.com/scoutapp/
 <li><a href="#sqlalchemy">SQLAlchemy</a></li>
 </ul>
 
+<p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
+
 <h3 id="automatically-applied">Automatically applied</h3>
 
 <p>The libraries below are automatically detected by the agent during the startup process and do not require explicit configuration to add instrumentation.</p>
@@ -4633,6 +4579,8 @@ the respective library for instructions.</p>
 </ul></li>
 </ul>
 
+<p>Additionally, <a href="#request-queuing">Scout can also instrument request queuing time</a>.</p>
+
 <p>You can instrument your own code or other libraries via <a href="#php-custom-instrumentation">custom instrumentation</a>.
 You can suggest additional libraries you&rsquo;d like Scout to instrument
 <a href="https://github.com/scoutapp/scout-apm-php/issues">on GitHub</a>.</p>
@@ -5620,6 +5568,66 @@ SCOUT_AUTO_INSTRUMENTS=true</pre>
 <p><img src="images/devtrace.png" alt="devtrace" /></p>
 
 <p>View our <a href="#ruby-devtrace">Ruby</a> and <a href="#elixir-devtrace">Elixir</a> instructions.</p>
+
+<h2 id="request-queuing">Request Queuing</h2>
+
+<p>Scout&rsquo;s PHP, Python, and Ruby integrations can measure the time it takes a request to reach your application from farther upstream (a load balancer or web server). This appears in Scout as &ldquo;Request Queuing&rdquo; and provides an indication of your application&rsquo;s capacity. Large request queuing time is an indication that your app needs more capacity.</p>
+
+<p><img src="images/request_queue_annotated.png" alt="request queuing" /></p>
+
+<p>To see this metric within Scout, you need to configure your upstream software, adding an HTTP header that our agent reads. This is typically a one-line change.</p>
+
+<h3 id="http-header">HTTP Header</h3>
+
+<p>The Scout agent depends on an HTTP request header set by an upstream load balancer (ex: HAProxy) or web server (ex: Apache, Ngnix).</p>
+
+<p><strong>Protip:</strong> We suggest adding the header as early as possible in your infrastructure. This ensures you won&rsquo;t miss performance issues that appear before the header is set.</p>
+
+<p>The agent will read any of the following headers as the start time of the request:</p>
+<pre class="highlight ruby tab-ruby"><code><span class="sx">%w(X-Queue-Start X-Request-Start X-QUEUE-START X-REQUEST-START x-queue-start x-request-start)</span>
+</code></pre>
+<p>Include a value in the format <code class="prettyprint">t=MICROSECONDS_SINCE_EPOCH</code> where <code class="prettyprint">MICROSECONDS_SINCE_EPOCH</code> is an integer value of the number of microseconds that have elapsed since the beginning of Unix epoch.</p>
+
+<p><strong>Nearly any front-end HTTP server or load balancer can be configured to add this header.</strong> Some examples are below.</p>
+
+<h3 id="aws">AWS</h3>
+
+<p>The Python integration also parses the <code class="prettyprint">X-Amzn-Trace-Id</code> header set by AWS ELB&rsquo;s, if a queue start or request start header is not present.</p>
+
+<h3 id="heroku">Heroku</h3>
+
+<p>Time in queue is automatically collected for apps deployed on Heroku. This measures the time from when a request hits the Heroku router and when your app begins processing the request.</p>
+
+<h3 id="apache">Apache</h3>
+
+<p>Apache&rsquo;s <strong>mod_headers</strong> module includes a <code class="prettyprint">%t</code> variable that is formatted for Scout usage. To enable request queue reporting, add this code to your Apache config:</p>
+<pre class="highlight  tab-plaintext"><code>RequestHeader set X-Request-Start "%t"
+</code></pre>
+<h4 id="apache-request-queuing-and-file-uploads">Apache Request Queuing and File Uploads</h4>
+
+<p>If you are using Apache, you may observe a spike in queue time within Scout for actions that process large file uploads. Apache adds the <code class="prettyprint">X-Request-Start</code> header as soon as the request hits Apache. So, all of the time spent uploading a file will be reported as queue time.</p>
+
+<p>This is different from Nginx, which will first buffer the file to a tmp file on disk, then once the upload is complete, add headers to the request.</p>
+
+<h3 id="haproxy">HAProxy</h3>
+
+<p>HAProxy 1.5+ supports timestamped headers and can be set in the frontend or backend section. We suggest putting this in the frontend to get a more accurate number:</p>
+<pre class="highlight  tab-plaintext"><code>http-request set-header X-Request-Start t=%Ts
+</code></pre>
+<h3 id="nginx">Nginx</h3>
+
+<p>Nginx 1.2.6+ supports the use of the <code class="prettyprint">#{msec}</code> variable. This makes adding the request queuing header straightforward.</p>
+
+<p>General Nginx usage:</p>
+<pre class="highlight  tab-plaintext"><code>proxy_set_header X-Request-Start "t=${msec}";
+</code></pre>
+<p>Passenger 5+:</p>
+<pre class="highlight  tab-plaintext"><code>passenger_set_header X-Request-Start "t=${msec}";
+</code></pre>
+<p>Older Passsenger versions:</p>
+<pre class="highlight  tab-plaintext"><code>passenger_set_cgi_param X-REQUEST-START "t=${msec}";
+</code></pre>
+<p>Note: The Nginx option is local to the <a href="https://www.phusionpassenger.com/library/config/nginx/reference/#this-configuration-option-is-not-inherited-across-contexts">location block</a>, and isn&rsquo;t inherited.</p>
 
 <h2 id="chart-embeds">Chart Embeds</h2>
 
