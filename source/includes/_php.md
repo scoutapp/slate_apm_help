@@ -34,6 +34,8 @@ the respective library for instructions.
     * Controllers
     * SQL queries (Doctrine)
     * Twig rendering
+    
+Additionally, [Scout can also instrument request queuing time](#request-queuing).
 
 You can instrument your own code or other libraries via [custom instrumentation](#php-custom-instrumentation).
 You can suggest additional libraries you'd like Scout to instrument
