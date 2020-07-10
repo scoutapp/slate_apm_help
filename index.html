@@ -3752,6 +3752,11 @@ pip install scout-apm
 rq worker <span>--job-class scout_apm.rq.Worker</span> myqueue
 </pre>
 
+<p>If you&rsquo;re using the <a href="https://python-rq.org/patterns/">RQ Heroku pattern</a>, you can change your code to use the <code>scout_apm.rq.HerokuWorker</code> class:</p>
+<pre class="terminal" style="width: initial">
+from scout_apm.rq import HerokuWorker as Worker
+</pre>
+
 <p>If you&rsquo;re using Django-RQ, instead use the <a href="https://github.com/rq/django-rq#custom-job-and-worker-classes">custom worker setting</a> to point to our custom Worker class:</p>
 <pre class="terminal" style="width: initial">
 RQ = {
