@@ -1052,6 +1052,16 @@ We typically respond within a couple of hours during the business day.
       </td>
     </tr>
     <tr>
+      <th>collect_remote_ip</th>
+      <td>
+        Automatically capture end user IP addresses as part of each trace's context.
+      </td>
+       <td>
+         <code>true</code>
+       </td>
+      <td>No</td>
+    </tr>
+    <tr>
       <th>
         ignore
       </th>
@@ -1110,6 +1120,30 @@ We typically respond within a couple of hours during the business day.
         No
       </td>
     </tr>
+  </tbody>
+</table>
+
+There are also some configuration options that affect how the core agent process is run.
+Typically you don't need to change these:
+
+<table class="lookup">
+  <thead>
+    <tr>
+      <th>
+        Setting&nbsp;Name
+      </th>
+      <th>
+        Description
+      </th>
+      <th>
+        Default
+      </th>
+      <th>
+        Required
+      </th>
+    </tr>
+  </thead>
+  <tbody>
     <tr>
       <th>
         core_agent_dir
