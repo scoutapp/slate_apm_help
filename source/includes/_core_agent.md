@@ -13,7 +13,7 @@ If the Core Agent is required for your language, the Scout agent library for tha
         <span class="step">1</span>
       </td>
       <td>
-        <p>Create a directory which your app has access to (for example: /var/www)</p>
+        <p>Create a directory which your app has permissions to read, write and execute into (for our example we will use: /var/www)</p>
 <pre style='width:500px'>
 cd /var/www
 mkdir scout_apm_core
@@ -54,6 +54,8 @@ tar -xvzf core-agent-download.tgz
 <pre style='width:500px'>
 ./core-agent start --socket ./core-agent.sock --daemonize true
 </pre>
+<p style='margin-top:50px'><strong>Note:</strong> this will not persist past a reboot. We suggest adding the core agent to upstart, systemd, or any other processes manager you may be using.<p>
+<p style='margin-top:20px'>For additional startup flags, check the in-executable help with <code>./core-agent start --help</code></p>
       </td>
     </tr>
     <tr>
@@ -67,7 +69,7 @@ tar -xvzf core-agent-download.tgz
 </pre>
         <p style='margin-top:50px'>If you are using one of the supported languages (PHP, Python, Elixir, and Node.js), you will have to set the following configuration variables to point to the correct socket (as well as disabling the agent from re-downloading and launching the core agent again):<p>
         <ul>
-            <li><code>SCOUT_CORE_AGENT_SOCKET_PATH=/var/www/scout_apm_core</code></li>
+            <li><code>SCOUT_CORE_AGENT_SOCKET_PATH=/var/www/scout_apm_core/core-agent.sock</code></li>
             <li><code>SCOUT_CORE_AGENT_DOWNLOAD=false</code></li>
             <li><code>SCOUT_CORE_AGENT_LAUNCH=false</code></li>
         </ul>
@@ -76,16 +78,27 @@ tar -xvzf core-agent-download.tgz
   </tbody>
 </table>
 
+## Downloading the core agent to another directory
+By default, the core agent will be downloaded into the /tmp directory. However due to /tmp being as mounted as not executable, or SEL configuration, or your umask permissions, you may not be able to execute the core-agent in that directory. 
+
+If you want to place it in another directory, you will have to set the enviornment variable `SCOUT_CORE_AGENT_DIR` to the directory you want to the core agent to run in. Your app must have read, write, and execute permissions for this directory. 
+
+Read your langage's agent configuration reference for more detail.
+
 ## Troubleshooting
 
-### Unable to launch Core Agent in tmp directory
+### Checking if the core agent is executable
 
-This could be due to a few issues, including the tmp directory being mounted as non executable, SELinux configuration, or your umask permissions.
+In some cases, the core agent won't be able to execute. You may be presented with an error message that looks similar to:
 
-To verify that this is your issue, please follow steps 1 and 2 in [Launching Core Agent manually](#launching-core-agent-manually) in a folder that your app has permissions to access (for ex: `/var/www/scout_apm_core`).
+<code style='width: 500px; white-space: normal'>
+[Scout] Failed to launch core agent - exception core-agent exited with non-zero status. 
+Output: sh: 1: /tmp/scout_apm_core/scout_apm_core-v1.2.9-x86_64-unknown-linux-musl/core-agent: Permission denied
+</code>
 
-If you are able to launch the core agent manually, you will need to change your configuration file (where your Scout API key is located), and have `SCOUT_CORE_AGENT_DIR` point to the directory where you were able to manually launch the core agent (ex: `SCOUT_CORE_AGENT_DIR=/var/www/scout_apm_core`). See your language's agent configuration docs for more detail.
+Try following "Downloading the core agent to another directory" above to see if you are able to execute the core agent in another folder.
 
+If you continue having issues, please reach out to us at [support@scoutapm.com](mailto:support@scoutapm.com).
 
 ## Available platforms and architectures
 
