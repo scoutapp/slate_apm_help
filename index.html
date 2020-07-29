@@ -5222,13 +5222,114 @@ specific deploys to changes in performance.</p>
 
 <p>If the Core Agent is required for your language, the Scout agent library for that language will handle downloading, configuring, and launching the Core Agent automatically. However, you may manually manage the Core Agent through configuration options.</p>
 
+<h2 id="launching-core-agent-manually">Launching Core Agent manually</h2>
+
+<table class="help">
+  <tbody>
+    <tr>
+      <td>
+        <span class="step">1</span>
+      </td>
+      <td>
+        <p>Create a directory which your app has permissions to read, write and execute into (for our example we will use: /var/www)</p>
+<pre style='width:500px'>
+cd /var/www
+mkdir scout_apm_core
+</pre>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">2</span>
+      </td>
+      <td>
+        <p>Download and test the core agent:</p>
+<pre style='width:500px'>
+# 1. cd into the scout_apm_core directory
+cd ./scout_apm-core
+
+# 2. Download the core agent tarball
+curl https://s3-us-west-1.amazonaws.com/scout-public-downloads/apm_core_agent/release/scout_apm_core-latest-x86_64-unknown-linux-gnu.tgz --output core-agent-download.tgz
+
+# 3. Unzip the core-agent
+tar -xvzf core-agent-download.tgz
+
+# 4. Test that core agent is executable
+./core-agent
+</pre>
+    <p style='margin-top:60px;margin-bottom:10px'>
+    If everything has run successfully, you should see something similar to the following output:
+    </p>
+    <img src="images/core_agent_info.png" alt="core agent startup info/output"/>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">3</span>
+      </td>
+      <td>
+        <p>Start the core agent:</p>
+<pre style='width:500px'>
+./core-agent start --daemonize true
+</pre>
+<p style='margin-top:50px'><strong>Note:</strong> this will not persist past a reboot. We suggest adding the core agent to upstart, systemd, or any other processes manager you may be using.<p>
+<p style='margin-top:20px'>For additional startup flags, check the in-executable help with <code>./core-agent start --help</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span class="step">4</span>
+      </td>
+      <td>
+        <p>Check to see that core agent socket is running:</p>
+<pre style='width:500px'>
+ ./core-agent probe
+</pre>
+        <p style='margin-top:50px'>If you are using one of the supported languages (PHP, Python, Elixir, and Node.js), you will have to set the following configuration variables to point to the correct socket (as well as disabling the agent from re-downloading and launching the core agent again):<p>
+        <ul>
+            <li><code>SCOUT_CORE_AGENT_SOCKET_PATH=/var/www/scout_apm_core/scout-agent.sock</code></li>
+            <li><code>SCOUT_CORE_AGENT_DOWNLOAD=false</code></li>
+            <li><code>SCOUT_CORE_AGENT_LAUNCH=false</code></li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="downloading-the-core-agent-to-another-directory">Downloading the core agent to another directory</h2>
+
+<p>By default, the core agent will be downloaded into the /tmp directory. However due to /tmp being as mounted as not executable, or SELinux configuration, or your umask permissions, you may not be able to execute the core-agent in that directory. </p>
+
+<p>To change the directory that Scout downloads to, use the configuration SCOUT_CORE_AGENT_DIR. Your app must have read, write, and execute permissions for this directory. </p>
+
+<p>Read your language&rsquo;s agent configuration reference for more detail.</p>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<h3 id="checking-if-the-core-agent-is-executable">Checking if the core agent is executable</h3>
+
+<p>In some cases, the core agent won&rsquo;t be able to execute. You may be presented with an error message that looks similar to:</p>
+
+<p><code style='width: 500px; white-space: normal'>
+[Scout] Failed to launch core agent - exception core-agent exited with non-zero status. 
+Output: sh: 1: /tmp/scout_apm_core/scout_apm_core-v1.2.9-x86_64-unknown-linux-musl/core-agent: Permission denied
+</code></p>
+
+<p>Try following <a href="#downloading-the-core-agent-to-another-directory">Downloading the core agent to another directory</a> above to see if you are able to execute the core agent in another directory to determine if there is a permissions issue with the default location.</p>
+
+<p>If you continue having issues, please reach out to us at <a href="mailto:support@scoutapm.com">support@scoutapm.com</a>.</p>
+
+<h2 id="available-platforms-and-architectures">Available platforms and architectures</h2>
+
 <p>Builds of the Core Agent are available for these platforms and architectures:</p>
 
-<p>Linux i686 (glibc)
-Linux x86-64 (glibc)
-Linux i686 (musl)
-Linux x86-64 (musl)
-OSX/Darwin x86-64</p>
+<ul>
+<li>Linux i686 (glibc)</li>
+<li>Linux x86-64 (glibc)</li>
+<li>Linux i686 (musl)</li>
+<li>Linux x86-64 (musl)</li>
+<li>OSX/Darwin x86-64</li>
+</ul>
 
 <h1 id="other-languages">Other languages</h1>
 
