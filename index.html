@@ -2383,26 +2383,37 @@ $ yarn add @scout_apm/scout-apm
       <td style="padding-top: 15px">
         <p>Add to Express Middleware:</p>
         <pre style="width:500px">
+
+// Require scout-apm first, before other requires
+const scout = require("@scout_apm/scout-apm");
 const express = require("express");
 
-// Require scout-apm after express, but before all other requires.
-const scout = require("@scout_apm/scout-apm");
-
-// Initialize your express application
-const app = express();
-
-// Enable the app-wide scout middleware
-app.use(scout.expressMiddleware());
-
+// The "main" function
 async function start() {
   // Trigger the download and installation of the core-agent
-  await scout.install();
+  await scout.install({
+    allowShutdown: true, // allow shutting down spawned scout-agent processes from this program
+    monitor: true, // enable monitoring
+    name: "<application name>",
+    key: "<scout key>",
+  });
+
+  // Initialize your express application
+  const app = express();
+
+  // Enable the app-wide scout middleware
+  app.use(scout.expressMiddleware());
+
+  // Add other middleware and routes
+  // app.use( ... )
+  // app.get( ... )
 
   // Start express
   app.start();
 }
 
-if require.main === module { start(); }
+// If this script is executed directly, run the start function
+if (require.main === module) { start(); }
        </pre>
       </td>
     </tr>
@@ -2418,7 +2429,7 @@ export SCOUT_KEY="[AVAILABLE IN THE SCOUT UI]"
 export SCOUT_NAME="A FRIENDLY NAME FOR YOUR APP"
 </pre>
 
-**NOTE** You may pass configuration to `scout.expressMiddleware` *and/or* `scout.install`, and if a scout agent instance does not exist already one will be created for you on the fly. Inbound requests will *not* wait until the middleware is ready, but will start being recorded once the `core-agent` has been setup.
+**NOTE** Pass configuration to `scout.install` and if a scout agent instance does not exist already one will be created for you on the fly. After `await`ing or `.then`ing the `Promise` returned by `scout.install`, you can be sure that the scout agent is available and enable the middleware by calling `app.use(scout.expressMiddleware())`. If you do *not* call `scout.install({ &hellip; })` and wait for setup to complete, the first inbound request will start the setup and eventually requests will be recorded (setup will not block requests, and recording will start when the agent has been set up).
 
 <p>
 If you&rsquo;ve installed Scout via the Heroku Addon, the provisioning process automatically sets <code>SCOUT_MONITOR</code> and <code>SCOUT_KEY</code> via <a href="https://devcenter.heroku.com/articles/config-vars">config vars</a>. Only <code>SCOUT_NAME</code> is required.
@@ -2643,19 +2654,36 @@ aggregates data by the app name.</p>
 <h3 id="nodejs-logging-express-middleware">Express middleware logging</h3>
 
 <p>To enable agent logging with the <code class="prettyprint">express</code> middleware, your middleware should be set up like the following:</p>
-<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"express"</span><span class="p">);</span>
-<span class="kr">const</span> <span class="nx">scout</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"@scout_apm/scout-apm"</span><span class="p">);</span>
+<pre class="highlight javascript tab-javascript"><code><span class="kr">const</span> <span class="nx">scout</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"@scout_apm/scout-apm"</span><span class="p">);</span>
+<span class="kr">const</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">"express"</span><span class="p">);</span>
 
-<span class="c1">// Enable the app-wide scout middleware</span>
-<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">scout</span><span class="p">.</span><span class="nx">expressMiddleware</span><span class="p">({</span>
-  <span class="na">config</span><span class="p">:</span> <span class="p">{</span>
-    <span class="na">allowShutdown</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// allow shutting down spawned scout-agent processes from this program</span>
-    <span class="na">monitor</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// enable monitoring</span>
-    <span class="na">name</span><span class="p">:</span> <span class="s2">"&lt;application name&gt;"</span><span class="p">,</span>
-    <span class="na">key</span><span class="p">:</span> <span class="s2">"&lt;scout key&gt;"</span><span class="p">,</span>
-  <span class="p">},</span>
-  <span class="na">logFn</span><span class="p">:</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">consoleLogFn</span><span class="p">,</span>
-<span class="p">}));</span>
+<span class="c1">// The "main" function of your application</span>
+<span class="nx">async</span> <span class="kd">function</span> <span class="nx">start</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// Create your express application</span>
+  <span class="kr">const</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">express</span><span class="p">();</span>
+
+  <span class="c1">// Install scout</span>
+  <span class="nx">await</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">install</span><span class="p">(</span>
+    <span class="c1">// Configuration for the scout agent</span>
+    <span class="p">{</span>
+      <span class="na">allowShutdown</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// allow shutting down spawned scout-agent processes from this program</span>
+      <span class="na">monitor</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// enable monitoring</span>
+      <span class="na">name</span><span class="p">:</span> <span class="s2">"&lt;application name&gt;"</span><span class="p">,</span>
+      <span class="na">key</span><span class="p">:</span> <span class="s2">"&lt;scout key&gt;"</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="c1">// Additional scout options</span>
+    <span class="p">{</span>
+      <span class="na">logFn</span><span class="p">:</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">consoleLogFn</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">);</span>
+
+  <span class="c1">// Enable the app-wide scout middleware</span>
+  <span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">scout</span><span class="p">.</span><span class="nx">expressMiddleware</span><span class="p">());</span>
+
+  <span class="c1">// ... Add other middleware/handlers ...</span>
+
+  <span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(...);</span>
+<span class="p">}</span>
 </code></pre>
 <p>If you are using <a href="https://www.npmjs.com/package/winston"><code class="prettyprint">winston</code></a> you may build a <code class="prettyprint">logFn</code> by passing a <code class="prettyprint">winston.Logger</code> to the exported <code class="prettyprint">scout.buildWinstonLogger</code> helper function:</p>
 <pre class="highlight javascript tab-javascript"><code>  <span class="nx">logFn</span><span class="p">:</span> <span class="nx">scout</span><span class="p">.</span><span class="nx">buildWinstonLogger</span><span class="p">(</span><span class="nx">yourLogger</span><span class="p">),</span>
@@ -2829,18 +2857,10 @@ const handler = (req, res) =&gt; {
     // Functionality here
 };
 </code></pre>
-<p>The express middleware automatically wraps the request with a transaction/instrumentation like the following:</p>
-<pre class="highlight  tab-plaintext"><code>// At top, with other imports
-const express = require("express");
-const scout = require("@scout_apm/scout-apm");
-
-// Enable the app-wide scout middleware
-app.use(scout.expressMiddleware({ ... }));
-
-// Pseudo-code for the replaced handler
-scout.api.WebTransaction.run("Controller/GET /", finishTransaction =&gt; { // transaction name format is `&lt;kind&gt;/&lt;name&gt;`
-  scout.api.instrument("Controller/GET /", finishSpan =&gt; { // instrumentation name format is `&lt;kind&gt;/&lt;name&gt;`
-    // the handler code
+<p>The express middleware automatically wraps your request and handler with a transaction/instrumentation as if you&rsquo;d written the following:</p>
+<pre class="highlight  tab-plaintext"><code>scout.api.WebTransaction.run("Controller/GET /&lt;your route&gt;", finishTransaction =&gt; { // transaction name format is `&lt;kind&gt;/&lt;name&gt;`
+  scout.api.instrument("Controller/GET /&lt;your route&gt;", finishSpan =&gt; { // instrumentation name format is `&lt;kind&gt;/&lt;name&gt;`
+    // The original handler code
   });
 });
 </code></pre>
