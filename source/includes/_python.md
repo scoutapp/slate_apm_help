@@ -1266,13 +1266,17 @@ Typically you don't need to change these:
       </th>
       <td>
         The path to the socket to connect to the <a href="#core-agent">Core Agent</a>, passed to it when launching.
-        This does not normally need to be set, as it can be automatically derived to live in the same directoy as the core agent.
+        This may be either a TCP address, in the format <code>tcp://&lt;address&gt;:&lt;port&gt;</code>, or an absolute path to create as a Unix socket.
+        The deafult is to use TCP.
+        <br>
+        <br>
+        Prior to version 2.16.0, this defaulted to using a Unix socket in the same directoy as the core agent.
         <br>
         <br>
         Prior to version 2.13.0, this was called <strong>socket_path</strong>. That name now works as an alias, and takes precedence to allow old configuration to continue to work.
       </td>
       <td>
-        Auto detected
+        <code>tcp://127.0.0.1:6590</code>
       </td>
       <td>
         No
