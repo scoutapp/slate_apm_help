@@ -146,6 +146,57 @@ SCOUT_AUTO_INSTRUMENTS=true</pre>
 
 A [detailed AutoInstruments FAQ](#autoinstruments-faq) is available in our reference area.
 
+## Error Monitoring
+
+<aside class="notice">Error Monitoring is in our BETA program.</aside>
+
+Monitoring for your site just got easier. With our powerful error monitoring service backed by our class leading APM solution, let your developers get back to what really matters.
+
+When the error monitoring service is enabled, you will gain access to the context in which errors occur on your application. With our high fidelity overview charts as well as our detailed error tracing, you will gain insights into your app's error trends as well as how these issues arose.
+
+![error monitoring overview page](error_monitoring_service.png)
+
+### Enabling Error Monitoring
+
+Error Monitoring is a BETA feature and available to apps using Ruby 2.1+. To enable:
+
+<table class="help install">
+  <tbody>
+    <tr>
+      <td><span class="step">1</span></td>
+      <td><p>Within your Rails app's directory, run:</p><pre>bundle update scout_apm</pre>
+<p>Error Monitoring was released in <code>scout_apm</code> version 4.0.0.</p>
+      </td>
+    </tr>
+    <tr>
+      <td><span class="step">2</span></td>
+      <td><p>Set the <code>errors_enabled</code> <a href="#errors_enabled">config option</a> to <code>true</code>.</p>
+
+      If you are using a config file:
+<pre>
+# config/scout_apm.yml
+production:
+  errors_enabled: true</pre>
+
+        If you are using environment variables:
+<pre>
+SCOUT_ERRORS_ENABLED=true</pre>
+      </td>
+
+
+    </tr>
+
+      <tr>
+      <td><span class="step">3</span></td>
+      <td><p>Deploy</p></td>
+    </tr>
+    <tr>
+      <td><span class="step">4</span></td>
+      <td><p>Reach out to <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> to have us enable the service</p></td>
+    </tr>
+  </tbody>
+</table>
+
 ## ScoutProf
 
 <aside class="notice">ScoutProf will be deprecated and succeeded by <a href="#autoinstruments">AutoInstruments</a>.</aside>

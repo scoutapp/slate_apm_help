@@ -461,6 +461,10 @@ but that can be set to a stricter level to quiet the agent's logging via the
 `log_level` configuration. The underlying LoggerInterface's level will take
 precedence if it is tighter than the `log_level` configuration.
 
+<h3 id="php-debug-logs">Debug Logs</h3>
+To set Scout's log level to debug, set the [log_level](#scout_log_level-1) configuration to `debug`.
+
+Scout's log level defaults to the same log level as the LoggerInterface provided, if you aren't seeing debug log levels from Scout, you will need to lower your LoggerInterface's log level as well.
 
 <h2 id="php-custom-instrumentation">Custom Instrumentation</h2>
 
