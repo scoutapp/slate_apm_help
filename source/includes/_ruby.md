@@ -1102,6 +1102,46 @@ production:
 Aft you've disabled a node in your configuration file and restarted your app server, the node show up as inactive in the UI after 10 minutes.
 
 
+## Ignoring transactions	
+
+There are a couple of approaches to ignore web requests and background jobs you don't care to instrument. These approaches are listed below.	
+
+### By the web endpoint path name	
+
+You can ignore requests to web endpoints that match specific paths (like `/health_check`). See the `ignore` setting in the [configuration options](#ruby-configuration-options).	
+
+### In your code	
+
+To selectively ignore a web request or background job in your code, add the following within the transaction:	
+
+```ruby	
+ScoutApm::Transaction.ignore!	
+```	
+
+### Sampling web requests	
+
+Use probability sampling to limit the number of web requests Scout analyzes:	
+
+```ruby	
+# app/controllers/application_controller.rb	
+before_action :sample_requests_for_scout	
+def sample_requests_for_scout	
+  # Sample rate should range from 0-1:	
+  # * 0: captures no requests	
+  # * 0.75: captures 75% of requests	
+  # * 1: captures all requests	
+  sample_rate = 0.75	
+  if rand > sample_rate	
+    Rails.logger.debug("[Scout] Ignoring request: #{request.original_url}")	
+    ScoutApm::Transaction.ignore!	
+  end	
+end	
+```	
+
+### Ignoring all background jobs	
+
+You can ignore all background jobs by setting `enable_background_jobs: false` in your configuration file. See the [configuration options](#ruby-configuration-options).
+
 ## Overhead Considerations
 
 Scout is built for production monitoring and is engineered to add minimal overhead. We test against several open-source benchmarks on significant releases to prevent releasing performance regressions.
