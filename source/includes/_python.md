@@ -1635,13 +1635,13 @@ import scout_apm.api
 scout_apm.api.Context.add("user_email", request.user.email)
 ```
 
-### Context Key Restrictions
+<h3 id="python-context-key-restrictions">Context Key Restrictions</h3>
 
 The Context `key` must be a `String` with only printable characters. Custom context keys may contain alphanumeric characters, dashes, and underscores. Spaces are not allowed.
 
 Attempts to add invalid context will be ignored.
 
-### Context Value Types
+<h3 id="python-context-value-types">Context Value Types</h3>
 
 Context values can be any json-serializable type. Examples:
 
