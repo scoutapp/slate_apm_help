@@ -228,10 +228,9 @@ We offer a no risk, fully featured, free trial. Enter a credit or debit card any
 
 Your first bill is 30 days after your signup date.
 
-### Subscription Style
-#### Per-Request
+### Subscriptions
 
-We currently offer three transaction-based [pricing plans](https://scoutapm.com/info/pricing). Custom plans are available for higher transaction volume. Contact [support@scoutapm.com](mailto:support@scoutapm.com) for pricing options.
+We offer both monthly and anual subscriptions with varying transaction levels and capabilities. Contact [support@scoutapm.com](mailto:support@scoutapm.com) for pricing options.
 
 ## Replacing New Relic
 
