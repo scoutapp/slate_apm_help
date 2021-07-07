@@ -6,6 +6,8 @@ Our Ruby agent supports Ruby on Rails 2.2+ and Ruby 1.8.7+. See a [list of libra
 
 [Memory Bloat detection](#memory-bloat-detection) and [ScoutProf](#scoutprof) require Ruby 2.1+.
 
+Scout APM 4.0.0+ require Ruby 2.1+. If you're using a Ruby version lower than 2.1, you can still use Scout APM 2.6.10.
+
 <h2 id="ruby_install">Installation</h2>
 
 Tailored instructions are provided within our user interface. General instructions:
@@ -292,6 +294,20 @@ The following configuration settings are available:
     </tr>
     <tr>
       <th>
+        errors_enabled
+      </th>
+      <td>
+        Whether <a href="#ruby-error-monitoring">Error Monitoring</a> should be enabled.
+      </td>
+      <td>
+        <code>false</code>
+      </td>
+      <td>
+        No
+      </td>
+    </tr>
+    <tr>
+      <th>
         log_level
       </th>
       <td>
@@ -495,6 +511,26 @@ The following configuration settings are available:
        </td>
       <td>No</td>
     </tr>
+    <tr>
+      <th>errors_ignored_exceptions</th>
+      <td>
+        Excludes certain exceptions from being reported
+      </td>
+       <td>
+         <code>[ActiveRecord::RecordNotFound, ActionController::RoutingError]</code>
+       </td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <th>errors_filtered_params</th>
+      <td>
+        Filtered parameters in exceptions
+      </td>
+       <td>
+         <code>[password, s3-key]</code>
+       </td>
+      <td>No</td>
+    </tr>
   </tbody>
 </table>
 
@@ -517,6 +553,16 @@ Scout identifies deploys via the following:
 2. If you are using Heroku, enable [Dyno Metadata](https://devcenter.heroku.com/articles/dyno-metadata). This adds a `HEROKU_SLUG_COMMIT` environment variable to your dynos, which Scout then associates with deploys.
 3. If you are deploying via a custom approach, set a `SCOUT_REVISION_SHA` environment variable equal to the SHA of your latest release.
 4. If the app resides in a Git repo, Scout parses the output of `git rev-parse --short HEAD` to determine the revision SHA.
+
+<h2 id="ruby-error-monitoring">Enabling Error Monitoring</h2>
+**Only available for Ruby version 2.1+**
+
+To enable our [Error Monitoring](#error-monitoring) service:
+
+1. Update your Scout APM gem to 4.0.0+
+2. Set [errors_enabled](#errors_enabled) to `true`
+3. Deploy
+4. Reach out to <a href="mailto:support@scoutapm.com">support@scoutapm.com</a> to have us enable the service
 
 <h2 id="ruby-devtrace">Enabling DevTrace</h2>
 
@@ -1055,45 +1101,44 @@ production:
 
 Aft you've disabled a node in your configuration file and restarted your app server, the node show up as inactive in the UI after 10 minutes.
 
-## Ignoring transactions
 
-There are a couple of approaches to ignore web requests and background jobs you don't care to instrument. These approaches are listed below.
+## Ignoring transactions	
 
-### By the web endpoint path name
+There are a couple of approaches to ignore web requests and background jobs you don't care to instrument. These approaches are listed below.	
 
-You can ignore requests to web endpoints that match specific paths (like `/health_check`). See the `ignore` setting in the [configuration options](#ruby-configuration-options).
+### By the web endpoint path name	
 
-### In your code
+You can ignore requests to web endpoints that match specific paths (like `/health_check`). See the `ignore` setting in the [configuration options](#ruby-configuration-options).	
 
-To selectively ignore a web request or background job in your code, add the following within the transaction:
+### In your code	
 
-```ruby
-ScoutApm::Transaction.ignore!
-```
+To selectively ignore a web request or background job in your code, add the following within the transaction:	
 
-### Sampling web requests
+```ruby	
+ScoutApm::Transaction.ignore!	
+```	
 
-Use probability sampling to limit the number of web requests Scout analyzes:
+### Sampling web requests	
 
-```ruby
-# app/controllers/application_controller.rb
-before_action :sample_requests_for_scout
+Use probability sampling to limit the number of web requests Scout analyzes:	
 
-def sample_requests_for_scout
-  # Sample rate should range from 0-1:
-  # * 0: captures no requests
-  # * 0.75: captures 75% of requests
-  # * 1: captures all requests
-  sample_rate = 0.75
+```ruby	
+# app/controllers/application_controller.rb	
+before_action :sample_requests_for_scout	
+def sample_requests_for_scout	
+  # Sample rate should range from 0-1:	
+  # * 0: captures no requests	
+  # * 0.75: captures 75% of requests	
+  # * 1: captures all requests	
+  sample_rate = 0.75	
+  if rand > sample_rate	
+    Rails.logger.debug("[Scout] Ignoring request: #{request.original_url}")	
+    ScoutApm::Transaction.ignore!	
+  end	
+end	
+```	
 
-  if rand > sample_rate
-    Rails.logger.debug("[Scout] Ignoring request: #{request.original_url}")
-    ScoutApm::Transaction.ignore!
-  end
-end
-```
-
-### Ignoring all background jobs
+### Ignoring all background jobs	
 
 You can ignore all background jobs by setting `enable_background_jobs: false` in your configuration file. See the [configuration options](#ruby-configuration-options).
 
