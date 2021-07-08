@@ -1579,6 +1579,35 @@ Wraps a whole function, timing the execution of specified function within a tran
 def bar():
     # Work
 ```
+## Instrumenting Async Code
+
+If you need to instrument an asynchronous function, or a function that returns an awaitable,
+you can use the `async_` decorator to decorate your function:
+
+```python
+@scout_apm.api.WebTransaction.async_("Foo")
+async def foo():
+    # app work
+
+@scout_apm.api.BackgroundTransaction.async_("Bar")
+async def bar():
+    # app work
+
+@scout_apm.api.instrument.async_("Spam")
+async def spam():
+    # app work
+
+# Use async_ even though this function doesn't use async def
+# because it returns an awaitable.
+@scout_apm.api.instrument.async_("Returns Awaitable")
+def returns_awaitable():
+    return spam()
+```
+
+<aside class="notice">
+  If you use the <code>.async_</code> decorator on a synchronous function that does not return an awaitable,
+  a <code>RuntimeWarning</code> will be logged indicating that an awaitable was not awaited.
+</aside>
 
 <h2 id="python-ignoring-transactions">Ignoring Transactions</h2>
 
